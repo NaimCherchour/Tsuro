@@ -1,10 +1,9 @@
 
-
 RAPPEL : 
 
     Identifiez-vous correctement a git : 
     
-        username : Prenom NOM
+        username : NOM Prenom
         mail : ??
         
     Pour cloner le projet :
