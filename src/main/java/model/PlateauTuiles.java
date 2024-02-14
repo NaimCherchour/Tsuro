@@ -39,6 +39,31 @@ public class PlateauTuiles {
         }
     }
 
+
+    public boolean joueurPerdu(Joueur joueur) {
+        int ligne = joueur.getLigne();
+        int colonne = joueur.getColonne();
+    
+        return (ligne == 0 || ligne == plateau.length - 1 || colonne == 0 || colonne == plateau[0].length - 1);
+    }
+
+    public void reinitialiserPlateau() {
+        // Remettre à zéro les tuiles
+        for (int i = 0; i < plateau.length; i++) {
+            for (int j = 0; j < plateau[i].length; j++) {
+                plateau[i][j] = null;
+            }
+        }
+    
+        // Les deux joueurs sont replacé a leur place initial : pour plus de joueur on pourra utiliser des enum si les places sont toujours les même ou alors utilisé une boucle 
+        Joueur joueur1 = new Joueur(3, 4, 2);
+        Joueur joueur2 = new Joueur(5, 6, 1);
+    
+        // Générer de nouvelles tuiles aléatoires (si nécessaire)
+        //genererTuilesAleatoires();
+    }
+    
+
     public static void main(String[] args) {
         PlateauTuiles plateau = new PlateauTuiles(9);
         plateau.afficherPlateau();

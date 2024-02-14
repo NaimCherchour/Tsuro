@@ -16,6 +16,14 @@ public class Joueur {
         this.numeros = new ArrayList<>();
     }
 
+    public int getLigne() {
+        return ligne;
+    }
+    
+    public int getColonne() {
+        return colonne;
+    }
+    
 
     public void setEntreeSelectionnee(int entreeSelectionnee) {
         this.entreeSelectionnee = entreeSelectionnee;
