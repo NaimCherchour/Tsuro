@@ -17,10 +17,17 @@ public class Joueur {
     public int getLigne() {
         return ligne;
     }
+    public void setLigne(int a){
+        ligne=a;
+    }
     
     public int getColonne() {
         return colonne;
     }
+    public void setColonne(int a){
+        colonne=a;
+    }
+
     public int getEntree() {
         return PointEntree;
     }
