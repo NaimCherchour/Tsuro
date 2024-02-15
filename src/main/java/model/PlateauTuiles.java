@@ -7,19 +7,10 @@ public class PlateauTuiles {
 
     public PlateauTuiles(int taille) {
         plateau = new Tuiles[taille][taille];
-    
-        // Placer des tuiles sur les bords pour les entrés
-        for (int i = 1; i < taille - 1; i++) {
-            plateau[0][i] = new Tuiles(); // Bord supérieur
-            plateau[taille - 1][i] = new Tuiles(); // Bord inférieur
-            plateau[i][0] = new Tuiles(); // Bord gauche
-            plateau[i][taille - 1] = new Tuiles(); // Bord droit
-        }
-
     }
 
     public void placerTuile(int ligne, int colonne, Tuiles tuile) {
-        if (ligne <= 0 || ligne >= plateau.length - 1 || colonne <= 0 || colonne >= plateau[0].length - 1) {
+        if (ligne <= 0 || ligne >= plateau.length - 1 || colonne <= 0 || colonne >= plateau[0].length - 1 || plateau[ligne][colonne]==null) {
             System.out.println("Impossible de placer une tuile sur les bords du plateau.");
             return;
         }
