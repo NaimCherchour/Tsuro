@@ -12,9 +12,13 @@ public class Tuiles{
     private int id;
     private static final int TAILLE_DU_TABLEAU = 8;
     private int[] tableauTuiles;
+    private int rotation = 0;
 
     public int[] GettabTui(){
         return tableauTuiles;
+    }
+    public int getRotation(){
+        return rotation;
     }
 
     public Tuiles() {
@@ -39,19 +43,6 @@ public class Tuiles{
         tableauTuiles[pointA] = pointB;
         tableauTuiles[pointB] = pointA;
     }
-    /**
-     * Effectue une rotation de la tuile de 90 degrés dans le sens des aiguilles d'une montre.
-     * Utilise la formule canonique avec ajustement pour maintenir l'orientation au Nord.
-     */
-    public void tournerTuile() {
-        int[] nouveauTableau = new int[TAILLE_DU_TABLEAU];
-        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            int nouvellePosition = (i + 2) % TAILLE_DU_TABLEAU;
-            nouveauTableau[nouvellePosition] = (tableauTuiles[i] + 2) % TAILLE_DU_TABLEAU;
-        }
-        tableauTuiles = nouveauTableau;
-    }
-
     /**
      * Affiche les connexions actuelles de la tuile.
      */

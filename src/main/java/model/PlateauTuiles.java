@@ -1,20 +1,22 @@
-package main.java.model;
 
+package main.java.model;
 import java.util.Scanner;
 
 public class PlateauTuiles {
     private Tuiles[][] plateau;
+    public int [] interConnection = {5,4,7,6,1,0,3,2}; // pour chaque index, correspond au nouvelle index dans la tuile suivante
 
     public PlateauTuiles(int taille) {
         plateau = new Tuiles[taille][taille];
     }
 
-    public void placerTuile(int ligne, int colonne, Tuiles tuile) {
-        if (ligne <= 0 || ligne >= plateau.length - 1 || colonne <= 0 || colonne >= plateau[0].length - 1 || plateau[ligne][colonne]==null) {
-            System.out.println("Impossible de placer une tuile sur les bords du plateau.");
+    public void placerTuile(int ligne, int colonne, Tuiles tuile, Joueur j ) {
+        System.out.println("Impossible de placer une tuile ici.");
+        if (ligne < 0 || ligne >= plateau.length  || colonne < 0 || colonne >= plateau.length  || plateau[ligne][colonne]==null || Math.abs(ligne - j.getLigne()) != 1 || Math.abs(colonne - j.getColonne()) != 1) {
             return;
         }
         plateau[ligne][colonne] = tuile;
+
     }
 
     public void afficherPlateau() {
@@ -29,13 +31,32 @@ public class PlateauTuiles {
             System.out.println();
         }
     }
+    public void ActualiserPosJ(Joueur j){ // Uniquement appellé apres le placement d'une tuile
+        int entree = j.getEntree();
+        if (entree < 2) {
+            j.setLigne(j.getLigne() - 1);
+        } else if (entree > 1 && entree < 4) {
+            j.setColonne(j.getColonne() + 1);
+        } else if (entree > 3 && entree < 6) {
+            j.setLigne(j.getLigne() + 1);
+        } else if (entree > 5 && entree < 8) {
+            j.setColonne(j.getColonne() - 1);
+        }
+        if (joueurPerdu(j)){
+            System.out.println("Le joueur a perdu.");
+        }
+        else { //recherche de la nouvelle entré
+            Tuiles nvTuiles = plateau[j.getLigne()][j.getColonne()];
+            j.setEntree(nvTuiles.GettabTui()[(nvTuiles.getRotation()*2+interConnection[j.getEntree()])%8]);// Verifie les rotations pour donner le nouveau point ou positionner la pion
+            }
+    }
 
 
     public boolean joueurPerdu(Joueur joueur) {
         int ligne = joueur.getLigne();
         int colonne = joueur.getColonne();
     
-        return (ligne == 0 || ligne == plateau.length - 1 || colonne == 0 || colonne == plateau[0].length - 1);
+        return (ligne < 0 || ligne >= plateau.length  || colonne < 0 || colonne >= plateau.length );
     }
 
     public void reinitialiserPlateau() {
@@ -65,7 +86,8 @@ public class PlateauTuiles {
         int ligne = scanner.nextInt();
         int colonne = scanner.nextInt();
         Tuiles tuile = new Tuiles(); 
-        plateau.placerTuile(ligne, colonne, tuile);
+        
+        //plateau.placerTuile(ligne, colonne, tuile);
 
         plateau.afficherPlateau();
 

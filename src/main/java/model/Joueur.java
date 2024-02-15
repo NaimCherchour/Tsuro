@@ -6,12 +6,12 @@ import java.util.List;
 public class Joueur {
     private int ligne;
     private int colonne;
-    private int entreeSelectionnee; 
+    private int PointEntree; 
 
-    public Joueur(int ligne, int colonne, int entreeSelectionnee) {
+    public Joueur(int ligne, int colonne, int PointEntree) {
         this.ligne = ligne;
         this.colonne = colonne;
-        this.entreeSelectionnee = entreeSelectionnee;
+        this.PointEntree = PointEntree;
     }
 
     public int getLigne() {
@@ -21,10 +21,11 @@ public class Joueur {
     public int getColonne() {
         return colonne;
     }
-    
-
-    public void setEntreeSelectionnee(int entreeSelectionnee) {
-        this.entreeSelectionnee = entreeSelectionnee;
+    public int getEntree() {
+        return PointEntree;
+    }
+    public void setEntree(int n){
+        PointEntree=n;
     }
 
     public static void main(String[] args) {
