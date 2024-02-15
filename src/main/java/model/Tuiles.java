@@ -6,14 +6,14 @@ public class Tuiles{
     private static int dernierIdAttribue = 0;
     private int id;
     private static final int TAILLE_DU_TABLEAU = 8;
-    private int[] tableauTuiles;
+    private int[] tableauEntreeSortie;
 
     public Tuiles() {
         this.id = ++dernierIdAttribue;
-        tableauTuiles = new int[TAILLE_DU_TABLEAU];
+        tableauEntreeSortie = new int[TAILLE_DU_TABLEAU];
         // Initialiser la tuile avec des valeurs par défaut pour éviter les chemins non définis
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            tableauTuiles[i] = -1; // -1 indique qu'aucun chemin n'est encore défini
+            tableauEntreeSortie[i] = -1; // -1 indique qu'aucun chemin n'est encore défini
         }
     }
     /**
@@ -27,8 +27,8 @@ public class Tuiles{
             System.out.println("Indices des points invalides.");
             return;
         }
-        tableauTuiles[pointA] = pointB;
-        tableauTuiles[pointB] = pointA;
+        tableauEntreeSortie[pointA] = pointB;
+        tableauEntreeSortie[pointB] = pointA;
     }
     /**
      * Effectue une rotation de la tuile de 90 degrés dans le sens des aiguilles d'une montre.
@@ -38,9 +38,9 @@ public class Tuiles{
         int[] nouveauTableau = new int[TAILLE_DU_TABLEAU];
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
             int nouvellePosition = (i + 2) % TAILLE_DU_TABLEAU;
-            nouveauTableau[nouvellePosition] = (tableauTuiles[i] + 2) % TAILLE_DU_TABLEAU;
+            nouveauTableau[nouvellePosition] = (tableauEntreeSortie[i] + 2) % TAILLE_DU_TABLEAU;
         }
-        tableauTuiles = nouveauTableau;
+        tableauEntreeSortie = nouveauTableau;
     }
 
     /**
@@ -49,8 +49,8 @@ public class Tuiles{
     public void afficherTuile() {
         System.out.println("Tuile ID: " + id);
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            if (tableauTuiles[i] != -1) {
-                System.out.println("De " + i + " à " + tableauTuiles[i]);
+            if (tableauEntreeSortie[i] != -1) {
+                System.out.println("De " + i + " à " + tableauEntreeSortie[i]);
             }
         }
     }
