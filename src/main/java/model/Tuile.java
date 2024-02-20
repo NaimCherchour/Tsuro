@@ -5,8 +5,21 @@ public class Tuile{
 
     private static int dernierIdAttribue = 0;
     private int id;
-    private static final int TAILLE_DU_TABLEAU = 8;
-    private int[] tableauEntreeSortie;
+    protected static final int TAILLE_DU_TABLEAU = 8; //TODO : Pourquoi protected et pas private ? J'ai mis un getter entre-temps
+    private int[] tableauEntreeSortie; // Tableau de 8 éléments pour les interconnexions de la tuile
+
+    /**
+     * Getter et Setter du tableau d'entrée/sortie ie : le tableau des chemins/interconnexions de la tuile
+     * Getter de la taille du tableau au lieu de le mettre protected ?
+     */
+    public int[] getTableauEntreeSortie() {
+        return tableauEntreeSortie;}
+    public void setTableauEntreeSortie(int[] tableauEntreeSortie) {
+        this.tableauEntreeSortie = tableauEntreeSortie;
+    }
+    public int getTailleDuTableau() {
+        return TAILLE_DU_TABLEAU;
+    }
 
     public Tuile() {
         this.id = ++dernierIdAttribue;
