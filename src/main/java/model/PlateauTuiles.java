@@ -95,8 +95,8 @@ public class PlateauTuiles {
                 plateau[i][j] = null;
             }
         }
-        Joueur joueur1 = new Joueur(3, 4, 2);
-        Joueur joueur2 = new Joueur(5, 6, 1);
+        Joueur joueur1 = new Joueur(3, 4, 2,"lili");
+        Joueur joueur2 = new Joueur(5, 6, 1,"toto");
     }
 
     
