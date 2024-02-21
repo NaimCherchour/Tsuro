@@ -26,11 +26,12 @@ public class PlateauTuiles {
      * @param j Le joueur associé à la tuile.
      */
     public void placerTuile(int ligne, int colonne, Tuiles tuile, Joueur j) {
-        System.out.println("Impossible de placer une tuile ici.");
-        if (ligne < 0 || ligne >= plateau.length || colonne < 0 || colonne >= plateau.length || plateau[ligne][colonne] == null || Math.abs(ligne - j.getLigne()) != 1 || Math.abs(colonne - j.getColonne()) != 1) {
+        if (ligne < 0 || ligne >= plateau.length || colonne < 0 || colonne >= plateau.length ||  plateau[ligne][colonne] != null ){
+            System.out.println("Impossible de placer une tuile ici.");
             return;
         }
         plateau[ligne][colonne] = tuile;
+        ActualiserPosJ(j);
     }
 
     /**
@@ -40,9 +41,9 @@ public class PlateauTuiles {
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 if (plateau[i][j] == null) {
-                    System.out.print("Case vide\t");
+                    System.out.print("X\t");
                 } else {
-                    System.out.print("Tuile " + "\t");
+                    System.out.print("T " + "\t");
                 }
             }
             System.out.println();
@@ -104,16 +105,26 @@ public class PlateauTuiles {
         PlateauTuiles plateau = new PlateauTuiles(9);
         plateau.afficherPlateau();
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Entrez les coordonnées de la tuile (ligne colonne) :");
-        int ligne = scanner.nextInt();
-        int colonne = scanner.nextInt();
+        System.out.println("Entrez les coordonnées de départ (ligne colonne) :");
+        int ligneDepart = 0;
+        int colonneDepart = -1;
+        
+        // Création des joueurs avec les coordonnées de départ
+        Joueur joueur1 = new Joueur(ligneDepart, colonneDepart, 2, "Lili");
+
+        System.out.println("Coordonnées de départ du joueur 1 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
+
+        System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
+        int ligneTuile = 0;
+        int colonneTuile = 0;
         Tuiles tuile = new Tuiles(); 
         
-        //plateau.placerTuile(ligne, colonne, tuile);
+        // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
+        plateau.placerTuile(ligneTuile, colonneTuile, tuile, joueur1); // Par exemple, placer la tuile pour le joueur 1
 
         plateau.afficherPlateau();
 
-        scanner.close();
+        System.out.println("Coordonnées du joueur 1 après placement de tuile : " + joueur1.getLigne() + ", " + joueur1.getColonne());
+
     }
 }
