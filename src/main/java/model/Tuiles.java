@@ -17,6 +17,7 @@ public class Tuiles{
     public Chemin[] GettabTui(){
         return tableauChemins;
     }
+
     public int getRotation(){
         return rotation;
     }

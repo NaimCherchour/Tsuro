@@ -46,7 +46,7 @@ public class PlateauTuiles {
                     System.out.print("T " + "\t");
                 }
             }
-            System.out.println();
+            System.out.println("\n");
         }
     }
 
@@ -96,8 +96,6 @@ public class PlateauTuiles {
                 plateau[i][j] = null;
             }
         }
-        Joueur joueur1 = new Joueur(3, 4, 2,"lili");
-        Joueur joueur2 = new Joueur(5, 6, 1,"toto");
     }
 
     
@@ -117,7 +115,8 @@ public class PlateauTuiles {
         System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
         int ligneTuile = 0;
         int colonneTuile = 0;
-        Tuiles tuile = new Tuiles(); 
+        Tuiles tuile = new Tuiles();
+        tuile.GettabTui(); 
         
         // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
         plateau.placerTuile(ligneTuile, colonneTuile, tuile, joueur1); // Par exemple, placer la tuile pour le joueur 1
@@ -126,5 +125,18 @@ public class PlateauTuiles {
 
         System.out.println("Coordonnées du joueur 1 après placement de tuile : " + joueur1.getLigne() + ", " + joueur1.getColonne());
 
+        System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
+        int ligneTuile2 = 0;
+        int colonneTuile2 = 1;
+        Tuiles tuile2 = new Tuiles();
+        tuile2.GettabTui();
+        
+        
+        // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
+        plateau.placerTuile(ligneTuile2, colonneTuile2, tuile2, joueur1); // Par exemple, placer la tuile pour le joueur 1
+
+        plateau.afficherPlateau();
+
+        System.out.println("Coordonnées du joueur 1 après placement de tuile2 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
     }
 }
