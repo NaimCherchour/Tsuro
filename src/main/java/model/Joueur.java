@@ -33,6 +33,10 @@ public class Joueur {
      * 
      * @return La ligne actuelle du joueur.
      */
+    public void setPointEntree(int pointEntree) {
+        PointEntree = pointEntree;
+    }
+
     public int getLigne() {
         return ligne;
     }
@@ -85,6 +89,16 @@ public class Joueur {
     public void setEntree(Chemin chemin) {
         PointEntree = chemin.getPointSortie();
     }
+
+    /**
+     * Déplace le joueur sur le plateau en fonction de la tuile sur laquelle il se trouve.
+     * 
+     * @param plateau Le plateau de jeu.
+     */
+    public void deplacerJoueur(PlateauTuiles plateau) {
+        plateau.ActualiserPosJ(this);
+    }
+
     public static void main(String[] args) {
         // Exemple d'utilisation de la classe Joueur
         Joueur joueur1 = new Joueur(3, 4, 2,"max");

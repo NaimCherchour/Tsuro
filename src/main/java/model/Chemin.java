@@ -36,4 +36,24 @@ public class Chemin {
     public void setCouleur(String couleur) {
         this.couleur = couleur;
     }
+
+    /**
+     * Vérifie si le chemin a déjà été emprunté par un joueur.
+     * 
+     * @return true si le chemin a été emprunté par un autre joueur, false sinon, sachant que les joueurs sont représentés par leurs couleurs respectives.
+     */
+    public boolean estEmprunte() {
+        return this.joueur != null;
+    }
+
+    /**
+     * Vérifie si le chemin a été emprunté par un joueur spécifique basé sur la couleur.
+     * 
+     * @param couleurJoueur La couleur du joueur à vérifier.
+     * @return true si le chemin a été emprunté par le joueur avec la couleur spécifiée, false sinon.
+     */
+    public boolean estEmpruntePar(String couleurJoueur) {
+        return this.joueur != null && this.couleur.equals(couleurJoueur);
+    }
+
 }
