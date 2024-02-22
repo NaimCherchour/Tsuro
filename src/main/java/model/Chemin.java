@@ -16,6 +16,11 @@ public class Chemin {
         this.couleur = couleur;
         this.joueur = joueur;
     }
+    public Chemin(){
+        this.pointSortie = -1;
+        this.couleur = null;
+        this.joueur = null;
+    }
 
     public int getPointSortie() {
         return pointSortie;

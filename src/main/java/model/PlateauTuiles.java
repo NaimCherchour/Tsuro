@@ -115,14 +115,17 @@ public class PlateauTuiles {
 
     
     public static void main(String[] args) {
-        PlateauTuiles plateau = new PlateauTuiles(9);
+
+        TuileAdapt tuiles = new TuileAdapt();
+        Tuiles tuile1 = tuiles.getTuile(1);
+        tuile1.afficherTuileNaive(); 
+
+        PlateauTuiles plateau = new PlateauTuiles(7);
         plateau.afficherPlateau();
 
         System.out.println("Entrez les coordonnées de départ (ligne colonne) :");
         int ligneDepart = 0;
         int colonneDepart = -1;
-        
-        // Création des joueurs avec les coordonnées de départ
         Joueur joueur1 = new Joueur(ligneDepart, colonneDepart, 2, "Lili");
 
         System.out.println("Coordonnées de départ du joueur 1 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
@@ -130,28 +133,13 @@ public class PlateauTuiles {
         System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
         int ligneTuile = 0;
         int colonneTuile = 0;
-        Tuiles tuile = new Tuiles();
-        tuile.GettabTui(); 
         
         // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
-        plateau.placerTuile(ligneTuile, colonneTuile, tuile, joueur1); // Par exemple, placer la tuile pour le joueur 1
+        plateau.placerTuile(ligneTuile, colonneTuile, tuile1, joueur1); // Par exemple, placer la tuile pour le joueur 1
 
         plateau.afficherPlateau();
 
-        System.out.println("Coordonnées du joueur 1 après placement de tuile : " + joueur1.getLigne() + ", " + joueur1.getColonne());
+        System.out.println("Coordonnées du joueur 1 après placement de tuile : " + joueur1.getLigne() + ", " + joueur1.getColonne() + ". Sorti : "+joueur1.getEntree());
 
-        System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
-        int ligneTuile2 = 0;
-        int colonneTuile2 = 1;
-        Tuiles tuile2 = new Tuiles();
-        tuile2.GettabTui();
-        
-        
-        // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
-        plateau.placerTuile(ligneTuile2, colonneTuile2, tuile2, joueur1); // Par exemple, placer la tuile pour le joueur 1
-
-        plateau.afficherPlateau();
-
-        System.out.println("Coordonnées du joueur 1 après placement de tuile2 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
     }
 }

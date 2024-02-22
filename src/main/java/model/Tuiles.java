@@ -34,6 +34,17 @@ public class Tuiles{
             tableauChemins[i] = new Chemin(-1, null, null); // -1 indique qu'aucun chemin n'est encore défini
         }
     }
+    public Tuiles(int id, int[] tableauEntreeSortie) {
+        this.id = id;
+        tableauChemins = new Chemin[TAILLE_DU_TABLEAU];
+        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+            tableauChemins[i] = new Chemin(); // Crée un nouvel objet Chemin pour chaque élément du tableau
+            tableauChemins[i].setPointSortie(tableauEntreeSortie[i]);
+        }
+        this.rotation = 0; // rotation à 0 par défaut
+    }
+
+
     /**
      * Connecte deux points sur la tuile.
      * 
@@ -41,11 +52,11 @@ public class Tuiles{
      * @param pointB Deuxième point à connecter.
      */
     public void connecterPoints(int pointA, int pointB,String couleur, Joueur joueur) {
-        if (pointA < 0 || pointA >= TAILLE_DU_TABLEAU || pointB < 0 || pointB >= TAILLE_DU_TABLEAU) {
-            System.out.println("Indices des points invalides.");
+        if (pointA < 0 || pointA >= TAILLE_DU_TABLEAU || pointB < 0 || pointB >= TAILLE_DU_TABLEAU || tableauChemins[pointA] !=null) {
+            System.out.println("Indices des points invalides ou déjà connecté. ");
             return;
         }
-      tableauChemins[pointA] = new Chemin(pointB, couleur, joueur);
+        tableauChemins[pointA] = new Chemin(pointB, couleur, joueur);
         tableauChemins[pointB] = new Chemin(pointA, couleur, joueur);
     }
     /**
@@ -58,6 +69,16 @@ public class Tuiles{
             if (chemin.getPointSortie() != -1) {
                 System.out.println("De " + i + " à " + chemin.getPointSortie() +" (Couleur: " + chemin.getCouleur() +
                         ", Joueur: " + chemin.getJoueur().getPrenom() + ")");
+            }
+        }
+    }
+
+    public void afficherTuileNaive() {
+        System.out.println("Tuile ID: " + id);
+        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+            Chemin chemin = tableauChemins[i];
+            if (chemin.getPointSortie() != -1) {
+                System.out.println("De " + i + " à " + chemin.getPointSortie());
             }
         }
     }
