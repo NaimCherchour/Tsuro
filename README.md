@@ -1,3 +1,36 @@
+# Projet De Programmation Tsuro ( VP2B )
+
+Pour exécuter le projet:
+
+ (javac -cp src/main/java/*/*.java)
+ (java src/main/java/Main.java)
+ 
+Pour exécuter les tests:
+
+
+## Auteurs
+ - Arkam Rayane 
+ - Cherchour Naim
+ - Chioukh Sami
+ - Kecman Dejan
+ - Lounici Sifaks 
+
+## Git : 
+
+Pour cloner le projet :
+        git clone https://gaufre.informatique.univ-paris-diderot.fr/ProjetTsuro/projettsuro.git
+        
+        
+## Comment jouer :
+
+## Fonctionnalités implémentées :
+
+### Le Bot :
+
+#### Mode réseau : ? 
+
+#### Les tests :
+
 
 RAPPEL : 
 
@@ -6,13 +39,7 @@ RAPPEL :
         username : NOM Prenom
         mail : ??
         
-    Pour cloner le projet :
-    
-        git clone https://gaufre.informatique.univ-paris-diderot.fr/ProjetTsuro/projettsuro.git
-        
-    Faites un pull pour récuperer les modifications ( du fichier TestAccès ).
-    
-    Modifier le fichier TestAccès avec votre prenom et nom puis push.
+
     
     
         
