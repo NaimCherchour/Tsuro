@@ -8,6 +8,8 @@ public class Tuile{
     protected static final int TAILLE_DU_TABLEAU = 8; //TODO : Pourquoi protected et pas private ? J'ai mis un getter entre-temps
     private int[] tableauEntreeSortie; // Tableau de 8 éléments pour les interconnexions de la tuile
 
+    private int rotation; // Ajouté pour gérer la rotation des tuiles
+
     /**
      * Getter et Setter du tableau d'entrée/sortie ie : le tableau des chemins/interconnexions de la tuile
      * Getter de la taille du tableau au lieu de le mettre protected ?
@@ -28,6 +30,11 @@ public class Tuile{
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
             tableauEntreeSortie[i] = -1; // -1 indique qu'aucun chemin n'est encore défini
         }
+    }
+    public Tuile ( int id , int[] tableauEntreeSortie ){
+        this.id = id;
+        this.tableauEntreeSortie = tableauEntreeSortie;
+        this.rotation = 0 ; // rotation à 0 par défaut
     }
     /**
      * Connecte deux points sur la tuile.
