@@ -1,32 +1,31 @@
 package main.java.model;
 
 public class Chemin {
-    private int pointSortie;
-    private String couleur;
-    private Joueur joueur;
 
+    enum Couleur{
+        NONE,RED,BLUE
+    }
+
+    private int pointSortie;
+    private Joueur joueur;
+    private Couleur couleur;
 
     /**
      * @param pointSortie represente le point de sortie du chemin du joueur
      * @param couleur represente la couleur attribuer au chemin du joueur 
      * @param joueur represente le joueur
      */
-    public Chemin(int pointSortie, String couleur, Joueur joueur) {
+    public Chemin(int pointSortie,Couleur couleur, Joueur joueur) {
         this.pointSortie = pointSortie;
         this.couleur = couleur;
         this.joueur = joueur;
-    }
-    public Chemin(){
-        this.pointSortie = -1;
-        this.couleur = null;
-        this.joueur = null;
     }
 
     public int getPointSortie() {
         return pointSortie;
     }
 
-    public String getCouleur() {
+    public Couleur getCouleur() {
         return couleur;
     }
 
@@ -38,27 +37,11 @@ public class Chemin {
         this.pointSortie = pointSortie;
     }
 
-    public void setCouleur(String couleur) {
+    public void setCouleur(Couleur couleur) {
         this.couleur = couleur;
     }
 
-    /**
-     * Vérifie si le chemin a déjà été emprunté par un joueur.
-     * 
-     * @return true si le chemin a été emprunté par un autre joueur, false sinon, sachant que les joueurs sont représentés par leurs couleurs respectives.
-     */
     public boolean estEmprunte() {
-        return this.joueur != null;
+        return this.couleur ==null;
     }
-
-    /**
-     * Vérifie si le chemin a été emprunté par un joueur spécifique basé sur la couleur.
-     * 
-     * @param couleurJoueur La couleur du joueur à vérifier.
-     * @return true si le chemin a été emprunté par le joueur avec la couleur spécifiée, false sinon.
-     */
-    public boolean estEmpruntePar(String couleurJoueur) {
-        return this.joueur != null && this.couleur.equals(couleurJoueur);
-    }
-
 }

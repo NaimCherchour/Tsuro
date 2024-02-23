@@ -1,6 +1,8 @@
 package main.java.model;
 import java.util.Scanner;
 
+import main.java.model.Chemin.Couleur;
+
 /**
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
@@ -73,8 +75,8 @@ public class PlateauTuiles {
             Chemin tmp=TrouveNVEntre(j.getEntree(),nvTuiles,j);
             if (!tmp.estEmprunte()){
                 j.setEntree(tmp);
-                tmp.setCouleur("Vert"); //exemple
-                LiaisonCheminInvers(tmp,nvTuiles,"Vert");
+                tmp.setCouleur(Couleur.RED); //exemple
+                LiaisonCheminInvers(tmp,nvTuiles,Couleur.RED);
                 //si le chemin n'est pas emprunter || on défini la nouvelle entré , la couleur et on lie le chemin inverse du chemin tmp
             }
             else {
@@ -83,10 +85,10 @@ public class PlateauTuiles {
         }
     }
     public Chemin TrouveNVEntre(int ancienPoint,Tuiles nvTuiles,Joueur j){
-        return nvTuiles.GettabTui()[(nvTuiles.getRotation()*2+interConnection[j.getEntree()])%8]; //trouve le nouveau chemin a emprunter
+        return nvTuiles.getTableauChemin()[(nvTuiles.getRotation()*2+interConnection[j.getEntree()])%8]; //trouve le nouveau chemin a emprunter
     }
-    public void LiaisonCheminInvers(Chemin x, Tuiles nvTuiles,String couleur){
-        nvTuiles.GettabTui()[x.getPointSortie()].setCouleur(couleur); //défini la couleur du chemin inverse
+    public void LiaisonCheminInvers(Chemin x, Tuiles nvTuiles,Couleur couleur){
+        nvTuiles.getTableauChemin()[x.getPointSortie()].setCouleur(couleur); //défini la couleur du chemin inverse
     }
 
     /**
