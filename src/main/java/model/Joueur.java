@@ -3,6 +3,8 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.java.model.Tuiles.Chemin;
+
 /**
  * La classe Joueur représente un joueur dans le jeu.
  */

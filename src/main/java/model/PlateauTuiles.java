@@ -1,7 +1,8 @@
 package main.java.model;
 import java.util.Scanner;
 
-import main.java.model.Chemin.Couleur;
+import main.java.model.Tuiles.Chemin;
+import main.java.model.Tuiles.Chemin.Couleur;
 
 /**
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import main.java.model.Chemin.Couleur;
+import main.java.model.Tuiles.Chemin.Couleur;
 
 public class Tuiles{
 
@@ -85,11 +85,58 @@ public class Tuiles{
         }
     }
 
+    public class Chemin {
+
+        enum Couleur{
+            NONE,RED,BLUE
+        }
+    
+        private int pointSortie;
+        private Joueur joueur;
+        private Couleur couleur;
+    
+        /**
+         * @param pointSortie represente le point de sortie du chemin du joueur
+         * @param couleur represente la couleur attribuer au chemin du joueur 
+         * @param joueur represente le joueur
+         */
+        public Chemin(int pointSortie,Couleur couleur, Joueur joueur) {
+            this.pointSortie = pointSortie;
+            this.couleur = couleur;
+            this.joueur = joueur;
+        }
+    
+        public int getPointSortie() {
+            return pointSortie;
+        }
+    
+        public Couleur getCouleur() {
+            return couleur;
+        }
+    
+        public Joueur getJoueur() {
+            return joueur;
+        }
+    
+        public void setPointSortie(int pointSortie) {
+            this.pointSortie = pointSortie;
+        }
+    
+        public void setCouleur(Couleur couleur) {
+            this.couleur = couleur;
+        }
+    
+        public boolean estEmprunte() {
+            return this.couleur ==null;
+        }
+    }
+    
+
     public static void main(String[] args) {
         System.out.println();
         Tuiles a=new Tuiles();
         Joueur j1=new Joueur(1, 2, 2,"toto");
-        a.connecterPoints(0, 1, Couleur.BLUE, j1);
+        a.connecterPoints(0, 1,Couleur.BLUE, j1);
         a.afficherTuile();
     }
 }
