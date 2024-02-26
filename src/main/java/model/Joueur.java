@@ -3,17 +3,24 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.java.model.Tuiles.Chemin;
+import main.java.model.Tuile.Chemin;
+
 
 /**
  * La classe Joueur représente un joueur dans le jeu.
  */
 public class Joueur {
 
-    private int ligne;           // La ligne actuelle où se trouve le joueur sur le plateau.
-    private int colonne;         // La colonne actuelle où se trouve le joueur sur le plateau.
-    private int PointEntree;     // Le point d'entrée du joueur sur la tuile.
+    private int ligne;
+    private int colonne;
+    private int PointEntree;
     private String prenom;
+    private Couleur couleur;
+    private static int indexCouleur = 1 ;
+
+    public enum Couleur {
+        NONE, ROUGE, VERT, BLEU, JAUNE // Ajoutez d'autres couleurs au besoin
+    }
 
     /**
      * Constructeur de la classe Joueur.
@@ -23,11 +30,22 @@ public class Joueur {
      * @param PointEntree Le point d'entrée initial du joueur sur la tuile.
      * @param prenom Le prenom du joueur.
      */
-    public Joueur(int ligne, int colonne, int PointEntree,String prenom) {
+    public Joueur(int ligne, int colonne, int PointEntree, String prenom) {
         this.ligne = ligne;
         this.colonne = colonne;
         this.PointEntree = PointEntree;
-        this.prenom=prenom;
+        this.prenom = prenom;
+        this.couleur = getNextCouleur();
+        Joueur.indexCouleur+=1;
+    }
+
+    private Couleur getNextCouleur() {
+        Couleur[] couleurs = Couleur.values();
+        if (Joueur.indexCouleur>=couleurs.length){
+            System.out.println("impossible d'ajouter d'autres joueurs");
+            return Couleur.NONE;
+        }
+        return couleurs[Joueur.indexCouleur];
     }
 
     /**
@@ -41,6 +59,9 @@ public class Joueur {
 
     public int getLigne() {
         return ligne;
+    }
+    public Joueur.Couleur getCouleur() {
+        return couleur;
     }
 
     /**
@@ -103,6 +124,6 @@ public class Joueur {
 
     public static void main(String[] args) {
         // Exemple d'utilisation de la classe Joueur
-        Joueur joueur1 = new Joueur(3, 4, 2,"max");
+        Joueur joueur1 = new Joueur(3, 4, 2, "max");
     }
 }

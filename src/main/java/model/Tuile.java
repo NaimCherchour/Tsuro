@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import main.java.model.Tuile.Chemin.Couleur;
+import main.java.model.Joueur.Couleur;
 
 public class Tuile{
 
@@ -28,38 +28,13 @@ public class Tuile{
     /**
      * Le Tableau de chemin contient à chaque indice le point de sortie ,la couleur et le joueur 
      */
-    public Tuile() {
-        this.id = ++dernierIdAttribue;
-        tableauChemins = new Chemin[TAILLE_DU_TABLEAU];
-        // Initialiser la tuile avec des valeurs par défaut pour éviter les chemins non définis
-        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            tableauChemins[i] = new Chemin(-1, null, null); // -1 indique qu'aucun chemin n'est encore défini
-        }
-    }
     public Tuile(int id, int[] tableauEntreeSortie) {
         this.id = id;
         tableauChemins = new Chemin[TAILLE_DU_TABLEAU];
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            tableauChemins[i] = new Chemin(i, Couleur.NONE, null); // Crée un nouvel objet Chemin pour chaque élément du tableau
-            tableauChemins[i].setPointSortie(tableauEntreeSortie[i]);
+            tableauChemins[i] = new Chemin(tableauEntreeSortie[i]); // Crée un nouvel objet Chemin pour chaque élément du tableau
         }
         this.rotation = 0; // rotation à 0 par défaut
-    }
-
-
-    /**
-     * Connecte deux points sur la tuile.
-     * 
-     * @param pointA Premier point à connecter.
-     * @param pointB Deuxième point à connecter.
-     */
-    public void connecterPoints(int pointA, int pointB,Couleur couleur, Joueur joueur) {
-        if (pointA < 0 || pointA >= TAILLE_DU_TABLEAU || pointB < 0 || pointB >= TAILLE_DU_TABLEAU || tableauChemins[pointA] !=null) {
-            System.out.println("Indices des points invalides ou déjà connecté. ");
-            return;
-        }
-        tableauChemins[pointA] = new Chemin(pointB, couleur, joueur);
-        tableauChemins[pointB] = new Chemin(pointA, couleur, joueur);
     }
     /**
      * Affiche les connexions actuelles de la tuile.
@@ -86,31 +61,37 @@ public class Tuile{
     }
 
     public class Chemin {
-
-        enum Couleur{
-            NONE,RED,BLUE
-        }
     
         private int pointSortie;
         private Joueur joueur;
-        private Couleur couleur;
+        private Joueur.Couleur couleur;
     
         /**
          * @param pointSortie represente le point de sortie du chemin du joueur
          * @param couleur represente la couleur attribuer au chemin du joueur 
          * @param joueur represente le joueur
          */
-        public Chemin(int pointSortie,Couleur couleur, Joueur joueur) {
+        public Chemin(int pointSortie, Joueur joueur) {
             this.pointSortie = pointSortie;
-            this.couleur = couleur;
             this.joueur = joueur;
+            if (joueur == null){
+                this.couleur = null;
+            }
+            else {
+                this.couleur = joueur.getCouleur();
+            }
+        }
+        public Chemin(int pointSortie){
+            this.pointSortie = pointSortie;
+            joueur=null;
+            couleur=Couleur.NONE;
         }
     
         public int getPointSortie() {
             return pointSortie;
         }
     
-        public Couleur getCouleur() {
+        public Joueur.Couleur getCouleur() {
             return couleur;
         }
     
@@ -122,22 +103,18 @@ public class Tuile{
             this.pointSortie = pointSortie;
         }
     
-        public void setCouleur(Couleur couleur) {
+        public void setCouleur(Joueur.Couleur couleur) {
             this.couleur = couleur;
         }
     
         public boolean estEmprunte() {
-            return this.couleur ==null;
+            return this.couleur != Couleur.NONE;
         }
     }
     
 
     public static void main(String[] args) {
         System.out.println();
-        Tuile a=new Tuile();
-        Joueur j1=new Joueur(1, 2, 2,"toto");
-        a.connecterPoints(0, 1,Couleur.BLUE, j1);
-        a.afficherTuile();
     }
 }
 
