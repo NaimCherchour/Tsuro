@@ -110,6 +110,13 @@ public class Tuile{
         public boolean estEmprunte() {
             return this.couleur != Couleur.NONE;
         }
+
+        public void marquerCheminVisite(int indiceChemin, Joueur.Couleur couleur) {
+            tableauChemins[indiceChemin].setCouleur(couleur);;
+            
+            int tmp=tableauChemins[indiceChemin].getPointSortie();
+            tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
+        }
     }
     
 
