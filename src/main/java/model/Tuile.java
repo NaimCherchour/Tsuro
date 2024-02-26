@@ -117,6 +117,11 @@ public class Tuile{
             int tmp=tableauChemins[indiceChemin].getPointSortie();
             tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
         }
+
+        public boolean cheminEstEmprunte(int indiceChemin) {
+            Chemin chemin = tableauChemins[indiceChemin];
+            return chemin.estEmprunte();
+        }
     }
     
 
