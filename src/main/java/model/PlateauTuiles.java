@@ -90,11 +90,13 @@ public class PlateauTuiles {
                 j.setColonne(nouvelleColonne);
                 Tuile nvTuiles = plateau[j.getLigne()][j.getColonne()];
                 Chemin tmp=TrouveNVEntre(j.getEntree(),nvTuiles,j);
+                System.out.println("sortie du chemin :"+tmp.getPointSortie());
                 if (tmp.estEmprunte()){
                     System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
                 }
                 else {
-                    j.setEntree(tmp);
+                    //j.setEntree(tmp);
+                    j.setPointEntree(tmp.getPointSortie()+2*nvTuiles.getRotation());
                     tmp.setCouleur(j.getCouleur());
                     LiaisonCheminInvers(tmp,nvTuiles,j.getCouleur());
                     ActualiserPosJ(j);
@@ -108,7 +110,7 @@ public class PlateauTuiles {
     }
 
     public Chemin TrouveNVEntre(int ancienPoint,Tuile nvTuiles,Joueur j){
-        return nvTuiles.getTableauChemin()[(nvTuiles.getRotation()*2+interConnection[j.getEntree()])%8]; //trouve le nouveau chemin a emprunter
+        return nvTuiles.getTableauChemin()[interConnection[(j.getEntree()-(2*nvTuiles.getRotation()))%8]]; //trouve le nouveau chemin a emprunter
     }
     public void LiaisonCheminInvers(Chemin x, Tuile nvTuiles,Joueur.Couleur couleur){
         nvTuiles.getTableauChemin()[x.getPointSortie()].setCouleur(couleur); //défini la couleur du chemin inverse
@@ -146,6 +148,8 @@ public class PlateauTuiles {
         tuile1.afficherTuileNaive();
         Tuile tuile2 = tuiles.getTuile(2);
         tuile2.afficherTuileNaive(); 
+        tuile1.setRotation(1);
+    
 
         PlateauTuiles plateau = new PlateauTuiles(7);
         plateau.afficherPlateau();
