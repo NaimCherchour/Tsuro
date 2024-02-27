@@ -23,6 +23,9 @@ public class Tuile{
     public int getRotation(){
         return rotation;
     }
+    public void setRotation(int r){
+        rotation=r;
+    }
 
 
     /**
