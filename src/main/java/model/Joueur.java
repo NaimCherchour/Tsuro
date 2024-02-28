@@ -109,8 +109,8 @@ public class Joueur {
      * 
      * @param chemin Le nouveau point d'entrée du joueur sur la tuile.
      */
-    public void setEntree(Chemin chemin) {
-        PointEntree = chemin.getPointSortie();
+    public void setEntree(Chemin chemin,Tuile tmp) {
+        PointEntree = (chemin.getPointSortie()+2*tmp.getRotation())%8;
     }
 
     /**

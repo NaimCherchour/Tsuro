@@ -90,13 +90,13 @@ public class PlateauTuiles {
                 j.setColonne(nouvelleColonne);
                 Tuile nvTuiles = plateau[j.getLigne()][j.getColonne()];
                 Chemin tmp=TrouveNVEntre(j.getEntree(),nvTuiles,j);
-                System.out.println("sortie du chemin :"+tmp.getPointSortie());
+                System.out.println("sortie du chemin :"+(tmp.getPointSortie()+2*nvTuiles.getRotation())%8);
                 if (tmp.estEmprunte()){
                     System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
                 }
                 else {
                     //j.setEntree(tmp);
-                    j.setPointEntree(tmp.getPointSortie()+2*nvTuiles.getRotation());
+                    j.setEntree(tmp,nvTuiles);
                     tmp.setCouleur(j.getCouleur());
                     LiaisonCheminInvers(tmp,nvTuiles,j.getCouleur());
                     ActualiserPosJ(j);
@@ -148,7 +148,6 @@ public class PlateauTuiles {
         tuile1.afficherTuileNaive();
         Tuile tuile2 = tuiles.getTuile(2);
         tuile2.afficherTuileNaive(); 
-        tuile1.setRotation(1);
     
 
         PlateauTuiles plateau = new PlateauTuiles(7);
