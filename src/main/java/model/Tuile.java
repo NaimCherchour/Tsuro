@@ -48,7 +48,7 @@ public class Tuile{
             Chemin chemin = tableauChemins[i];
             if (chemin.getPointSortie() != -1) {
                 System.out.println("De " + i + " à " + chemin.getPointSortie() +" (Couleur: " + chemin.getCouleur() +
-                        ", Joueur: " + chemin.getJoueur().getPrenom() + ")");
+                        ".");
             }
         }
     }
@@ -66,28 +66,15 @@ public class Tuile{
     public class Chemin {
     
         private int pointSortie;
-        private Joueur joueur;
         private Joueur.Couleur couleur;
     
         /**
          * @param pointSortie represente le point de sortie du chemin du joueur
          * @param couleur represente la couleur attribuer au chemin du joueur 
-         * @param joueur represente le joueur
          */
-        public Chemin(int pointSortie, Joueur joueur) {
-            this.pointSortie = pointSortie;
-            this.joueur = joueur;
-            if (joueur == null){
-                this.couleur = null;
-            }
-            else {
-                this.couleur = joueur.getCouleur();
-            }
-        }
         public Chemin(int pointSortie){
             this.pointSortie = pointSortie;
-            joueur=null;
-            couleur=Couleur.NONE;
+            couleur=Couleur.BLACK;
         }
     
         public int getPointSortie() {
@@ -97,11 +84,6 @@ public class Tuile{
         public Joueur.Couleur getCouleur() {
             return couleur;
         }
-    
-        public Joueur getJoueur() {
-            return joueur;
-        }
-    
         public void setPointSortie(int pointSortie) {
             this.pointSortie = pointSortie;
         }
@@ -114,10 +96,10 @@ public class Tuile{
             return this.couleur != Couleur.NONE;
         }
 
-        public void marquerCheminVisite(int indiceChemin, Joueur.Couleur couleur) {
-            tableauChemins[indiceChemin].setCouleur(couleur);;
+        public void marquerCheminVisite(Joueur.Couleur couleur) {
+            setCouleur(couleur);;
             
-            int tmp=tableauChemins[indiceChemin].getPointSortie();
+            int tmp=tableauChemins[getPointSortie()].getPointSortie();
             tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
         }
 

@@ -96,9 +96,8 @@ public class PlateauTuiles {
                 }
                 else {
                     //j.setEntree(tmp);
-                    j.setEntree(tmp,nvTuiles);
-                    tmp.setCouleur(j.getCouleur());
-                    LiaisonCheminInvers(tmp,nvTuiles,j.getCouleur());
+                    j.setEntree(tmp,nvTuiles); //cherche la nouvelle entré en prenant en compte les rotation
+                    tmp.marquerCheminVisite(j.getCouleur());
                     ActualiserPosJ(j);
                 }
             } else {
@@ -111,9 +110,6 @@ public class PlateauTuiles {
 
     public Chemin TrouveNVEntre(int ancienPoint,Tuile nvTuiles,Joueur j){
         return nvTuiles.getTableauChemin()[interConnection[(j.getEntree()-(2*nvTuiles.getRotation()))%8]]; //trouve le nouveau chemin a emprunter
-    }
-    public void LiaisonCheminInvers(Chemin x, Tuile nvTuiles,Joueur.Couleur couleur){
-        nvTuiles.getTableauChemin()[x.getPointSortie()].setCouleur(couleur); //défini la couleur du chemin inverse
     }
 
     /**

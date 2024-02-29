@@ -19,7 +19,7 @@ public class Joueur {
     private static int indexCouleur = 1 ;
 
     public enum Couleur {
-        NONE, ROUGE, VERT, BLEU, JAUNE // Ajoutez d'autres couleurs au besoin
+        BLACK, ROUGE, VERT, BLEU, JAUNE // Ajoutez d'autres couleurs au besoin
     }
 
     /**
@@ -43,7 +43,7 @@ public class Joueur {
         Couleur[] couleurs = Couleur.values();
         if (Joueur.indexCouleur>=couleurs.length){
             System.out.println("impossible d'ajouter d'autres joueurs");
-            return Couleur.NONE;
+            return null;
         }
         return couleurs[Joueur.indexCouleur];
     }
