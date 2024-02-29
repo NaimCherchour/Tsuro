@@ -89,7 +89,7 @@ public class PlateauTuiles {
                 j.setLigne(nouvelleLigne);
                 j.setColonne(nouvelleColonne);
                 Tuile nvTuiles = plateau[j.getLigne()][j.getColonne()];
-                Chemin tmp=TrouveNVEntre(j.getEntree(),nvTuiles,j);
+                Chemin tmp=TrouveNVEntre(nvTuiles,j);
                 System.out.println("sortie du chemin :"+(tmp.getPointSortie()+2*nvTuiles.getRotation())%8);
                 if (tmp.estEmprunte()){
                     System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
@@ -108,7 +108,7 @@ public class PlateauTuiles {
         }
     }
 
-    public Chemin TrouveNVEntre(int ancienPoint,Tuile nvTuiles,Joueur j){
+    public Chemin TrouveNVEntre(Tuile nvTuiles,Joueur j){
         return nvTuiles.getTableauChemin()[interConnection[(j.getEntree()-(2*nvTuiles.getRotation()))%8]]; //trouve le nouveau chemin a emprunter
     }
 

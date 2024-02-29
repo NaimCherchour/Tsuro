@@ -93,7 +93,7 @@ public class Tuile{
         }
     
         public boolean estEmprunte() {
-            return this.couleur != Couleur.NONE;
+            return this.couleur != Couleur.BLACK;
         }
 
         public void marquerCheminVisite(Joueur.Couleur couleur) {
