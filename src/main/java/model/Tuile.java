@@ -3,12 +3,12 @@ package main.java.model;
 import main.java.model.Joueur.Couleur;
 
 public class Tuile{
-    private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
+private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
     private static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ; TODO : Peut-on utiliser 4 cases seulement ?
     private final Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
     private int rotation = 0; // Rotation de la tuile (0, 1-> +1/4, 2->+2/4, 3-> +3/4)
 
-
+    
     // getters / setters
     public Chemin[] getTableauChemins(){
         return tableauChemins;
@@ -17,7 +17,7 @@ public class Tuile{
     public int getRotation(){
         return rotation;
     }
-
+    
     public void setRotation(int rotation){
         this.rotation = rotation;
     }
@@ -27,7 +27,7 @@ public class Tuile{
 
     /**
      * Le Tableau de chemin contient à chaque indice  le point de sortie ,la couleur du chemin
-     * L'indice représente le point d'entrée
+     * L'indice représente le point d'entrée 
      */
     public Tuile(int id, int[] tableauEntreeSortie) {
         this.id = id;
@@ -40,8 +40,8 @@ public class Tuile{
     /**
      * Affiche les connexions actuelles de la tuile.
      */
-    public void afficherTuileNaive() {
-        // affichage d'une tuil terminal pour aider aux tests
+        public void afficherTuileNaive() {
+// affichage d'une tuil terminal pour aider aux tests
         // TODO : à supprimer lors de la fin de la partie vue
         System.out.println("Tuile ID: " + id);
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
@@ -60,6 +60,11 @@ public class Tuile{
         this.rotation = this.rotation % 4;
     }
 
+    public Chemin trouverNouveauChemin(PlateauTuiles.Direction ancienPoint, int pointActuel) {
+        int nouvelIndice = (ancienPoint.oppose().ordinal() * 2 + (pointActuel + 1) % 2) % 8;
+        return getTableauChemins()[(nouvelIndice-(2*getRotation()))%8];
+    }
+
     public class Chemin {
     
         private int pointSortie; // Point de sortie du chemin tel que le point d'entrée est l'indice du tableau
@@ -69,23 +74,23 @@ public class Tuile{
     
         /**
          * @param pointSortie représente le point de sortie du chemin du joueur
-         * @Description : Le constructeur de la classe Chemin ; la couleur sera initialisée par défault à NOIR
+         * @Description : Le constructeur de la classe Chemin ; la couleur sera initialisée par défault à NOIR 
          */
         public Chemin(int pointSortie ) {
             this.pointSortie = pointSortie;
             this.couleur = Couleur.NOIR;
         }
-
-        // Getters / Setters
+    
+// Getters / Setters
         public int getPointSortie() {
-            // TODO : La formule de calcul du point de sortie en fonction de la rotation
+// TODO : La formule de calcul du point de sortie en fonction de la rotation
             return pointSortie;
         }
     
         public Joueur.Couleur getCouleur() {
             return couleur;
         }
-
+            
         public void setCouleur(Joueur.Couleur couleur) {
             this.couleur = couleur;
         }
@@ -100,12 +105,6 @@ public class Tuile{
             tableauChemins[indiceChemin].setCouleur(couleur);;
             int tmp = tableauChemins[indiceChemin].getPointSortie();
             tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
-        }
-
-        public boolean cheminEstEmprunte(int indiceChemin) {
-            // ToDO : utiliser cette méthode au lieu du estEmprunté()
-            Chemin chemin = tableauChemins[indiceChemin];
-            return chemin.estEmprunte();
         }
     }
     

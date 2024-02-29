@@ -1,4 +1,7 @@
 package main.java.model;
+import java.util.Scanner;
+
+import main.java.model.Joueur;
 
 import main.java.model.Tuile.Chemin;
 
@@ -36,6 +39,7 @@ public class PlateauTuiles {
         }
     }
     private Tuile[][] plateau; // Matrice représentant le plateau de tuiles.
+    public int[] interConnection = {5,4,7,6,1,0,3,2}; // Pour chaque index, correspond à la nouvelle index dans la tuile suivante.
 
     /**
      * Constructeur de la classe PlateauTuiles.
@@ -69,7 +73,7 @@ public class PlateauTuiles {
      * Affiche le plateau de tuiles.
      */
     public void afficherPlateau() {
-        //TODO : à supprimer lors de la fin de la partie vue
+//TODO : à supprimer lors de la fin de la partie vue
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 if (plateau[i][j] == null) {
@@ -92,7 +96,7 @@ public class PlateauTuiles {
      * @param j Le joueur dont la position doit être actualisée.
      */
 
-    // Méthode pour actualiser la position du joueur après le placement d'une tuile
+     // Méthode pour actualiser la position du joueur après le placement d'une tuile
     public void actualiserPosJ(Joueur j) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
         Direction entree = j.getDirectionEntree().oppose(); // La direction du joueur
@@ -106,7 +110,7 @@ public class PlateauTuiles {
                 j.setLigne(nouvelleLigne);
                 j.setColonne(nouvelleColonne);
                 Tuile nouvelleTuile = plateau[nouvelleLigne][nouvelleColonne]; // TODO : Le joueur place un etuile d'abord après il se déplace
-                Chemin nouveauChemin = trouverNouveauChemin(j.getDirectionEntree(), j.getEntree(),nouvelleTuile);
+                Chemin nouveauChemin = nouvelleTuile.trouverNouveauChemin(j.getDirectionEntree(), j.getEntree());
                 System.out.println("sortie du chemin :"+(nouveauChemin.getPointSortie()+2*nouvelleTuile.getRotation())%8);
                 if (nouveauChemin.estEmprunte()) {
                     System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
@@ -122,16 +126,6 @@ public class PlateauTuiles {
             System.out.println("Déplacement impossible : le joueur est sorti du plateau.");
         }
     }
-
-    // Méthode pour trouver le nouveau chemin à emprunter
-    public Chemin trouverNouveauChemin(Direction ancienPoint, int pointActuel,Tuile nouvelleTuile) {
-        int nouvelIndice = (ancienPoint.oppose().ordinal() * 2 + (pointActuel + 1) % 2) % 8;
-        return nouvelleTuile.getTableauChemins()[nouvelIndice];
-    }
-
-
-
-
 
     /**
      * Vérifie si le joueur a perdu en sortant du plateau.
@@ -157,7 +151,7 @@ public class PlateauTuiles {
         }
     }
 
-
+    
 
     // TEST
     public static void main(String[] args) {
@@ -167,7 +161,9 @@ public class PlateauTuiles {
         tuile1.afficherTuileNaive();
         Tuile tuile2 = tuiles.getTuile(2);
         tuile2.afficherTuileNaive(); 
-
+        tuile2.tournerTuile();
+        tuile2.tournerTuile();
+    
         PlateauTuiles plateau = new PlateauTuiles(7);
         plateau.afficherPlateau();
 
