@@ -1,25 +1,22 @@
 package main.java.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import main.java.model.Tuile.Chemin;
 
 
 /**
  * La classe Joueur représente un joueur dans le jeu.
  */
-public class Joueur {
 
-    private int ligne;
-    private int colonne;
-    private int PointEntree;
-    private String prenom;
-    private Couleur couleur;
-    private static int indexCouleur = 1 ;
+public class Joueur {
+    private int ligne; // La ligne actuelle ( de la tuile ) du joueur sur le plateau
+    private int colonne; // La colonne actuelle ( de la tuile ) du joueur sur le plateau
+    private int PointEntree; // Le point d'entrée du joueur sur le plateau ( 1ère tuile ) ; est ce la position par rapport au tuile ??
+    private final String prenom; // Le prénom du joueur
+    private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
+        private static int indexCouleur = 1 ; // TODO : remplacer avec ordinal() pour obtenir l'index de la couleur
 
     public enum Couleur {
-        BLACK, ROUGE, VERT, BLEU, JAUNE // Ajoutez d'autres couleurs au besoin
+        NOIR, ROUGE,BLEU,VERT,JAUNE,ORANGE,ROSE
     }
 
     /**
@@ -41,11 +38,34 @@ public class Joueur {
 
     private Couleur getNextCouleur() {
         Couleur[] couleurs = Couleur.values();
+
         if (Joueur.indexCouleur>=couleurs.length){
             System.out.println("impossible d'ajouter d'autres joueurs");
-            return null;
+            return Couleur.NOIR;
         }
         return couleurs[Joueur.indexCouleur];
+    }
+
+    public PlateauTuiles.Direction getDirectionEntree() {
+        // Récupérer la direction du joueur en fonction du point d'entrée du joueur
+        switch (PointEntree) {
+            case 0, 1 -> {
+                return PlateauTuiles.Direction.NORD;
+            }
+            case 2, 3 -> {
+                return PlateauTuiles.Direction.EST;
+            }
+            case 4, 5 -> {
+                return PlateauTuiles.Direction.SUD;
+            }
+            case 6, 7 -> {
+                return PlateauTuiles.Direction.OUEST;
+            }
+            default -> {
+                System.out.println("Point d'entrée invalide pour le joueur !");
+                return null;
+            }
+        }
     }
 
     /**
@@ -66,7 +86,6 @@ public class Joueur {
 
     /**
      * Modifie la ligne du joueur.
-     * 
      * @param a La nouvelle valeur de la ligne du joueur.
      */
     public void setLigne(int a) {
@@ -75,7 +94,6 @@ public class Joueur {
 
     /**
      * Obtient la colonne actuelle du joueur.
-     * 
      * @return La colonne actuelle du joueur.
      */
     public int getColonne() {
@@ -84,7 +102,6 @@ public class Joueur {
 
     /**
      * Modifie la colonne du joueur.
-     * 
      * @param a La nouvelle valeur de la colonne du joueur.
      */
     public void setColonne(int a) {
@@ -93,7 +110,6 @@ public class Joueur {
 
     /**
      * Obtient le point d'entrée du joueur sur la tuile.
-     * 
      * @return Le point d'entrée du joueur sur la tuile.
      */
     public int getEntree() {
@@ -106,12 +122,13 @@ public class Joueur {
 
     /**
      * Modifie le point d'entrée du joueur sur la tuile.
-     * 
      * @param chemin Le nouveau point d'entrée du joueur sur la tuile.
      */
     public void setEntree(Chemin chemin,Tuile tmp) {
+        // on est censé changer le point d'entrée du joueur sur la tuile avec la nouvelle sortie
         PointEntree = (chemin.getPointSortie()+2*tmp.getRotation())%8;
     }
+
 
     /**
      * Déplace le joueur sur le plateau en fonction de la tuile sur laquelle il se trouve.
@@ -119,7 +136,7 @@ public class Joueur {
      * @param plateau Le plateau de jeu.
      */
     public void deplacerJoueur(PlateauTuiles plateau) {
-        plateau.ActualiserPosJ(this);
+        plateau.actualiserPosJ(this);
     }
 
     public static void main(String[] args) {
