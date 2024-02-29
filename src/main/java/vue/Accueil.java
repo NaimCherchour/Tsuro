@@ -21,13 +21,10 @@ public class Accueil {
     public void show() {
         frame = new JFrame("Bienvenue : TSURO \n" + "");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1280, 720);
 
-        ImageIcon backgroundImage = new ImageIcon("src/main/ressources/fondv1.jpg");
-        Image originalImage = backgroundImage.getImage();
-        Image resizedImage = originalImage.getScaledInstance(800, 600, Image.SCALE_SMOOTH);
-        ImageIcon resizedBackgroundImage = new ImageIcon(resizedImage);
-        JLabel background = new JLabel(resizedBackgroundImage);
-
+        // Utiliser un GIF en fond
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/anime.gif"));
 
         JButton startButton = new JButton("Appuyer pour commencer");
         startButton.setBorderPainted(false);
@@ -40,8 +37,8 @@ public class Accueil {
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
-        progressBar.setFont(new Font("Arial", Font.PLAIN, 16)); // Ajustez la taille de la police
-        progressBar.setPreferredSize(new Dimension(1000, 30)); // Ajustez la taille de la barre de progression
+        progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
+        progressBar.setPreferredSize(new Dimension(1000, 30));
 
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -49,8 +46,8 @@ public class Accueil {
                 startButtonClicked = true;
                 frame.dispose();
                 // Lancer le jeu depuis la classe Game
-                //Game game = new Game();
-                //game.start();
+                // Game game = new Game();
+                // game.start();
             }
         });
 
@@ -69,13 +66,11 @@ public class Accueil {
         background.add(progressBarPanel, BorderLayout.SOUTH);
 
         frame.getContentPane().add(background);
-        frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         // Animation de la barre de progression
-        Timer timer = new Timer(50, new ActionListener() {
-            //Timer timer; 
+        Timer timer = new Timer(250, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int value = progressBar.getValue() + 1;
@@ -87,7 +82,6 @@ public class Accueil {
             }
         });
         timer.start();
-        
     }
 
     public boolean isStartButtonClicked() {

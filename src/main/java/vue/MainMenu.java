@@ -2,120 +2,68 @@ package main.java.vue;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainMenu {
 
     private static String playerName = "";
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            createAndShowGUI();
-        });
+        SwingUtilities.invokeLater(MainMenu::createAndShowGUI);
     }
 
     public static void createAndShowGUI() {
-        JFrame frame = new JFrame("TSURO : MENU\n" + "");
+        JFrame frame = new JFrame("TSURO : MENU");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Ajouter une image en fond
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/fondv1.jpg"));
-        background.setLayout(new BorderLayout());
+        // Utilisation d'un GIF en fond
+        // Assurez-vous que le chemin d'accès et le nom du fichier GIF sont corrects
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/menu.gif"));
+        frame.setContentPane(background);
+        frame.setLayout(new BorderLayout());
 
-        JLayeredPane layeredPane = new JLayeredPane();
-        background.add(layeredPane, BorderLayout.CENTER);
+        // Préparation du panneau pour les boutons avec transparence
+        JPanel buttonsPanel = new JPanel(new GridBagLayout());
+        buttonsPanel.setOpaque(false); // Rend le panneau transparent
 
-        JButton playButton = new JButton("JOUER");
-        JButton scoresButton = new JButton("Scores");
-        JButton profilePicButton = new JButton("Profile");
-        JButton quitButton = new JButton("Quitter");
-        JButton rulesButton = new JButton("Règles");
+        JButton playButton = new JButton(new ImageIcon("src/main/ressources/but2.png"));
+        JButton scoresButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
+        JButton quitButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
+        JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
 
-        mainStyle(layeredPane, playButton, scoresButton, profilePicButton, quitButton, rulesButton);
+        customizeButtons(playButton, scoresButton, quitButton, rulesButton);
+        mainStyle(buttonsPanel, playButton, scoresButton, quitButton, rulesButton);
 
-        frame.getContentPane().add(background);
-        frame.setSize(600, 400);
+        frame.add(buttonsPanel, BorderLayout.CENTER);
+        frame.setSize(888, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    private static void mainStyle(JLayeredPane layeredPane, JButton play, JButton scores, JButton profilePic, JButton quit, JButton rulesButton) {
-        play.setFont(new Font("Arial", Font.PLAIN, 20));
-        scores.setFont(new Font("Arial", Font.PLAIN, 20));
-        quit.setFont(new Font("Arial", Font.PLAIN, 20));
-        profilePic.setFont(new Font("Arial", Font.PLAIN, 20));
-        rulesButton.setFont(new Font("Arial", Font.PLAIN, 20));
-
-        profilePic.setContentAreaFilled(false);
-        profilePic.setOpaque(true);
-
-        play.setFocusPainted(false);
-        scores.setFocusPainted(false);
-        profilePic.setFocusPainted(false);
-        quit.setFocusPainted(false);
-        rulesButton.setFocusPainted(false);
-
-        play.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (playerName.isEmpty()) {
-                    showPseudoInput(layeredPane);
-                } else {
-                }
-            }
-        });
-
-        scores.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showLeaderboard((JFrame) SwingUtilities.getWindowAncestor(layeredPane));
-            }
-        });
-
-        profilePic.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showSkinSelection((JFrame) SwingUtilities.getWindowAncestor(layeredPane));
-            }
-        });
-
-        quit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, "Êtes-vous sûr de vouloir quitter ?", "Confirmation", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                }
-            }
-        });
-
-        
-
-        // Utiliser GridBagLayout
-        layeredPane.setLayout(new GridBagLayout());
+    private static void mainStyle(JPanel panel, JButton... buttons) {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 0, 10, 0); // Ajuste l'espacement entre les boutons
 
-        // Positionnement des boutons au milieu
-        addComponent(layeredPane, play, gbc, 0, 0, 1, 1, GridBagConstraints.CENTER);
-        addComponent(layeredPane, scores, gbc, 0, 1, 1, 1, GridBagConstraints.CENTER);
-        addComponent(layeredPane, profilePic, gbc, 0, 2, 1, 1, GridBagConstraints.CENTER);
-        addComponent(layeredPane, quit, gbc, 0, 3, 1, 1, GridBagConstraints.CENTER);
-        addComponent(layeredPane, rulesButton, gbc, 0, 4, 1, 1, GridBagConstraints.CENTER);
+        for (JButton button : buttons) {
+            panel.add(button, gbc);
+        }
     }
 
-    private static void addComponent(Container container, Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight, int anchor) {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.anchor = anchor;
-        container.add(component, gbc);
+    private static void customizeButtons(JButton... buttons) {
+        for (JButton button : buttons) {
+            button.setBorder(BorderFactory.createEmptyBorder());
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            ImageIcon icon = (ImageIcon) button.getIcon();
+            Image img = icon.getImage();
+            Image newimg = img.getScaledInstance(150, 100, java.awt.Image.SCALE_SMOOTH); // Ajuster la taille si nécessaire
+            button.setIcon(new ImageIcon(newimg));
+            button.setPressedIcon(new ImageIcon(newimg)); // Assure que l'icône reste identique lorsqu'elle est pressée
+        }
     }
 
+    // Les méthodes suivantes pourraient être utilisées pour étendre la fonctionnalité de l'application :
     private static void showPseudoInput(JLayeredPane layeredPane) {
         String pseudo = JOptionPane.showInputDialog(layeredPane, "Quel est votre pseudo ?", "Entrer votre pseudo", JOptionPane.QUESTION_MESSAGE);
         if (pseudo != null && !pseudo.trim().isEmpty()) {
@@ -125,15 +73,13 @@ public class MainMenu {
         }
     }
 
-   
     private static void showLeaderboard(JFrame frame) {
-        // A developper
+        // Implémentation future pour afficher le tableau des scores
         JOptionPane.showMessageDialog(frame, "Tableau des scores");
     }
 
     private static void showSkinSelection(JFrame frame) {
-        // A developper
+        // Implémentation future pour permettre la sélection du skin
         JOptionPane.showMessageDialog(frame, "Quel profil veux-tu choisir?");
     }
-    
 }
