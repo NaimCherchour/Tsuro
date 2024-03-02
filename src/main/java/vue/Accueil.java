@@ -24,7 +24,7 @@ public class Accueil {
         frame.setSize(1280, 720);
 
         // Utilisation d'un GIF en tant que fond
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/menu.gif"));
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/anime.gif"));
 
         // Création du bouton de démarrage
         JButton startButton = new JButton("Appuyer pour commencer");
