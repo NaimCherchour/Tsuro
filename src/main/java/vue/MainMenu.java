@@ -10,14 +10,7 @@ public class MainMenu {
 
     private static String playerName = "";
 
-    /**
-     * Méthode principale pour démarrer le menu principal du jeu TSURO.
-     * @param args Arguments en ligne de commande d'un main.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainMenu::createAndShowGUI);
-    }
-
+  
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
      */
@@ -27,7 +20,7 @@ public class MainMenu {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Utilisation d'un GIF en tant que fond d'écran
-        JLabel background = new JLabel(new ImageIcon("src/main/resources/menu.gif"));
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/menu.gif"));
         frame.setContentPane(background);
         frame.setLayout(new BorderLayout());
 
@@ -36,10 +29,10 @@ public class MainMenu {
         buttonsPanel.setOpaque(false); // Rend le panneau transparent
 
         // Création des boutons avec des images personnalisées
-        JButton playButton = new JButton(new ImageIcon("src/main/resources/but2.png"));
-        JButton scoresButton = new JButton(new ImageIcon("src/main/resources/button.png"));
-        JButton quitButton = new JButton(new ImageIcon("src/main/resources/button.png"));
-        JButton rulesButton = new JButton(new ImageIcon("src/main/resources/button.png"));
+        JButton playButton = new JButton(new ImageIcon("src/main/ressources/BUT2.png"));
+        JButton scoresButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
+        JButton quitButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
+        JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
 
         // Personnalisation des boutons
         customizeButtons(playButton, scoresButton, quitButton, rulesButton);
