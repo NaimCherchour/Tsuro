@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Tuiles {
     private HashMap<Integer, Tuile> tuiles; // Les tuiles sont stockées dans une map pour faciliter l'accès
     // J'ai utilisé le hashMap pour stocker les tuiles car il permet de stocker les tuiles avec un id unique et de les retrouver facilement
+
     public Tuiles() {
         tuiles = new HashMap<>(); // Initialiser la map
         initialiserTuiles(); // Initialiser les tuiles
@@ -59,7 +60,7 @@ public class Tuiles {
         // A TEST
         Tuiles tuiles = new Tuiles();
         Tuile tuile1 = tuiles.getTuile(1);
-        tuile1.afficherTuile(); // 5
+        tuile1.afficherTuileNaive();
     }
 }
 

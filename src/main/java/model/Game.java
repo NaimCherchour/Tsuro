@@ -20,7 +20,7 @@ public class Game {
 
     public void jouerPartie() {
         Scanner scanner = new Scanner(System.in);
-        TuileAdapt tuiles = new TuileAdapt();
+        Tuiles tuiles = new Tuiles();
         plateau.afficherPlateau();
 
         while (joueurs.size() > 1) {

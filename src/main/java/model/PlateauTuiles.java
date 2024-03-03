@@ -156,7 +156,7 @@ public class PlateauTuiles {
     // TEST
     public static void main(String[] args) {
 
-        TuileAdapt tuiles = new TuileAdapt();
+        Tuiles tuiles = new Tuiles();
         Tuile tuile1 = tuiles.getTuile(1);
         tuile1.afficherTuileNaive();
         Tuile tuile2 = tuiles.getTuile(2);
