@@ -3,16 +3,35 @@ package main.java.model;
 import main.java.model.Joueur.Couleur;
 
 public class Tuile{
-private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
-    private static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ; TODO : Peut-on utiliser 4 cases seulement ?
-    private final Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
+    private final int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
+    public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
+    private  Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
     private int rotation = 0; // Rotation de la tuile (0, 1-> +1/4, 2->+2/4, 3-> +3/4)
 
     
     // getters / setters
+
     public Chemin[] getTableauChemins(){
         return tableauChemins;
     }
+
+
+    // modifie le tableau de chemins de la tuile avec Un tableau d'entiers sans avoir à créer un nouvel objet Chemin
+    // Ce Setter sert à une seul chose : à la génération des tuiles
+    // Car le Tableau de Chemins est final ; c'est l'identité de la Tuile
+    public void setTableauChemins(int[] tableauSortie){
+        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+            tableauChemins[i] = new Chemin(tableauSortie[i]); // Crée un nouvel objet Chemin pour chaque élément du tableau
+        }
+    }
+
+    // modifie le tableau de chemins de la tuile avec Un tableau de Chemins
+    // Ce Setter sert à une seul chose : à la génération des tuiles
+    // Car le Tableau de Chemins est final ; c'est l'identité de la Tuile
+    public void setTableauChemins(Chemin[] tableauSortie){
+        tableauChemins = tableauSortie;
+    }
+
 
     public int getRotation(){
         return rotation;
@@ -37,11 +56,21 @@ private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
+    // Constructeur pour la génération des tuiles ; On a besoin d'une Tuile vide au début de la génération
+    public Tuile ( int id ){
+        // For generating Tiles
+        this.id = id;
+        tableauChemins = new Chemin[TAILLE_DU_TABLEAU]; // création des chemins correspondant aux interconnexions du tableau
+        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+            tableauChemins[i] = new Chemin(-1); // Crée un nouvel objet Chemin pour chaque élément du tableau
+        }
+        this.rotation = 0; // rotation à 0 par défaut
+    }
     /**
-     * Affiche les connexions actuelles de la tuile.
+     * Affiche les connexions actuelles de la tuile Sans tenir compte de la rotation
      */
         public void afficherTuileNaive() {
-// affichage d'une tuil terminal pour aider aux tests
+        // affichage d'une tuil terminal pour aider aux tests
         // TODO : à supprimer lors de la fin de la partie vue
         System.out.println("Tuile ID: " + id);
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
@@ -58,6 +87,20 @@ private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
         // On a une formule pour calculer le nouveau point de sortie selon la rotation
         this.rotation += 1;
         this.rotation = this.rotation % 4;
+    }
+
+    /**
+     * permet de trouver le point de sortie d'un chemin selon la rotation
+     * @param ind ( <=> l'entrée du Chemin)
+     * @param rotation
+     * @return le Point de sortie selon La rotation
+     */
+    public int getPointSortieAvecRot(int ind, int rotation) {
+        int tmp = (ind - (rotation * 2)) % 8;
+        if (tmp < 0) {
+            tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
+        }
+        return (tableauChemins[tmp].getPointSortie() + rotation*2)%8;
     }
 
     public Chemin trouverNouveauChemin(PlateauTuiles.Direction ancienPoint, int pointActuel) {
@@ -81,11 +124,15 @@ private int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
             this.couleur = Couleur.NOIR;
         }
     
-// Getters / Setters
+        // Getters / Setters
+
         public int getPointSortie() {
-// TODO : La formule de calcul du point de sortie en fonction de la rotation
+        // TODO : La formule de calcul du point de sortie en fonction de la rotation
             return pointSortie;
         }
+
+
+
     
         public Joueur.Couleur getCouleur() {
             return couleur;
