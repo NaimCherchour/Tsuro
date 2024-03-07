@@ -2,7 +2,8 @@ package main.java.vue;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 /**
  * Représente le menu principal du jeu TSURO.
  */
@@ -10,7 +11,6 @@ public class MainMenu {
 
     private static String playerName = "";
 
-  
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
      */
@@ -19,30 +19,65 @@ public class MainMenu {
         JFrame frame = new JFrame("TSURO : MENU");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
+        ImageIcon icone = new ImageIcon("src/main/ressources/logo.png"); // Remplacez 'chemin/vers/votre/' par le chemin réel où votre fichier logo.png est stocké
+        frame.setIconImage(icone.getImage());
+
         // Utilisation d'un GIF en tant que fond d'écran
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/menu.gif"));
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/fond.png"));
         frame.setContentPane(background);
         frame.setLayout(new BorderLayout());
 
-        // Création d'un panneau pour les boutons avec un layout GridBag
+        // Création d'un panneau pour les boutons avec un layout GridBag 
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(68,0,0,0));
         buttonsPanel.setOpaque(false); // Rend le panneau transparent
 
         // Création des boutons avec des images personnalisées
-        JButton playButton = new JButton(new ImageIcon("src/main/ressources/BUT2.png"));
-        JButton scoresButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
-        JButton quitButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
-        JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/button.png"));
+        JButton playButton = new JButton(new ImageIcon("src/main/ressources/playButton.png"));
+        playButton.setActionCommand("play");
+        JButton optionsButton = new JButton(new ImageIcon("src/main/ressources/optionsButton.png"));
+        optionsButton.setActionCommand("options");
+        JButton quitButton = new JButton(new ImageIcon("src/main/ressources/quitButton.png"));
+        quitButton.setActionCommand("quit");
+        JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
+        rulesButton.setActionCommand("rules");
 
         // Personnalisation des boutons
-        customizeButtons(playButton, scoresButton, quitButton, rulesButton);
-        mainStyle(buttonsPanel, playButton, scoresButton, quitButton, rulesButton);
+        customizeButtons(playButton, optionsButton, quitButton);
+        // Applique le style principal aux boutons, à l'exception du bouton 'rules'
+        mainStyle(buttonsPanel, playButton, optionsButton, quitButton);
+        rulesButton.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
+        rulesButton.setFocusPainted(false);
+        rulesButton.setContentAreaFilled(false);
+        // Redimensionne l'icône du bouton
+        ImageIcon icon = (ImageIcon) rulesButton.getIcon();
+        Image img = icon.getImage();
+        Image newimg = img.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH);
+        rulesButton.setIcon(new ImageIcon(newimg));
+        ImageIcon pressedIconRules = new ImageIcon("src/main/ressources/rulesButtonPressed.png");
+        Image pressedImgRules = pressedIconRules.getImage();
+        Image newPressedImgRules = pressedImgRules.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH); // Taille personnalisée pour l'état pressé
+        rulesButton.setPressedIcon(new ImageIcon(newPressedImgRules)); // Définit l'icône pour l'état pressé        // Assigner l'icône de hover au bouton 'rules'
+        ImageIcon hoverIconRules = new ImageIcon("src/main/ressources/rulesButtonHover.png");
+        Image hoverImgRules = hoverIconRules.getImage();
+        Image newHoverImgRules = hoverImgRules.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH); // Taille personnalisée pour le hover
+        rulesButton.setRolloverIcon(new ImageIcon(newHoverImgRules));
 
-        // Ajout du panneau de boutons à la fenêtre principale
+
+
+        // Création d'un panneau spécifique pour le bouton 'rules'
+        JPanel rulesPanel = new JPanel(new BorderLayout());
+        rulesPanel.setOpaque(false);
+        rulesPanel.add(rulesButton, BorderLayout.EAST);
+
+        // Ajout du panneau de boutons et du panneau 'rules' à la fenêtre principale
+        
         frame.add(buttonsPanel, BorderLayout.CENTER);
+        frame.add(rulesPanel, BorderLayout.SOUTH);
 
         // Configuration de la taille et de la position de la fenêtre
-        frame.setSize(888, 500);
+        frame.setSize(1110, 625);
         frame.setLocationRelativeTo(null);
 
         // Rendre la fenêtre visible
@@ -58,7 +93,6 @@ public class MainMenu {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(10, 0, 10, 0); // Ajuste l'espacement entre les boutons
 
         // Ajoute les boutons au panneau avec le style défini
         for (JButton button : buttons) {
@@ -71,49 +105,54 @@ public class MainMenu {
      * @param buttons Les boutons à personnaliser.
      */
     private static void customizeButtons(JButton... buttons) {
-        // Itère sur chaque bouton pour personnaliser son apparence
         for (JButton button : buttons) {
             button.setBorder(BorderFactory.createEmptyBorder());
             button.setFocusPainted(false);
             button.setContentAreaFilled(false);
-
-            // Redimensionne l'icône du bouton
-            ImageIcon icon = (ImageIcon) button.getIcon();
+    
+            // Utiliser les noms de fichiers fournis pour les icônes de base
+            ImageIcon icon = new ImageIcon("src/main/ressources/" + button.getActionCommand() + "Button.png");
             Image img = icon.getImage();
-            Image newimg = img.getScaledInstance(150, 100, java.awt.Image.SCALE_SMOOTH);
-            button.setIcon(new ImageIcon(newimg));
-            button.setPressedIcon(new ImageIcon(newimg)); // Assure que l'icône reste identique lorsqu'elle est pressée
+            Image newImg = img.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
+            button.setIcon(new ImageIcon(newImg));
+    
+            // Utiliser les noms de fichiers fournis pour les icônes pressées
+            ImageIcon pressedIcon = new ImageIcon("src/main/ressources/" + button.getActionCommand() + "ButtonPressed.png");
+            Image pressedImg = pressedIcon.getImage();
+            Image newPressedImg = pressedImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
+            button.setPressedIcon(new ImageIcon(newPressedImg));
+    
+            // Utiliser les noms de fichiers fournis pour les icônes de survol
+            ImageIcon rolloverIcon = new ImageIcon("src/main/ressources/" + button.getActionCommand() + "ButtonHover.png");
+            Image rolloverImg = rolloverIcon.getImage();
+            Image newRolloverImg = rolloverImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
+            button.setRolloverIcon(new ImageIcon(newRolloverImg));
+    
+            // Ajoute un MouseAdapter pour changer l'icône lors du clic
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    button.setIcon(new ImageIcon(newPressedImg));
+                }
+    
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    button.setIcon(new ImageIcon(newImg));
+                }
+    
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    button.setIcon(new ImageIcon(newImg));
+                }
+    
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    button.setIcon(new ImageIcon(newRolloverImg));
+                }
+            });
         }
     }
+    
+    
 
-    /**
-     * Permet de saisir le pseudo du joueur.
-     * @param layeredPane Le pannel pour afficher la boîte de dialogue.
-     */
-    private static void showPseudoInput(JLayeredPane layeredPane) {
-        String pseudo = JOptionPane.showInputDialog(layeredPane, "Quel est votre pseudo ?", "Entrer votre pseudo", JOptionPane.QUESTION_MESSAGE);
-        if (pseudo != null && !pseudo.trim().isEmpty()) {
-            playerName = pseudo.trim().toLowerCase();
-        } else {
-            JOptionPane.showMessageDialog(layeredPane, "Veuillez choisir un pseudo valide.", "Erreur", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Affiche le classement des joueurs.
-     * @param frame La fenêtre principale pour afficher le tableau des scores.
-     */
-    private static void showLeaderboard(JFrame frame) {
-        // Implémentation future pour afficher le tableau des scores
-        JOptionPane.showMessageDialog(frame, "Tableau des scores");
-    }
-
-    /**
-     * Affiche la sélection de skin.
-     * @param frame La fenêtre principale pour afficher la sélection du profil.
-     */
-    private static void showSkinSelection(JFrame frame) {
-        // Implémentation future pour permettre la sélection du profil
-        JOptionPane.showMessageDialog(frame, "Quel profil veux-tu choisir?");
-    }
 }

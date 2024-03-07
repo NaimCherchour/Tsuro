@@ -12,22 +12,24 @@ public class Accueil {
 
     private JFrame frame;
     private boolean startButtonClicked = false;
-    private JProgressBar progressBar;
+    //private JProgressBar progressBar;
 
     /**
      * Affiche l'écran d'accueil.
      */
     public void show() {
         // Création de la fenêtre principale
-        frame = new JFrame("Bienvenue : TSURO");
+        frame = new JFrame("TSURO");
+        ImageIcon icon = new ImageIcon("src/main/ressources/logo.png");
+        frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1280, 720);
+        frame.setSize(1065, 600);
 
         // Utilisation d'un GIF en tant que fond
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/anime.gif"));
+        JLabel background = new JLabel(new ImageIcon("src/main/ressources/accueil.gif"));
 
         // Création du bouton de démarrage
-        JButton startButton = new JButton("Appuyer pour commencer");
+        JButton startButton = new JButton();
         startButton.setBorderPainted(false);
         startButton.setContentAreaFilled(false);
         startButton.setFocusPainted(false);
@@ -37,10 +39,10 @@ public class Accueil {
         startButton.setFont(buttonFont);
 
         // Création de la barre de progression
-        progressBar = new JProgressBar(0, 100);
-        progressBar.setStringPainted(true);
-        progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
-        progressBar.setPreferredSize(new Dimension(1000, 30));
+        // progressBar = new JProgressBar(0, 100);
+        // progressBar.setStringPainted(true);
+        // progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
+        // progressBar.setPreferredSize(new Dimension(1000, 30));
 
         // Ajout d'un écouteur pour le bouton de démarrage
         startButton.addActionListener(new ActionListener() {
@@ -60,15 +62,15 @@ public class Accueil {
         buttonPanel.add(startButton);
 
         // Création d'un panneau pour la barre de progression
-        JPanel progressBarPanel = new JPanel();
-        progressBarPanel.setOpaque(false);
-        progressBarPanel.setLayout(new BorderLayout());
-        progressBarPanel.add(progressBar, BorderLayout.SOUTH);
+        // JPanel progressBarPanel = new JPanel();
+        // progressBarPanel.setOpaque(false);
+        // progressBarPanel.setLayout(new BorderLayout());
+        // progressBarPanel.add(progressBar, BorderLayout.SOUTH);
 
         // Mise en page du fond avec les panneaux de bouton et de barre de progression
         background.setLayout(new BorderLayout());
         background.add(buttonPanel, BorderLayout.CENTER);
-        background.add(progressBarPanel, BorderLayout.SOUTH);
+        // background.add(progressBarPanel, BorderLayout.SOUTH);
 
         // Ajout du fond à la fenêtre principale
         frame.getContentPane().add(background);
@@ -76,17 +78,17 @@ public class Accueil {
         frame.setVisible(true);
 
         // Animation de la barre de progression
-        Timer timer = new Timer(250, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int value = progressBar.getValue() + 1;
-                if (value > progressBar.getMaximum()) {
-                    value = progressBar.getMinimum();
-                }
-                progressBar.setValue(value);
-            }
-        });
-        timer.start();
+        // Timer timer = new Timer(250, new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         int value = progressBar.getValue() + 1;
+        //         if (value > progressBar.getMaximum()) {
+        //             value = progressBar.getMinimum();
+        //         }
+        //         progressBar.setValue(value);
+        //     }
+        // });
+        // timer.start();
     }
 
     /**
