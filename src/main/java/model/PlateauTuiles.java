@@ -37,13 +37,43 @@ public class PlateauTuiles {
                 default -> 0;
             };
         }
+        public static Direction getDirectionFromPoint ( int ind ){
+            // return values()[ind / 2];
+            if ( ind == 0 || ind == 1 ) {
+                return NORD;
+            } else if (ind == 2 || ind == 3 ){
+                return EST;
+            } else if ( ind == 4 || ind == 5){
+                return SUD;
+            } else if ( ind == 6 || ind == 7 ){
+                return OUEST;
+            }
+            return null;
+        }
+        // Méthode pour vérifier si deux directions sont du même côté
+        public static boolean sameSide(Direction first, Direction other) {
+            // Comparaison basée sur les indices (0 et 1, 2 et 3, 4 et 5, 6 et 7)
+            return first.ordinal()  == other.ordinal() ;
+        }
+
+        // Méthode pour vérifier si deux directions sont opposées
+        public static boolean opposite(Direction first, Direction other) {
+            // Deux directions sont opposées si elles diffèrent de 4 (180 degrés)
+            return Math.abs(first.ordinal() - other.ordinal()) == 2;
+        }
+
+        // Méthode pour vérifier si deux directions sont adjacentes
+        public static boolean adjacent(Direction first, Direction other) {
+            // Deux directions sont adjacentes si leur différence est 2 (90 degrés)
+            return (Math.abs(first.ordinal() - other.ordinal()) == 1 ) ||(Math.abs(first.ordinal()-other.ordinal()) == 3);
+        }
     }
     private Tuile[][] plateau; // Matrice représentant le plateau de tuiles.
     public int[] interConnection = {5,4,7,6,1,0,3,2}; // Pour chaque index, correspond à la nouvelle index dans la tuile suivante.
 
     /**
      * Constructeur de la classe PlateauTuiles.
-     * 
+     *
      * @param taille La taille du plateau de jeu.
      */
     public PlateauTuiles(int taille) {
@@ -52,7 +82,7 @@ public class PlateauTuiles {
 
     /**
      * Place une tuile sur le plateau à la position spécifiée et vérifie si le joueur perd.
-     * 
+     *
      * @param ligne La ligne où placer la tuile.
      * @param colonne La colonne où placer la tuile.
      * @param tuile La tuile à placer.
@@ -92,11 +122,11 @@ public class PlateauTuiles {
 
     /**
      * Actualise la position du joueur après le placement d'une tuile.
-     * 
+     *
      * @param j Le joueur dont la position doit être actualisée.
      */
 
-     // Méthode pour actualiser la position du joueur après le placement d'une tuile
+    // Méthode pour actualiser la position du joueur après le placement d'une tuile
     public void actualiserPosJ(Joueur j) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
         Direction entree = j.getDirectionEntree().oppose(); // La direction du joueur
@@ -129,14 +159,14 @@ public class PlateauTuiles {
 
     /**
      * Vérifie si le joueur a perdu en sortant du plateau.
-     * 
+     *
      * @param joueur Le joueur à vérifier.
      * @return true si le joueur a perdu, sinon false.
      */
     public boolean joueurPerdu(Joueur joueur) {
         int ligne = joueur.getLigne();
         int colonne = joueur.getColonne();
-    
+
         return (ligne < 0 || ligne >= plateau.length || colonne < 0 || colonne >= plateau.length);
     }
 
@@ -151,7 +181,7 @@ public class PlateauTuiles {
         }
     }
 
-    
+
 
     // TEST
     public static void main(String[] args) {
@@ -160,10 +190,10 @@ public class PlateauTuiles {
         Tuile tuile1 = tuiles.getTuile(1);
         tuile1.afficherTuileNaive();
         Tuile tuile2 = tuiles.getTuile(2);
-        tuile2.afficherTuileNaive(); 
+        tuile2.afficherTuileNaive();
         tuile2.tournerTuile();
         tuile2.tournerTuile();
-    
+
         PlateauTuiles plateau = new PlateauTuiles(7);
         plateau.afficherPlateau();
 
@@ -179,7 +209,7 @@ public class PlateauTuiles {
         System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
         int ligneTuile = 0;
         int colonneTuile = 0;
-        
+
         // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
         plateau.placerTuile(ligneTuile, colonneTuile, tuile1, joueur1); // Par exemple, placer la tuile pour le joueur 1
         plateau.placerTuile(ligneTuile, colonneTuile+1, tuile2, joueur1); // Par exemple, placer la tuile pour le joueur 1
