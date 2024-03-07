@@ -20,7 +20,7 @@ public class Game {
 
     public void jouerPartie() {
         Scanner scanner = new Scanner(System.in);
-        Tuiles tuiles = new Tuiles();
+        List<Tuile> tuiles = TuilesGenerator.genererToutesLesTuiles();
         plateau.afficherPlateau();
 
         while (joueurs.size() > 1) {
@@ -33,7 +33,7 @@ public class Game {
                 int colonneTuile = scanner.nextInt();
 
                 //Une tuile est choisie aléatoirement
-                Tuile tuile = tuiles.getTuile((int) (Math.random() * 3) + 1);
+                Tuile tuile = tuiles.get((int) (Math.random() * 3) + 1);
 
                 // Placer la tuile sur le plateau
                 plateau.placerTuile(ligneTuile, colonneTuile, tuile, joueur);

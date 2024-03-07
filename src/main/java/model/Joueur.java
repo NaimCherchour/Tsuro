@@ -2,6 +2,9 @@ package main.java.model;
 
 import main.java.model.Tuile.Chemin;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 
 /**
  * La classe Joueur représente un joueur dans le jeu.
@@ -138,6 +141,11 @@ public class Joueur {
      */
     public void deplacerJoueur(PlateauTuiles plateau) {
         plateau.actualiserPosJ(this);
+    }
+
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
 
     public static void main(String[] args) {
