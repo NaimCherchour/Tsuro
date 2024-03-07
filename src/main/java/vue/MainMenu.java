@@ -20,7 +20,7 @@ public class MainMenu {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
-        ImageIcon icone = new ImageIcon("src/main/ressources/logo.png"); // Remplacez 'chemin/vers/votre/' par le chemin réel où votre fichier logo.png est stocké
+        ImageIcon icone = new ImageIcon("src/main/ressources/logo.png");
         frame.setIconImage(icone.getImage());
 
         // Utilisation d'un GIF en tant que fond d'écran
@@ -31,7 +31,7 @@ public class MainMenu {
         // Création d'un panneau pour les boutons avec un layout GridBag 
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(68,0,0,0));
-        buttonsPanel.setOpaque(false); // Rend le panneau transparent
+        buttonsPanel.setOpaque(false); 
 
         // Création des boutons avec des images personnalisées
         JButton playButton = new JButton(new ImageIcon("src/main/ressources/playButton.png"));
