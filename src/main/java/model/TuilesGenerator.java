@@ -48,14 +48,14 @@ public class TuilesGenerator {
         Arrays.fill(pointsSortie,-1); // on initialise le tableau à -1 qui indique vide
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
             if (pointsSortie[i] == -1) { // si la case est vide ; cette condition sert pour le doublon
-                 int pointSortie = rand.nextInt(Tuile.TAILLE_DU_TABLEAU); // on génère une sortie pour l'indice ( entrée )
-                 while (pointSortie == i || pointsSortie[pointSortie] != -1) {
-                      // on regénère jusqu'à ne plus avoir le cas 0->0 ou 1->1 ... Il faut que pointSortie != indice (entrée)
-                     // et que le point de sortie ne soit pas déjà utilisé ie : si je génère 1->5 alors 5->? doit être vide
-                      pointSortie = rand.nextInt(Tuile.TAILLE_DU_TABLEAU); // Sélectionner aléatoirement un point de sortie
-                 }
-                 pointsSortie[i] = pointSortie; // on ajoute le point de Sortie par ex: 0->1
-                 pointsSortie[pointSortie] = i; // Le doublon donc par ex : 1->0
+                int pointSortie = rand.nextInt(Tuile.TAILLE_DU_TABLEAU); // on génère une sortie pour l'indice ( entrée )
+                while (pointSortie == i || pointsSortie[pointSortie] != -1) {
+                    // on regénère jusqu'à ne plus avoir le cas 0->0 ou 1->1 ... Il faut que pointSortie != indice (entrée)
+                    // et que le point de sortie ne soit pas déjà utilisé ie : si je génère 1->5 alors 5->? doit être vide
+                    pointSortie = rand.nextInt(Tuile.TAILLE_DU_TABLEAU); // Sélectionner aléatoirement un point de sortie
+                }
+                pointsSortie[i] = pointSortie; // on ajoute le point de Sortie par ex: 0->1
+                pointsSortie[pointSortie] = i; // Le doublon donc par ex : 1->0
             }
         }
         tuile.setTableauChemins(pointsSortie); // on rempli le tableau de Chemins avec ce tableau int[] de sorties généré
