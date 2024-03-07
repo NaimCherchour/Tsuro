@@ -45,13 +45,10 @@ public class MainMenu {
 
         // Ajoute un ActionListener au bouton "Quitter"
         quitButton.addActionListener(e -> {
-            int option = JOptionPane.showConfirmDialog(frame, "Êtes-vous sûr de vouloir quitter ?", "Confirmation",
-                    JOptionPane.YES_NO_OPTION);
-            if (option == JOptionPane.YES_OPTION) {
-                // Ferme l'application
-                System.exit(0);
-            }
+            customDialog dialog = new customDialog(frame); // 'frame' est votre JFrame principal
+            dialog.setVisible(true);
         });
+
 
         // Personnalisation des boutons
         customizeButtons(playButton, optionsButton, quitButton);
