@@ -43,6 +43,16 @@ public class MainMenu {
         JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
         rulesButton.setActionCommand("rules");
 
+        // Ajoute un ActionListener au bouton "Quitter"
+        quitButton.addActionListener(e -> {
+            int option = JOptionPane.showConfirmDialog(frame, "Êtes-vous sûr de vouloir quitter ?", "Confirmation",
+                    JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                // Ferme l'application
+                System.exit(0);
+            }
+        });
+
         // Personnalisation des boutons
         customizeButtons(playButton, optionsButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
