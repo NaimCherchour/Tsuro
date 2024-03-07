@@ -13,7 +13,7 @@ public class Joueur {
     private int PointEntree; // Le point d'entrée du joueur sur le plateau ( 1ère tuile ) ; est ce la position par rapport au tuile ??
     private final String prenom; // Le prénom du joueur
     private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
-    private static int indexCouleur = Couleur.NOIR.ordinal() + 1;; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
+    private static int indexCouleur = Couleur.NOIR.ordinal() + 1; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
         
 
     public enum Couleur {
