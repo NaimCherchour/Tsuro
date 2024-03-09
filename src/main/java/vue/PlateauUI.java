@@ -1,8 +1,9 @@
 package main.java.vue;
 
+import main.java.model.Joueur;
+
 import javax.swing.*;
 import java.awt.*;
-
 
 public class PlateauUI {
 
@@ -11,7 +12,7 @@ public class PlateauUI {
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 800;
 
-    public PlateauUI() {
+    public PlateauUI(Joueur joueur) {
         JFrame frame = new JFrame("Plateau de jeu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -28,10 +29,13 @@ public class PlateauUI {
         // Créer le panel de la grille
         JPanel gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE, 0, 0));
+
+        // Dans la boucle de création de la grille, ajoutez le joueur à la case correspondante
         for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
             JPanel panel = new JPanel();
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             panel.setPreferredSize(new Dimension(TILE_SIZE, TILE_SIZE));
+            ajouterJoueurSurPlateau(joueur, panel);
             gridPanel.add(panel);
         }
 
@@ -56,7 +60,6 @@ public class PlateauUI {
             sidePanel.add(rotateButton);
         }
 
-
         mainPanel.add(gridPanel);
         mainPanel.add(Box.createHorizontalStrut(50)); // Espace entre grille et panel latéral
         mainPanel.add(sidePanel);
@@ -65,8 +68,19 @@ public class PlateauUI {
         frame.setVisible(true);
     }
 
+    // Méthode pour ajouter le joueur à la case de la grille
+    private void ajouterJoueurSurPlateau(Joueur joueur, JPanel panel) {
+        JoueurUI joueurUI = new JoueurUI(joueur);
+        panel.add(joueurUI);
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PlateauUI());
+        SwingUtilities.invokeLater(() -> {
+            // Créer un nouveau joueur.
+            Joueur joueur = new Joueur(3, 4, 2, "Max");
+
+            // Créer la fenêtre du plateau avec le joueur.
+            new PlateauUI(joueur);
+        });
     }
 }
-
