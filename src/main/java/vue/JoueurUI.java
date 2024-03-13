@@ -9,7 +9,7 @@ import java.beans.PropertyChangeListener;
 
 public class JoueurUI extends JPanel implements PropertyChangeListener {
     private Joueur joueur;
-    private static final int TAILLE_PION = 20; // La taille du pion du joueur
+    private static final int TAILLE_PION = 90; // La taille du pion du joueur
 
     public JoueurUI(Joueur joueur) {
         this.joueur = joueur;
@@ -20,14 +20,15 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        dessinerPion(g, joueur.getColonne() * 120 + 60, joueur.getLigne() * 120 + 60);
+        dessinerPion(g, joueur.getColonne() * 10 + 60, joueur.getLigne() * 10 + 100);
     }
 
     private void dessinerPion(Graphics g, int x, int y) {
         // Adaptez la couleur et la forme du pion ici si nécessaire
-        g.setColor(convertirCouleur(joueur.getCouleur()));
-        g.fillOval(x, y, TAILLE_PION, TAILLE_PION);
+        g.setColor(Color.RED); // Couleur rouge
+        g.fillOval(x, y, 10, 10); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
     }
+    
 
     // Convertit l'énumération Couleur en Color de Java
     private Color convertirCouleur(Joueur.Couleur couleur) {
