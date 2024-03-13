@@ -1,6 +1,9 @@
 package main.java.vue;
 
+import main.java.controller.PlateauController;
+
 import main.java.model.Joueur;
+import main.java.model.PlateauTuiles;
 import main.java.model.Tuile;
 import main.java.model.Tuiles;
 
@@ -21,7 +24,13 @@ public class PlateauUI {
     private int clickedIndex;
     private JPanel Deck;
 
+    private PlateauController plateauController;
+    
+
     public PlateauUI(Joueur joueur) {
+        
+        PlateauTuiles plateau = new PlateauTuiles(GRID_SIZE);
+        plateauController = new PlateauController(plateau);
         filtre = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -89,7 +98,10 @@ public class PlateauUI {
                     public void mouseClicked(MouseEvent e) {
                         if (clickedPanel!=null){
                             gridPanel.remove((JPanel) e.getSource());
-                        }
+                        //     int ligne = 0;// Calculer la ligne en fonction de la position du clic
+                        //     int colonne = 0;// Calculer la colonne en fonction de la position du clic
+                        //     plateauController.placerTuile(ligne, colonne, joueurActuel.getTuileJoueur(clickedIndex));
+                         }
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.gridx = ligne; // Réglez la position en fonction de vos besoins
                         gbc.gridy = colonne; // Réglez la position en fonction de vos besoins

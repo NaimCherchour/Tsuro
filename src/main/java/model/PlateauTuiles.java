@@ -10,6 +10,7 @@ import main.java.model.Tuile.Chemin;
  */
 public class PlateauTuiles {
 
+    private Joueur joueurActuel;
     // Enumération des directions
     public enum Direction {
         NORD, EST, SUD, OUEST;
@@ -178,6 +179,14 @@ public class PlateauTuiles {
             for (int j = 0; j < plateau[i].length; j++) {
                 plateau[i][j] = null;
             }
+        }
+    }
+
+    public void setTuile(int ligne, int colonne, Tuile tuile) {
+        if (coordonneesValides(ligne, colonne)) {
+            plateau[ligne][colonne] = tuile;
+        } else {
+            throw new IllegalArgumentException("Les coordonnées spécifiées sont invalides.");
         }
     }
 
