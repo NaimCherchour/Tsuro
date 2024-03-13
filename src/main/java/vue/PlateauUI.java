@@ -1,11 +1,8 @@
 package main.java.vue;
 
 import main.java.controller.PlateauController;
-
 import main.java.model.Joueur;
 import main.java.model.PlateauTuiles;
-import main.java.model.Tuile;
-import main.java.model.Tuiles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
+/**
+ * Cette classe représente l'interface utilisateur du plateau de jeu.
+ */
 public class PlateauUI {
 
     private static final int GRID_SIZE = 6;
@@ -26,12 +26,19 @@ public class PlateauUI {
     private JPanel gridPanel; // Déclaration de gridPanel comme un champ de classe
 
     private PlateauController plateauController;
-    
 
+    /**
+     * Constructeur de la classe PlateauUI.
+     *
+     * @param joueur Le joueur à afficher sur le plateau.
+     */
     public PlateauUI(Joueur joueur) {
-        
+
+        // Initialisation du plateau et du contrôleur du plateau
         PlateauTuiles plateau = new PlateauTuiles(GRID_SIZE);
         plateauController = new PlateauController(plateau);
+
+        // Initialisation du filtre pour les cases de la grille
         filtre = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -51,6 +58,7 @@ public class PlateauUI {
             return;
         }
 
+        // Initialisation de la fenêtre du jeu
         JFrame frame = new JFrame("Plateau de jeu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -80,9 +88,10 @@ public class PlateauUI {
                 gbc.gridx = row;
                 gbc.gridy = col;
                 gridPanel.add(panel, gbc);
-                
-                panel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseEntered(java.awt.event.MouseEvent evt) {
+
+                panel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent evt) {
                         filtre.setBounds(0, 0, 120, 120);
                         filtre.setOpaque(false);
                         panel.setOpaque(false);
@@ -90,11 +99,13 @@ public class PlateauUI {
                         panel.setBackground(new Color(0, 0, 0, 0));
                     }
 
-                    public void mouseExited(java.awt.event.MouseEvent evt) {
+                    @Override
+                    public void mouseExited(MouseEvent evt) {
                         panel.remove(filtre);
                         panel.setBackground(null);
                     }
                 });
+
                 panel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -103,17 +114,6 @@ public class PlateauUI {
                         //     int ligne = 0;// Calculer la ligne en fonction de la position du clic
                         //     int colonne = 0;// Calculer la colonne en fonction de la position du clic
                         //     plateauController.placerTuile(ligne, colonne, joueurActuel.getTuileJoueur(clickedIndex));
-
-                        int caseWidth =TILE_SIZE /* Largeur d'une case de la grille */;
-                        int caseHeight =TILE_SIZE /* Hauteur d'une case de la grille */;
-        
-                        int x = e.getX(); // Coordonnée X du clic
-                        int y = e.getY(); // Coordonnée Y du clic
-        
-                        int ligne = y / caseHeight; // Calcul de la ligne en divisant la coordonnée Y par la hauteur d'une case
-                        int colonne = x / caseWidth; // Calcul de la colonne en divisant la coordonnée X par la largeur d'une case
-                        plateauController.placerTuile(ligne, colonne, joueur.getTuileJoueur(clickedIndex));
-
                          }
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.gridx = ligne;
@@ -156,8 +156,9 @@ public class PlateauUI {
             ac.gridy = i;
             Deck.add(tilePanel, ac);
             Deck.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 70));
-            tilePanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
+            tilePanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent evt) {
                     filtre.setBounds(0, 0, 120, 120);
                     filtre.setOpaque(false);
                     tilePanel.setOpaque(false);
@@ -165,7 +166,8 @@ public class PlateauUI {
                     tilePanel.setBackground(new Color(0, 0, 0, 0));
                 }
 
-                public void mouseExited(java.awt.event.MouseEvent evt) {
+                @Override
+                public void mouseExited(MouseEvent evt) {
                     tilePanel.remove(filtre);
                     tilePanel.setBackground(null);
                 }
@@ -181,12 +183,22 @@ public class PlateauUI {
 
     }
 
-    // Méthode pour ajouter le joueur à la case de la grille
+    /**
+     * Ajoute le joueur sur le plateau de jeu.
+     *
+     * @param joueur Le joueur à ajouter sur le plateau.
+     * @return Une instance de JoueurUI représentant l'interface du joueur.
+     */
     private JoueurUI ajouterJoueurSurPlateau(Joueur joueur) {
         JoueurUI joueurUI = new JoueurUI(joueur);
         return joueurUI;
     }
 
+    /**
+     * Méthode principale qui lance l'application.
+     *
+     * @param args Les arguments de la ligne de commande (non utilisés).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Créer un nouveau joueur.

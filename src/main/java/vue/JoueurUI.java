@@ -7,30 +7,54 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Cette classe représente l'interface utilisateur d'un joueur dans un jeu.
+ */
 public class JoueurUI extends JPanel implements PropertyChangeListener {
     private Joueur joueur;
     private static final int TAILLE_PION = 90; // La taille du pion du joueur
 
+    /**
+     * Constructeur de la classe JoueurUI.
+     *
+     * @param joueur Le joueur associé à cette interface utilisateur.
+     */
     public JoueurUI(Joueur joueur) {
         this.joueur = joueur;
         joueur.addPropertyChangeListener(this);
         setPreferredSize(new Dimension(TAILLE_PION, TAILLE_PION));
     }
 
+    /**
+     * Redessine le composant de l'interface utilisateur du joueur.
+     *
+     * @param g L'objet Graphics utilisé pour dessiner le composant.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         dessinerPion(g, joueur.getColonne() * 10 + 60, joueur.getLigne() * 10 + 100);
     }
 
+    /**
+     * Dessine le pion du joueur à une position spécifique.
+     *
+     * @param g L'objet Graphics utilisé pour dessiner le pion.
+     * @param x La coordonnée x de la position du pion.
+     * @param y La coordonnée y de la position du pion.
+     */
     private void dessinerPion(Graphics g, int x, int y) {
         // Adaptez la couleur et la forme du pion ici si nécessaire
         g.setColor(Color.RED); // Couleur rouge
         g.fillOval(x, y, 10, 10); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
     }
-    
 
-    // Convertit l'énumération Couleur en Color de Java
+    /**
+     * Convertit l'énumération Couleur en Color de Java.
+     *
+     * @param couleur La couleur de l'énumération du joueur.
+     * @return La couleur correspondante en objet Color de Java.
+     */
     private Color convertirCouleur(Joueur.Couleur couleur) {
         return switch (couleur) {
             case NOIR -> Color.BLACK;
@@ -43,6 +67,11 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
         };
     }
 
+    /**
+     * Gère les modifications de propriété du joueur.
+     *
+     * @param evt L'événement de changement de propriété.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         // Supposons que la propriété qui change est la position du joueur
@@ -51,13 +80,22 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Définit le joueur associé à cette interface utilisateur.
+     *
+     * @param joueur Le joueur associé.
+     */
     public void setJoueur(Joueur joueur) {
         this.joueur = joueur;
         joueur.addPropertyChangeListener(this);
         this.repaint();
     }
 
-
+    /**
+     * Méthode principale utilisée pour tester cette classe.
+     *
+     * @param args Les arguments de la ligne de commande (non utilisés dans cette application).
+     */
     public static void main(String[] args) {
         // Créer un nouveau joueur.
         Joueur joueur = new Joueur(3, 4, 2, "Max");
