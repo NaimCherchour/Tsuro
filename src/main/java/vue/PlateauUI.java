@@ -23,6 +23,7 @@ public class PlateauUI {
     private JPanel clickedPanel;
     private int clickedIndex;
     private JPanel Deck;
+    private JPanel gridPanel; // Déclaration de gridPanel comme un champ de classe
 
     private PlateauController plateauController;
     
@@ -60,8 +61,8 @@ public class PlateauUI {
         mainPanel.setBackground(Color.GRAY);
         mainPanel.setOpaque(false);
 
-        // Créer le panel de la grille avec un GridBagLayout
-        JPanel gridPanel = new JPanel(new GridBagLayout());
+        // Initialisation de gridPanel
+        gridPanel = new JPanel(new GridBagLayout());
 
         // Définir la taille fixe des cellules de la grille
         Dimension cellSize = new Dimension(TILE_SIZE, TILE_SIZE);
@@ -78,7 +79,7 @@ public class PlateauUI {
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.gridx = row;
                 gbc.gridy = col;
-                gridPanel.add(panel,gbc);
+                gridPanel.add(panel, gbc);
                 
                 panel.addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -87,26 +88,27 @@ public class PlateauUI {
                         panel.setOpaque(false);
                         panel.add(filtre);
                         panel.setBackground(new Color(0, 0, 0, 0));
-                        }
-                        public void mouseExited(java.awt.event.MouseEvent evt) {
-                            panel.remove(filtre);
-                            panel.setBackground(null);
-                        }
+                    }
+
+                    public void mouseExited(java.awt.event.MouseEvent evt) {
+                        panel.remove(filtre);
+                        panel.setBackground(null);
+                    }
                 });
                 panel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (clickedPanel!=null){
+                        if (clickedPanel != null) {
                             gridPanel.remove((JPanel) e.getSource());
                         //     int ligne = 0;// Calculer la ligne en fonction de la position du clic
                         //     int colonne = 0;// Calculer la colonne en fonction de la position du clic
                         //     plateauController.placerTuile(ligne, colonne, joueurActuel.getTuileJoueur(clickedIndex));
                          }
                         GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.gridx = ligne; // Réglez la position en fonction de vos besoins
-                        gbc.gridy = colonne; // Réglez la position en fonction de vos besoins
+                        gbc.gridx = ligne;
+                        gbc.gridy = colonne;
                         gridPanel.add(clickedPanel, gbc);
-                        gridPanel.revalidate(); // Actualisez la disposition
+                        gridPanel.revalidate();
                         joueur.supprimerTuile(clickedIndex);
                         Deck.revalidate();
                     }
@@ -118,8 +120,7 @@ public class PlateauUI {
         Deck = new JPanel(new GridBagLayout());
 
         for (int i = 0; i < 3; i++) {
-            final int index = i; // Variable finale pour stocker l'index de la tuile
-            
+            final int index = i;
             JPanel tilePanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -127,26 +128,22 @@ public class PlateauUI {
                     dessinateur.dessinerTuile(g, joueur.getTuileJoueur(index), dessinateur.getSpritesSet());
                 }
             };
-        
-            // Ajoutez un écouteur d'événements de clic pour chaque tuilePanel
+
             tilePanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     clickedPanel = (JPanel) e.getSource();
-                    // Obtenez l'index de la tuile dans le side panel
                     clickedIndex = index;
-                    
                 }
             });
 
-            
             tilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             tilePanel.setPreferredSize(cellSize);
 
             GridBagConstraints ac = new GridBagConstraints();
             ac.gridx = 1;
             ac.gridy = i;
-            Deck.add(tilePanel,ac);
+            Deck.add(tilePanel, ac);
             Deck.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 70));
             tilePanel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -155,7 +152,8 @@ public class PlateauUI {
                     tilePanel.setOpaque(false);
                     tilePanel.add(filtre);
                     tilePanel.setBackground(new Color(0, 0, 0, 0));
-                    }
+                }
+
                 public void mouseExited(java.awt.event.MouseEvent evt) {
                     tilePanel.remove(filtre);
                     tilePanel.setBackground(null);
@@ -163,23 +161,25 @@ public class PlateauUI {
             });
         }
 
-        mainPanel.add(gridPanel, BorderLayout.CENTER);
+        mainPanel.add(gridPanel);
+        //mainPanel.add(ajouterJoueurSurPlateau(joueur));
         mainPanel.add(Deck, BorderLayout.EAST);
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);
+
     }
 
     // Méthode pour ajouter le joueur à la case de la grille
-    private void ajouterJoueurSurPlateau(Joueur joueur, JPanel panel) {
+    private JoueurUI ajouterJoueurSurPlateau(Joueur joueur) {
         JoueurUI joueurUI = new JoueurUI(joueur);
-        panel.add(joueurUI);
+        return joueurUI;
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Créer un nouveau joueur.
-            Joueur joueur = new Joueur(3, 4, 2, "Max");
+            Joueur joueur = new Joueur(10, 10, 2, "Max");
 
             // Créer la fenêtre du plateau avec le joueur.
             new PlateauUI(joueur);
