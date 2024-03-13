@@ -103,6 +103,17 @@ public class PlateauUI {
                         //     int ligne = 0;// Calculer la ligne en fonction de la position du clic
                         //     int colonne = 0;// Calculer la colonne en fonction de la position du clic
                         //     plateauController.placerTuile(ligne, colonne, joueurActuel.getTuileJoueur(clickedIndex));
+
+                        int caseWidth =TILE_SIZE /* Largeur d'une case de la grille */;
+                        int caseHeight =TILE_SIZE /* Hauteur d'une case de la grille */;
+        
+                        int x = e.getX(); // Coordonnée X du clic
+                        int y = e.getY(); // Coordonnée Y du clic
+        
+                        int ligne = y / caseHeight; // Calcul de la ligne en divisant la coordonnée Y par la hauteur d'une case
+                        int colonne = x / caseWidth; // Calcul de la colonne en divisant la coordonnée X par la largeur d'une case
+                        plateauController.placerTuile(ligne, colonne, joueur.getTuileJoueur(clickedIndex));
+
                          }
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.gridx = ligne;
