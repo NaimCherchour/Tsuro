@@ -1,9 +1,14 @@
 package main.java.vue;
 
 import main.java.model.Joueur;
+import main.java.model.Tuile;
+import main.java.model.Tuiles;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class PlateauUI {
 
@@ -11,58 +16,116 @@ public class PlateauUI {
     private static final int TILE_SIZE = 120;
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 800;
+    private JPanel filtre;
 
     public PlateauUI(Joueur joueur) {
+        filtre = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(0, 0, 0, 100));
+                g2d.fillRect(0, 0, 120, 120);
+                g2d.dispose();
+            }
+        };
+
+        DessinateurDeTuile dessinateur;
+        try {
+            dessinateur = new DessinateurDeTuile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
         JFrame frame = new JFrame("Plateau de jeu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setLayout(new BorderLayout());
 
         // Créer un JPanel qui servira de conteneur pour la grille et les boutons
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+        JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.GRAY);
+        mainPanel.setOpaque(false);
 
-        // Ajouter de l'espace autour de la grille
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
+        // Créer le panel de la grille avec un GridBagLayout
+        JPanel gridPanel = new JPanel(new GridBagLayout());
 
-        // Créer le panel de la grille
-        JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE, 0, 0));
+        // Définir la taille fixe des cellules de la grille
+        Dimension cellSize = new Dimension(TILE_SIZE, TILE_SIZE);
 
         // Dans la boucle de création de la grille, ajoutez le joueur à la case correspondante
-        for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-            JPanel panel = new JPanel();
-            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            panel.setPreferredSize(new Dimension(TILE_SIZE, TILE_SIZE));
-            ajouterJoueurSurPlateau(joueur, panel);
-            gridPanel.add(panel);
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                JPanel panel = new JPanel();
+                panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                panel.setPreferredSize(cellSize);
+
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = row;
+                gbc.gridy = col;
+                gridPanel.add(panel,gbc);
+                
+                panel.addMouseListener(new java.awt.event.MouseAdapter() {
+                                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                                    filtre.setBounds(0, 0, 120, 120);
+                                    filtre.setOpaque(false);
+                                    panel.setOpaque(false);
+                                    panel.add(filtre);
+                                    panel.setBackground(new Color(0, 0, 0, 0));
+                                    }
+                                public void mouseExited(java.awt.event.MouseEvent evt) {
+                                    panel.remove(filtre);
+                                    panel.setBackground(null);
+                                }
+                            });
+            }
         }
 
         // Créer le panel latéral pour les tuiles et les boutons
-        JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-        sidePanel.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
+        JPanel sidePanel = new JPanel(new GridBagLayout());
 
         for (int i = 0; i < 3; i++) {
-            JPanel tilePanel = new JPanel();
+            final int index = i;
+                // Création d'un nouveau JPanel pour dessiner la tuile
+            JPanel tilePanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
+                    dessinateur.dessinerTuile(g, joueur.getTuileJoueur(index), dessinateur.getSpritesSet());
+
+                }
+            };
+
+            
             tilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            Component rigidArea = Box.createRigidArea(new Dimension(TILE_SIZE, TILE_SIZE));
-            tilePanel.add(rigidArea);
+            tilePanel.setPreferredSize(cellSize);
 
-            JButton rotateButton = new JButton("Rotate");
-            rotateButton.setPreferredSize(new Dimension(TILE_SIZE, TILE_SIZE / 4));
-            // Aligner le bouton rotate au centre horizontalement
-            rotateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            GridBagConstraints ac = new GridBagConstraints();
+            ac.gridx = 1;
+            ac.gridy = i;
+            sidePanel.add(tilePanel,ac);
+            sidePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 70));
+            tilePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    filtre.setBounds(0, 0, 120, 120);
+                    filtre.setOpaque(false);
+                    tilePanel.setOpaque(false);
+                    tilePanel.add(filtre);
+                    tilePanel.setBackground(new Color(0, 0, 0, 0));
+                    }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    tilePanel.remove(filtre);
+                    tilePanel.setBackground(null);
+                }
+            });
+            
 
-            // Ajouter le tilePanel et le bouton rotate au sidePanel
-            sidePanel.add(tilePanel);
-            sidePanel.add(rotateButton);
         }
 
-        mainPanel.add(gridPanel);
-        mainPanel.add(Box.createHorizontalStrut(50)); // Espace entre grille et panel latéral
-        mainPanel.add(sidePanel);
+        mainPanel.add(gridPanel, BorderLayout.CENTER);
+        mainPanel.add(sidePanel, BorderLayout.EAST);
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);

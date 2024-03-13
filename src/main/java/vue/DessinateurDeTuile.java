@@ -28,7 +28,7 @@ public class DessinateurDeTuile extends JPanel {
     private Set<Pair<Integer, Integer>> drawnConnections = new HashSet<>(); // POUR ÉVITER LES DOUBLONS
 
 
-    private BufferedImage getSpritesSet() {
+    public BufferedImage getSpritesSet() {
         return spritesSet;
     }
 
