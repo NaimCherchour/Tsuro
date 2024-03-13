@@ -17,6 +17,9 @@ public class PlateauUI {
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 800;
     private JPanel filtre;
+    private JPanel clickedPanel;
+    private int clickedIndex;
+    private JPanel Deck;
 
     public PlateauUI(Joueur joueur) {
         filtre = new JPanel() {
@@ -57,6 +60,8 @@ public class PlateauUI {
         // Dans la boucle de création de la grille, ajoutez le joueur à la case correspondante
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
+                final int ligne = row;
+                final int colonne = col;
                 JPanel panel = new JPanel();
                 panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 panel.setPreferredSize(cellSize);
@@ -67,36 +72,60 @@ public class PlateauUI {
                 gridPanel.add(panel,gbc);
                 
                 panel.addMouseListener(new java.awt.event.MouseAdapter() {
-                                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                                    filtre.setBounds(0, 0, 120, 120);
-                                    filtre.setOpaque(false);
-                                    panel.setOpaque(false);
-                                    panel.add(filtre);
-                                    panel.setBackground(new Color(0, 0, 0, 0));
-                                    }
-                                public void mouseExited(java.awt.event.MouseEvent evt) {
-                                    panel.remove(filtre);
-                                    panel.setBackground(null);
-                                }
-                            });
+                    public void mouseEntered(java.awt.event.MouseEvent evt) {
+                        filtre.setBounds(0, 0, 120, 120);
+                        filtre.setOpaque(false);
+                        panel.setOpaque(false);
+                        panel.add(filtre);
+                        panel.setBackground(new Color(0, 0, 0, 0));
+                        }
+                        public void mouseExited(java.awt.event.MouseEvent evt) {
+                            panel.remove(filtre);
+                            panel.setBackground(null);
+                        }
+                });
+                panel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (clickedPanel!=null){
+                            gridPanel.remove((JPanel) e.getSource());
+                        }
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.gridx = ligne; // Réglez la position en fonction de vos besoins
+                        gbc.gridy = colonne; // Réglez la position en fonction de vos besoins
+                        gridPanel.add(clickedPanel, gbc);
+                        gridPanel.revalidate(); // Actualisez la disposition
+                        joueur.supprimerTuile(clickedIndex);
+                        Deck.revalidate();
+                    }
+                });
             }
         }
 
         // Créer le panel latéral pour les tuiles et les boutons
-        JPanel sidePanel = new JPanel(new GridBagLayout());
+        Deck = new JPanel(new GridBagLayout());
 
         for (int i = 0; i < 3; i++) {
-            final int index = i;
-                // Création d'un nouveau JPanel pour dessiner la tuile
+            final int index = i; // Variable finale pour stocker l'index de la tuile
+            
             JPanel tilePanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
                     dessinateur.dessinerTuile(g, joueur.getTuileJoueur(index), dessinateur.getSpritesSet());
-
                 }
             };
+        
+            // Ajoutez un écouteur d'événements de clic pour chaque tuilePanel
+            tilePanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    clickedPanel = (JPanel) e.getSource();
+                    // Obtenez l'index de la tuile dans le side panel
+                    clickedIndex = index;
+                    
+                }
+            });
 
             
             tilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -105,8 +134,8 @@ public class PlateauUI {
             GridBagConstraints ac = new GridBagConstraints();
             ac.gridx = 1;
             ac.gridy = i;
-            sidePanel.add(tilePanel,ac);
-            sidePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 70));
+            Deck.add(tilePanel,ac);
+            Deck.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 70));
             tilePanel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     filtre.setBounds(0, 0, 120, 120);
@@ -120,12 +149,10 @@ public class PlateauUI {
                     tilePanel.setBackground(null);
                 }
             });
-            
-
         }
 
         mainPanel.add(gridPanel, BorderLayout.CENTER);
-        mainPanel.add(sidePanel, BorderLayout.EAST);
+        mainPanel.add(Deck, BorderLayout.EAST);
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);
