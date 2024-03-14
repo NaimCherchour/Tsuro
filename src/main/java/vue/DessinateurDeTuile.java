@@ -20,6 +20,8 @@ import static main.java.model.PlateauTuiles.Direction.*;
 import static main.java.model.Tuile.TAILLE_DU_TABLEAU;
 
 public class DessinateurDeTuile extends JPanel {
+
+    // todo : passer le model en attribut
     private BufferedImage spritesSet;
     private final int SPRITE_WIDTH= 120;
     private final int SPRITE_HEIGHT = 120;
@@ -60,7 +62,7 @@ public class DessinateurDeTuile extends JPanel {
             // Create a new AffineTransform for mirroring Vertically
             AffineTransform mirrorTransform = AffineTransform.getScaleInstance(1, -1);
             mirrorTransform.translate(0, -SPRITE_HEIGHT);
-
+            System.out.println("MIRROR");
             // Apply mirroring
             transformedSprite = new BufferedImage(sprite.getWidth(), sprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = transformedSprite.createGraphics();
@@ -82,21 +84,6 @@ public class DessinateurDeTuile extends JPanel {
         g2d.drawImage(transformedSprite, 0, 0, null);
         g2d.dispose();
 
-        int enter = Math.min(from,to);
-        int diff = Math.abs(from - to);
-        Direction first = getDirectionFromPoint(from);
-        Direction other = getDirectionFromPoint(to);
-        // Cas Spécial 4->1 et 6->3 on doit avancer le le x et le y initiale
-        /*
-        if ( diff == 3 && opposite(first,other)) {
-            if ( enter == 1 ) {
-                g.drawImage(rotatedSprite,40,0,null);
-            } else {
-                g.drawImage(rotatedSprite,0,40,null);
-            }
-        } else {
-            g.drawImage(rotatedSprite,0,0,null); // sinon 0 et 0
-        } */
         g.drawImage(rotatedSprite,x,y,null); // sinon 0 et 0
 
 
@@ -104,7 +91,9 @@ public class DessinateurDeTuile extends JPanel {
 
     private boolean mirrorNeeded(int from, int to) {
         // C'est le cas ou les deux points sont impairs
-        return from % 2 == 1 && to % 2 == 1;
+        int enter = Math.min(from,to);
+        System.out.println("enter = " + enter%2);
+        return (enter % 2 ) == 1 ;
     }
 
     // Method to draw the entire tile
@@ -211,6 +200,7 @@ public class DessinateurDeTuile extends JPanel {
         Tuile tuile8 = new Tuile ( 8 , new int[]{3,6,5,0,7,2,1,4});
         Tuile tuile9 = new Tuile(9,new int[]{6,3,4,1,2,7,0,5});
         Tuile tuile10 = new Tuile(10,new int[]{2,7,0,5,6,3,4,1}); // FAUX 1->3 et 5->3
+        Tuile tuile11  = new Tuile (11,new int[]{5,4,7,6,1,0,3,2});
 
         HashMap<Integer, Tuile> tuiles = new HashMap<>();
 
@@ -272,7 +262,7 @@ public class DessinateurDeTuile extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
-                dessinateur.dessinerTuile(g, tuiles.get(2), dessinateur.getSpritesSet(), 0, 0);
+                dessinateur.dessinerTuile(g, tuile11, dessinateur.getSpritesSet(), 0, 0);
 
             }
         };
