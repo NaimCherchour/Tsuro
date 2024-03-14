@@ -136,7 +136,7 @@ public class PlateauUI {
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    dessinateur.dessinerTuile(g, joueur.getTuileJoueur(index), dessinateur.getSpritesSet());
+                    dessinateur.dessinerTuile(g, joueur.getTuileJoueur(index), dessinateur.getSpritesSet(), 0, 0);
                 }
             };
 

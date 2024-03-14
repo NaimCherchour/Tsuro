@@ -3,7 +3,7 @@ package main.java.model;
 import main.java.model.Joueur.Couleur;
 
 public class Tuile{
-    private final int id; // Identifiant de la tuile ; TODO : à supprimer ou à garder ?
+    private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
     private  Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
     private int rotation = 0; // Rotation de la tuile (0, 1-> +1/4, 2->+2/4, 3-> +3/4)
@@ -92,11 +92,10 @@ public class Tuile{
     /**
      * permet de trouver le point de sortie d'un chemin selon la rotation
      * @param ind ( <=> l'entrée du Chemin)
-     * @param rotation
      * @return le Point de sortie selon La rotation
      */
-    public int getPointSortieAvecRot(int ind, int rotation) {
-        int tmp = (ind - (rotation * 2)) % 8;
+    public int getPointSortieAvecRot(int ind) {
+        int tmp = (ind - (this.rotation * 2)) % 8;
         if (tmp < 0) {
             tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
         }

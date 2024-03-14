@@ -106,20 +106,23 @@ public class TuilesGenerator {
         }
         ret.add(str);
         // Tuile avec rotation 1
+        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str1 += i + ":" + tuile.getPointSortieAvecRot(i,1) + "|";
+            str1 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
 
         }
         ret.add(str1);
         // Tuile avec rotation 2
+        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str2 += i + ":" + tuile.getPointSortieAvecRot(i,2) + "|";
+            str2 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
 
         }
         ret.add(str2);
         // Tuile avec rotation 3
+        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str3 += i + ":" + tuile.getPointSortieAvecRot(i,3) + "|";
+            str3 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
 
         }
         ret.add(str3);

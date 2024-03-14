@@ -50,7 +50,7 @@ public class DessinateurDeTuile extends JPanel {
      * @param sprite est le sprite extrait à dessiner
      * @param rotation est l'angle de Rotation
      */
-    private void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation) {
+    private void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation,int x , int y ) {
 
         System.out.println("I draw a path");
 
@@ -87,6 +87,7 @@ public class DessinateurDeTuile extends JPanel {
         Direction first = getDirectionFromPoint(from);
         Direction other = getDirectionFromPoint(to);
         // Cas Spécial 4->1 et 6->3 on doit avancer le le x et le y initiale
+        /*
         if ( diff == 3 && opposite(first,other)) {
             if ( enter == 1 ) {
                 g.drawImage(rotatedSprite,40,0,null);
@@ -95,7 +96,9 @@ public class DessinateurDeTuile extends JPanel {
             }
         } else {
             g.drawImage(rotatedSprite,0,0,null); // sinon 0 et 0
-        }
+        } */
+        g.drawImage(rotatedSprite,x,y,null); // sinon 0 et 0
+
 
     }
 
@@ -105,7 +108,7 @@ public class DessinateurDeTuile extends JPanel {
     }
 
     // Method to draw the entire tile
-    public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites) {
+    public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites,int x , int y ) {
         drawnConnections.clear(); // Clear the set before drawing each tile
 
 
@@ -115,7 +118,7 @@ public class DessinateurDeTuile extends JPanel {
             double rotation = calculateRotationAngle(connection,i);
             int indexSprite = getIndexSprite(connection, i);
             BufferedImage sprite = sprites.getSubimage(indexSprite * SPRITE_WIDTH, color * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
-            drawPath(g, i, connection, sprite,rotation);
+            drawPath(g, i, connection, sprite,rotation,x,y);
         }
     }
 
@@ -269,7 +272,7 @@ public class DessinateurDeTuile extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
-                dessinateur.dessinerTuile(g, tuiles.get(2), dessinateur.getSpritesSet());
+                dessinateur.dessinerTuile(g, tuiles.get(2), dessinateur.getSpritesSet(), 0, 0);
 
             }
         };

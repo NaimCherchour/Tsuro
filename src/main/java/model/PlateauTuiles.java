@@ -39,17 +39,7 @@ public class PlateauTuiles {
             };
         }
         public static Direction getDirectionFromPoint ( int ind ){
-            // return values()[ind / 2];
-            if ( ind == 0 || ind == 1 ) {
-                return NORD;
-            } else if (ind == 2 || ind == 3 ){
-                return EST;
-            } else if ( ind == 4 || ind == 5){
-                return SUD;
-            } else if ( ind == 6 || ind == 7 ){
-                return OUEST;
-            }
-            return null;
+            return values()[ind / 2];
         }
         // Méthode pour vérifier si deux directions sont du même côté
         public static boolean sameSide(Direction first, Direction other) {
@@ -70,7 +60,6 @@ public class PlateauTuiles {
         }
     }
     private Tuile[][] plateau; // Matrice représentant le plateau de tuiles.
-    public int[] interConnection = {5,4,7,6,1,0,3,2}; // Pour chaque index, correspond à la nouvelle index dans la tuile suivante.
 
     /**
      * Constructeur de la classe PlateauTuiles.
@@ -79,6 +68,10 @@ public class PlateauTuiles {
      */
     public PlateauTuiles(int taille) {
         plateau = new Tuile[taille][taille];
+    }
+
+    public Tuile getTuile(int ligne, int colonne){
+        return plateau[ligne][colonne];
     }
 
     /**
@@ -104,7 +97,7 @@ public class PlateauTuiles {
      * Affiche le plateau de tuiles.
      */
     public void afficherPlateau() {
-//TODO : à supprimer lors de la fin de la partie vue
+    //TODO : à supprimer lors de la fin de la partie vue
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 if (plateau[i][j] == null) {
@@ -130,7 +123,7 @@ public class PlateauTuiles {
     // Méthode pour actualiser la position du joueur après le placement d'une tuile
     public void actualiserPosJ(Joueur j) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
-        Direction entree = j.getDirectionEntree().oppose(); // La direction du joueur
+        Direction entree = Direction.getDirectionFromPoint(j.getEntree()).oppose(); // La direction du joueur
         int nouvelleLigne = j.getLigne() + entree.oppose().di(); // La nouvelle ligne du joueur selon sa direction
         int nouvelleColonne = j.getColonne() + entree.oppose().dj(); // La nouvelle colonne du joueur selon sa direction
         System.out.println("Nouvelle ligne : " + nouvelleLigne + " Nouvelle colonne : " + nouvelleColonne);
@@ -141,7 +134,7 @@ public class PlateauTuiles {
                 j.setLigne(nouvelleLigne);
                 j.setColonne(nouvelleColonne);
                 Tuile nouvelleTuile = plateau[nouvelleLigne][nouvelleColonne]; // TODO : Le joueur place un etuile d'abord après il se déplace
-                Chemin nouveauChemin = nouvelleTuile.trouverNouveauChemin(j.getDirectionEntree(), j.getEntree());
+                Chemin nouveauChemin = nouvelleTuile.trouverNouveauChemin(Direction.getDirectionFromPoint(j.getEntree()), j.getEntree());
                 System.out.println("sortie du chemin :"+(nouveauChemin.getPointSortie()+2*nouvelleTuile.getRotation())%8);
                 if (nouveauChemin.estEmprunte()) {
                     System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
@@ -213,7 +206,7 @@ public class PlateauTuiles {
         System.out.println(joueur1.getCouleur());
 
         System.out.println("Coordonnées de départ du joueur 1 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
-        System.out.println("Direction d'entrée du joueur 1 : " + joueur1.getDirectionEntree());
+        System.out.println("Direction d'entrée du joueur 1 : " + Direction.getDirectionFromPoint(joueur1.getEntree()));
         System.out.println("Point d'entrée du joueur 1 : " + joueur1.getEntree());
         System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
         int ligneTuile = 0;

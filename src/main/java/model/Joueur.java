@@ -75,27 +75,6 @@ public class Joueur {
         return couleurs[Joueur.indexCouleur];
     }
 
-    public PlateauTuiles.Direction getDirectionEntree() {
-        // Récupérer la direction du joueur en fonction du point d'entrée du joueur
-        switch (PointEntree) {
-            case 0, 1 -> {
-                return PlateauTuiles.Direction.NORD;
-            }
-            case 2, 3 -> {
-                return PlateauTuiles.Direction.EST;
-            }
-            case 4, 5 -> {
-                return PlateauTuiles.Direction.SUD;
-            }
-            case 6, 7 -> {
-                return PlateauTuiles.Direction.OUEST;
-            }
-            default -> {
-                System.out.println("Point d'entrée invalide pour le joueur !");
-                return null;
-            }
-        }
-    }
 
     /**
      * Obtient la ligne actuelle du joueur.
