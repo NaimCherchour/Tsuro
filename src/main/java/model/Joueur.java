@@ -4,6 +4,7 @@ import main.java.model.Tuile.Chemin;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 import java.util.Random;
 
 
@@ -150,6 +151,47 @@ public class Joueur {
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
+    }
+
+
+    /**
+     * Trouve le joueur ayant le chemin le plus long parmi une liste de joueurs
+     * donnée.
+     * @param joueurs Liste des joueurs.
+     * @param chemins Liste des chemins.
+     * @return Le joueur ayant le chemin le plus long, ou null s'il n'y en a pas.
+     */
+
+    public  static Joueur plusLongChemin(List<Joueur> joueurs,List<Chemin>chemins){
+        Joueur joueurplusLongChemin=null;
+        int maxCheminVisité=0;
+
+        for(Joueur joueur:joueurs){
+            int cheminVisitéJoueur=compterPassagesChemin(joueur,chemins);
+            if(cheminVisitéJoueur>maxCheminVisité){
+                maxCheminVisité=cheminVisitéJoueur;
+                joueurplusLongChemin=joueur;
+            }
+        }
+        return joueurplusLongChemin;
+    }
+
+    /**
+     * Compte le nombre de passages sur les chemins d'un joueur donné.
+     * @param joueur Joueur concerné.
+     * @param tableauChemins Liste des chemins.
+     * @return Le nombre de passages du joueur sur les chemins.
+     */
+
+    public static int compterPassagesChemin(Joueur joueur, List<Chemin> chemins) {
+        int compteur = 0;
+
+        for (Chemin chemin : chemins) {
+            if (chemin.getCouleur() == joueur.getCouleur()) {
+                compteur++;
+            }
+        }
+        return compteur;
     }
 
     public static void main(String[] args) {
