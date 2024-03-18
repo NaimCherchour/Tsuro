@@ -10,7 +10,7 @@ public class TuilesGenerator {
      * @return une liste de tuiles uniques qu'on utilisera dans la partie
      */
 
-    static List<Tuile> genererToutesLesTuiles() {
+    public static List<Tuile> genererToutesLesTuiles() {
         Set<String> configurationsUniques = new HashSet<>(); // Garder les configurations déjà générées
         List<Tuile> tuilesUniques = new ArrayList<>(); // Sauvegarder les tuiles uniques
 

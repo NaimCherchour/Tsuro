@@ -2,6 +2,7 @@ package main.java.vue;
 
 import main.java.model.Joueur;
 import main.java.model.PlateauTuiles;
+import main.java.model.Tuile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,14 +13,21 @@ import javax.imageio.ImageIO;
 
 public class GameBoardUI extends JPanel {
     private PlateauTuiles board;
+    private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
 
-    public GameBoardUI() throws IOException {
+    // getter
+    public PlateauTuiles getBoard() {
+        return board;
+    }
+
+    public Joueur getJoueur() {
+        return joueur;
+    }
+
+    public GameBoardUI(Joueur j ) throws IOException {
         this.board = new PlateauTuiles(6);
-        Joueur j = new Joueur(0,0,0,"BLEU");
-        this.board.placerTuile(0, 0, new main.java.model.Tuile(1,new int[]{1, 0, 3, 2, 5, 4, 7, 6}),j);
-        this.board.placerTuile(0, 1, new main.java.model.Tuile(1,new int[]{1, 0, 3, 2, 5, 4, 7, 6}),j);
-        this.board.placerTuile(0, 2, new main.java.model.Tuile(1,new int[]{1, 0, 3, 2, 5, 4, 7, 6}),j);
+        this.joueur = j;
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.setBackground(Color.RED);
@@ -57,6 +65,13 @@ public class GameBoardUI extends JPanel {
         }
     }
 
+    public void placerTuileSurPlateau(Joueur j , Tuile tuile) {
+        int ligne = j.getLigne();
+        int colonne = j.getColonne();
+        board.placerTuile(ligne, colonne, tuile,j);
+        repaint();  // Rafraîchir l'affichage
+    }
+
     public void rotateTile() {
         repaint();
     }
@@ -72,7 +87,8 @@ public class GameBoardUI extends JPanel {
             frame.setLayout(new BorderLayout());
             JPanel panel = null;
             try {
-                panel = new GameBoardUI();
+                Joueur j = new Joueur(0,0,0,"BLEU");
+                panel = new GameBoardUI(j);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

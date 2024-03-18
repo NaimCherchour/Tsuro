@@ -1,18 +1,29 @@
 package main.java.vue;
 
 import main.java.model.Tuile;
+import main.java.model.TuilesGenerator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 
 public class TuilePanel extends JPanel {
 
     private final DessinateurDeTuile dessinateur;
     private final Tuile tuile;
 
+    //getter
+    public Tuile getTuile() {
+        return tuile;
+    }
+
     public TuilePanel() throws IOException {
-        this.tuile = new Tuile(1, new int[]{1, 0, 3, 2, 5, 4, 7, 6}) ;
+        Random random = new Random();
+        int i = random.nextInt(35) + 1;
+        List<Tuile> tuiles = TuilesGenerator.genererToutesLesTuiles();
+        this.tuile = tuiles.get(i);
         this.dessinateur= new DessinateurDeTuile();
         setPreferredSize(new Dimension(120, 120)); // Taille préférée du panneau de la tuile
         repaint();    }
