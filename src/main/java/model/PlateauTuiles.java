@@ -1,7 +1,5 @@
 package main.java.model;
-import java.util.Scanner;
-
-import main.java.model.Joueur;
+import java.util.*;
 
 import main.java.model.Tuile.Chemin;
 
@@ -116,9 +114,17 @@ public class PlateauTuiles {
         }
     }
 
-    private boolean coordonneesValides(int ligne, int colonne) {
+    boolean coordonneesValides(int ligne, int colonne) {
         return (ligne >= 0 && ligne < plateau.length && colonne >= 0 && colonne < plateau[0].length);
     }
+
+    public Tuile getTuile(int x, int y) {
+        if (coordonneesValides(x, y)) {
+            return plateau[x][y];
+        }
+        return null;
+    }
+    
 
     /**
      * Actualise la position du joueur après le placement d'une tuile.
@@ -181,6 +187,28 @@ public class PlateauTuiles {
         }
     }
 
+    public boolean peutPlacerTuile(int x, int y, Tuile tuile) {
+        if (!coordonneesValides(x, y) || !isEmpty(x, y)) {
+            return false; // Vérifie si la position est dans les limites et vide
+        }
+        // on doit mettre ici la logique pour vérifier l'alignement avec les tuiles adjacentes si nécessaire
+        return true;
+    }
+    
+
+    // Dans la classe Joueur, la méthode getTuilesDisponibles est implémentée.
+    public List<Tuile> getTuilesDisponibles() {
+        // Retourne la liste des tuiles que le joueur peut utiliser.
+        // Implémentation fictive :
+        return new ArrayList<>(); // Doit retourner les tuiles réelles disponibles pour le joueur.
+    }
+
+    public int getTaille() {
+        return plateau.length; // Supposant que le plateau est carré
+    }
+    
+
+
 
 
     // TEST
@@ -200,7 +228,7 @@ public class PlateauTuiles {
         System.out.println("Entrez les coordonnées de départ (ligne colonne) :");
         int ligneDepart = 0;
         int colonneDepart = -1;
-        Joueur joueur1 = new Joueur(ligneDepart, colonneDepart, 2, "J1");
+        Joueur joueur1 = new Joueur(ligneDepart, colonneDepart, 2, "J1", false);
         System.out.println(joueur1.getCouleur());
 
         System.out.println("Coordonnées de départ du joueur 1 : " + joueur1.getLigne() + ", " + joueur1.getColonne());
