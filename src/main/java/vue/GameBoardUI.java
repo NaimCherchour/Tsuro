@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class GameBoardUI extends JPanel {
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public class GameBoardUI extends JPanel implements MouseListener {
     private PlateauTuiles board;
     private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
@@ -31,11 +34,45 @@ public class GameBoardUI extends JPanel {
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.setBackground(Color.RED);
+        addMouseListener(this);
 
     }
 
+    public int[] calculDePosition(int x,int y){
+        int X = 0 ;
+        int Y = 0 ;
+        while (x > 320 || y > 170){
+            if (x > 320){
+                x-=120;
+                X+=1;
+            }
+            if (y > 170){
+                y-=120;
+                Y+=1;
+            }
+        }
+        int t[]= {X,Y};
+        return t;
+    }
 
 
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX(); // Coordonnée x du clic
+        int y = e.getY(); // Coordonnée y du clic
+        int XY[]= calculDePosition( x, y);
+        System.out.println("Coordonnées du clic : (" + XY[0] + ", " + XY[1] + ")");
+    }
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 
     private void drawTile(Graphics g, int x, int y, int size) {
         // Example method to draw a tile at a specified position and size
@@ -87,7 +124,7 @@ public class GameBoardUI extends JPanel {
             frame.setLayout(new BorderLayout());
             JPanel panel = null;
             try {
-                Joueur j = new Joueur(0,0,0,"BLEU");
+                Joueur j = new Joueur(1,0,2,"BLEU");
                 panel = new GameBoardUI(j);
             } catch (IOException e) {
                 throw new RuntimeException(e);
