@@ -38,7 +38,7 @@ public class Joueur {
         this.colonne = colonne;
         this.PointEntree = PointEntree;
         this.prenom = prenom;
-        this.couleur = getNextCouleur();
+        this.couleur = Couleur.VERT;
         deck = GenereDeckJoueur();
         Joueur.indexCouleur+=1;
     }
@@ -147,7 +147,6 @@ public class Joueur {
     public void deplacerJoueur(PlateauTuiles plateau) {
         plateau.actualiserPosJ(this);
     }
-
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
@@ -179,7 +178,6 @@ public class Joueur {
     /**
      * Compte le nombre de passages sur les chemins d'un joueur donné.
      * @param joueur Joueur concerné.
-     * @param tableauChemins Liste des chemins.
      * @return Le nombre de passages du joueur sur les chemins.
      */
 

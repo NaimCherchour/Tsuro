@@ -61,7 +61,7 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     private void dessinerPion(Graphics g, int x, int y) {
         // Adaptez la couleur et la forme du pion ici si nécessaire
         Color c = convertirCouleur(joueur.getCouleur());
-        g.setColor(c); // Couleur rouge
+        g.setColor(c); // Couleur du pion
         g.fillOval(x, y, TAILLE_PION, TAILLE_PION); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
     }
 
