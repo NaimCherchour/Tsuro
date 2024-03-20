@@ -184,7 +184,7 @@ public class PlateauUI {
         }
 
         mainPanel.add(gridPanel);
-        //mainPanel.add(ajouterJoueurSurPlateau(joueur));
+        mainPanel.add(ajouterJoueurSurPlateau(joueur));
         mainPanel.add(Deck, BorderLayout.EAST);
 
         frame.add(mainPanel, BorderLayout.CENTER);
