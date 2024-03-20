@@ -198,8 +198,8 @@ public class PlateauUI {
      * @param joueur Le joueur à ajouter sur le plateau.
      * @return Une instance de JoueurUI représentant l'interface du joueur.
      */
-    private JoueurUI ajouterJoueurSurPlateau(Joueur joueur) {
-        JoueurUI joueurUI = new JoueurUI(joueur);
+    private JoueurPanel ajouterJoueurSurPlateau(Joueur joueur) {
+        JoueurPanel joueurUI = new JoueurPanel(joueur);
         return joueurUI;
     }
 

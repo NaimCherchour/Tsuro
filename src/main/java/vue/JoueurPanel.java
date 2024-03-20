@@ -10,16 +10,19 @@ import java.beans.PropertyChangeListener;
 /**
  * Cette classe représente l'interface utilisateur d'un joueur dans un jeu.
  */
-public class JoueurUI extends JPanel implements PropertyChangeListener {
+public class JoueurPanel extends JPanel implements PropertyChangeListener {
     private Joueur joueur;
-    private static final int TAILLE_PION = 90; // La taille du pion du joueur
+    private static final int TAILLE_PION = 15; // La taille du pion du joueur
+    private static final int MARGE_GAUCHE = 195;
+    private static final int MARGE_TOP = 45;
+    private static final int TUILE_SIZE = 120;
 
     /**
      * Constructeur de la classe JoueurUI.
      *
      * @param joueur Le joueur associé à cette interface utilisateur.
      */
-    public JoueurUI(Joueur joueur) {
+    public JoueurPanel(Joueur joueur) {
         this.joueur = joueur;
         joueur.addPropertyChangeListener(this);
         setPreferredSize(new Dimension(TAILLE_PION, TAILLE_PION));
@@ -33,7 +36,19 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        dessinerPion(g, joueur.getColonne() * 10 + 60, joueur.getLigne() * 10 + 100);
+        dessinerPion(g,  calculPosX(joueur),  calculPosY(joueur));
+    }
+    private int calculPosX(Joueur j){
+        int posActuelle = j.getEntree();
+        int posJoueurSurBoard = 0;
+
+        return MARGE_GAUCHE + j.getColonne() * TUILE_SIZE + posJoueurSurBoard;
+    }
+
+    private int calculPosY(Joueur j){
+        int posActuelle = j.getEntree();
+        int posJoueurSurBoard=0;
+        return MARGE_TOP + j.getLigne() * TUILE_SIZE + posJoueurSurBoard;
     }
 
     /**
@@ -45,8 +60,9 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
      */
     private void dessinerPion(Graphics g, int x, int y) {
         // Adaptez la couleur et la forme du pion ici si nécessaire
-        g.setColor(Color.RED); // Couleur rouge
-        g.fillOval(x, y, 10, 10); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
+        Color c = convertirCouleur(joueur.getCouleur());
+        g.setColor(c); // Couleur rouge
+        g.fillOval(x, y, TAILLE_PION, TAILLE_PION); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
     }
 
     /**
@@ -101,18 +117,18 @@ public class JoueurUI extends JPanel implements PropertyChangeListener {
         Joueur joueur = new Joueur(3, 4, 2, "Max");
 
         // Créer la fenêtre.
-        JFrame frame = new JFrame("Test JoueurUI");
+        JFrame frame = new JFrame("Test JoueurPanel");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
         // Créer l'UI du joueur.
-        JoueurUI joueurUI = new JoueurUI(joueur);
+        JoueurPanel JoueurPanel = new JoueurPanel(joueur);
 
         // Ajouter l'UI du joueur à la fenêtre.
-        frame.add(joueurUI);
+        frame.add(JoueurPanel);
 
         // Centrer le pion du joueur dans la fenêtre (à titre d'exemple).
-        joueurUI.setLocation(390, 290); // À ajuster en fonction de la position réelle du joueur sur le plateau.
+        JoueurPanel.setLocation(390, 290); // À ajuster en fonction de la position réelle du joueur sur le plateau.
 
         // Afficher la fenêtre.
         frame.setVisible(true);

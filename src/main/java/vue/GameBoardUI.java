@@ -100,6 +100,10 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
+        Joueur j = new Joueur (0, 0, 2, "VERT");
+        JoueurPanel joueurUI = new JoueurPanel(j);
+        joueurUI.paintComponent(g);
+
     }
 
     public void placerTuileSurPlateau(Joueur j , Tuile tuile) {

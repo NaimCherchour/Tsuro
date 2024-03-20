@@ -21,7 +21,7 @@ public class TuilePanel extends JPanel {
 
     public TuilePanel() throws IOException {
         Random random = new Random();
-        int i = random.nextInt(35) + 1;
+        int i = random.nextInt(35);
         List<Tuile> tuiles = TuilesGenerator.genererToutesLesTuiles();
         this.tuile = tuiles.get(i);
         this.dessinateur= new DessinateurDeTuile();
