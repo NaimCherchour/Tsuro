@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Random;
 
 /**
  * Cette classe représente l'interface utilisateur d'un joueur dans un jeu.
@@ -16,6 +17,8 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     private static final int MARGE_GAUCHE = 195;
     private static final int MARGE_TOP = 45;
     private static final int TUILE_SIZE = 120;
+    //int posY = MARGE_TOP + joueur.getLigne() * TUILE_SIZE + 40 + new Random().nextInt(1) * 40;
+    //int posX = MARGE_TOP + joueur.getColonne() * TUILE_SIZE + 40 + new Random().nextInt(1) * 40;
 
     /**
      * Constructeur de la classe JoueurUI.
@@ -36,8 +39,23 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        dessinerPion(g,  calculPosX(joueur),  calculPosY(joueur));
+        
+        // Calcul de la position horizontale aléatoire limitée au bord
+        int posX = calculPosX(joueur);
+        int randomIndex = new Random().nextInt(10) + 1; // Exclut le premier segment de 40 pixels
+        posX = Math.min(Math.max(posX, MARGE_GAUCHE), getWidth() - TAILLE_PION);
+        posX = MARGE_GAUCHE + (randomIndex * 40);
+
+        if ((posX - MARGE_GAUCHE) % 120 == 0) {
+            posX += 40;
+        }
+    
+        // Position verticale fixée sur la ligne du haut
+        int posY = MARGE_TOP;
+    
+        dessinerPion(g, posX, posY);
     }
+    
     private int calculPosX(Joueur j){
         int posActuelle = j.getEntree();
         int posJoueurSurBoard = 0;
@@ -61,7 +79,7 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     private void dessinerPion(Graphics g, int x, int y) {
         // Adaptez la couleur et la forme du pion ici si nécessaire
         Color c = convertirCouleur(joueur.getCouleur());
-        g.setColor(c); // Couleur du pion
+        g.setColor(c); // Couleur rouge
         g.fillOval(x, y, TAILLE_PION, TAILLE_PION); // Dessine un cercle de diamètre 50 (vous pouvez ajuster la taille selon vos besoins)
     }
 

@@ -133,7 +133,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
             JPanel panel = null;
             try {
                  Joueur j = new Joueur(0,0,2,"RED Max"); // juste pour afficher une couleur apart le rouge car le player 1 crée est la couleur RED
-                Joueur j2 = new Joueur(1,0,2,"BLUE Max");
+                Joueur j2 = new Joueur(0,0,2,"BLUE Max");
                 panel = new GameBoardUI(j2);
             } catch (IOException e) {
                 throw new RuntimeException(e);
