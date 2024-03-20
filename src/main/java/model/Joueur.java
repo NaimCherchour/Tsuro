@@ -38,7 +38,7 @@ public class Joueur {
         this.colonne = colonne;
         this.PointEntree = PointEntree;
         this.prenom = prenom;
-        this.couleur = Couleur.VERT;
+        this.couleur = Couleur.values()[indexCouleur];
         deck = GenereDeckJoueur();
         Joueur.indexCouleur+=1;
     }
