@@ -149,7 +149,7 @@ public class Tuile{
             // Marque un chemin avec la couleur / joueur qui l'a emprunté ainsi que le doublon
             // Si ROUGE a emprunté 1-> 3 il sera colorier ainsi que le doublon 3 -> 1
             tableauChemins[indiceChemin].setCouleur(couleur);;
-            int tmp = tableauChemins[indiceChemin].getPointSortie();
+            int tmp = getPointSortieAvecRot(indiceChemin);
             tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
         }
     }

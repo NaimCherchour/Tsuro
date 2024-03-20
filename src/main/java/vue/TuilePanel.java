@@ -41,11 +41,7 @@ public class TuilePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.GREEN);
-        g.fillRect(0, 0, 120, 120);
+        drawTile(g, 120);
 
-        for (int i = 0; i < 3; i++) {
-            drawTile(g, 120);
-        }
     }
 }

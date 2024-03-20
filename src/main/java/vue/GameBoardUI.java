@@ -109,7 +109,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
         repaint();  // Rafraîchir l'affichage
     }
 
-    public void rotateTile() {
+    public void rotateTile(Tuile tuile) {
+        tuile.tournerTuile();
         repaint();
     }
 

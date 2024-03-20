@@ -27,7 +27,7 @@ public class SidePanel extends JPanel {
             add(tuilePanel);
             // Ajouter un espace vertical fixe entre chaque TuilePanel et son bouton de rotation
             add(Box.createRigidArea(new Dimension(0, 10))); // Ajuster la hauteur selon les besoins
-            JButton bouton = createButtonRotation();
+            JButton bouton = createButtonRotation(tuilePanel);
             add(bouton); // Ajouter le bouton au panneau latéral
             add(Box.createRigidArea(new Dimension(0, 10))); // Ajuster la hauteur selon les besoins
             // Créer un bouton de rotation et lui ajouter un ActionListener pour placer la tuile sélectionnée
@@ -36,13 +36,13 @@ public class SidePanel extends JPanel {
         }
     }
 
-    private JButton createButtonRotation() {
+    private JButton createButtonRotation(TuilePanel tuilePanel) {
         JButton bouton = new JButton("Rotate");
         bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
         bouton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                rotateTile(); // Appeler la méthode pour faire pivoter la tuile
+                rotateTile(tuilePanel.getTuile()); // Appeler la méthode pour faire pivoter la tuile
             }
         });
         return bouton;
@@ -66,9 +66,11 @@ public class SidePanel extends JPanel {
     }
 
     // Method to rotate the tile and repaint
-    private void rotateTile() {
+    private void rotateTile( Tuile tuile) {
         // Call the rotateTile method in the GameBoardUI class
-        gameBoardUI.rotateTile();
+        tuile.tournerTuile(); // Appeler la méthode pour faire pivoter la tuile
+        repaint();
+        gameBoardUI.rotateTile(tuile);
     }
 }
 

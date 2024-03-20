@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import main.java.model.PlateauTuiles.Direction;
-
 import static main.java.model.PlateauTuiles.Direction.*;
 import static main.java.model.Tuile.TAILLE_DU_TABLEAU;
 
@@ -25,10 +25,7 @@ public class DessinateurDeTuile extends JPanel {
     private BufferedImage spritesSet;
     private final int SPRITE_WIDTH= 120;
     private final int SPRITE_HEIGHT = 120;
-
-
     private Set<Pair<Integer, Integer>> drawnConnections = new HashSet<>(); // POUR ÉVITER LES DOUBLONS
-
 
     public BufferedImage getSpritesSet() {
         return spritesSet;
@@ -43,19 +40,61 @@ public class DessinateurDeTuile extends JPanel {
         }
     }
 
+    public void setDrawnConnections(Set<Pair<Integer, Integer>> drawnConnections) {
+        this.drawnConnections = drawnConnections;
+    }
+
+    // Méthode principale pour dessiner une tuile
+
+    public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites, int x, int y) {
+        drawnConnections.clear(); // Clear the set before drawing each tile
+        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+            int connection = tuile.getPointSortieAvecRot(i);
+            if (!isConnectionDrawn(i, connection)) { // Check if connection is already drawn
+                int color = tuile.getTableauChemins()[i].getCouleur().ordinal();
+                double rotation = calculateRotationAngle(connection, i);
+                int indexSprite = getIndexSprite(connection, i);
+                BufferedImage sprite = sprites.getSubimage(indexSprite * SPRITE_WIDTH, color * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
+                drawPath(g, i, connection, sprite, rotation, x, y);
+                markConnectionAsDrawn(i, connection); // Mark the connection as drawn
+            }
+        }
+    }
+
+    public void test(Graphics g) {
+        BufferedImage sprite = spritesSet.getSubimage(4 * SPRITE_WIDTH, 1 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
+        AffineTransform mirrorTransform = AffineTransform.getScaleInstance(1, -1);
+        mirrorTransform.translate(0, -SPRITE_HEIGHT); // Translate by the negative height of the sprite to flip vertically
+
+        // Apply mirroring
+        BufferedImage transformedSprite = new BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = transformedSprite.createGraphics();
+        g2d.setTransform(mirrorTransform);
+        g2d.drawImage(sprite, 0, 0, null);
+        g2d.dispose();
+
+        // Draw the transformedSprite instead of sprite
+        g.drawImage(transformedSprite, 0, 0, SPRITE_WIDTH,SPRITE_HEIGHT,null);
+    }
+
+
+
+    private boolean isConnectionDrawn(int from, int to) {
+        return drawnConnections.contains(new Pair<>(from, to)) || drawnConnections.contains(new Pair<>(to, from));
+    }
+
+    private void markConnectionAsDrawn(int from, int to) {
+        drawnConnections.add(new Pair<>(from, to));
+    }
 
     /**
-     *
      * @param g pour
      * @param from est le point d'entrée
      * @param to est le point de sortie
      * @param sprite est le sprite extrait à dessiner
      * @param rotation est l'angle de Rotation
      */
-    private void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation,int x , int y ) {
-
-        System.out.println("I draw a path");
-
+    private void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation,int x,int y) {
         BufferedImage transformedSprite;
         // Check if mirroring is needed
         if (mirrorNeeded(from, to)) {
@@ -84,32 +123,27 @@ public class DessinateurDeTuile extends JPanel {
         g2d.drawImage(transformedSprite, 0, 0, null);
         g2d.dispose();
 
-        g.drawImage(rotatedSprite,x,y,null); // sinon 0 et 0
+        if (from == 1 && to == 4) {
+           g.drawImage(rotatedSprite, 40, 0, SPRITE_WIDTH, SPRITE_HEIGHT, null);
+           return;
+        }
+        g.drawImage(rotatedSprite,x,y,null);
 
 
     }
 
     private boolean mirrorNeeded(int from, int to) {
-        // C'est le cas ou les deux points sont impairs
+        // C'est le cas ou l'entrée est impair
         int enter = Math.min(from,to);
-        System.out.println("enter = " + enter%2);
-        return (enter % 2 ) == 1 ;
-    }
-
-    // Method to draw the entire tile
-    public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites,int x , int y ) {
-        drawnConnections.clear(); // Clear the set before drawing each tile
-
-
-        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            int connection = tuile.getTableauChemins()[i].getPointSortie(); // OBSERVER !!!!
-            int color = tuile.getTableauChemins()[i].getCouleur().ordinal();
-            double rotation = calculateRotationAngle(connection,i);
-            int indexSprite = getIndexSprite(connection, i);
-            BufferedImage sprite = sprites.getSubimage(indexSprite * SPRITE_WIDTH, color * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
-            drawPath(g, i, connection, sprite,rotation,x,y);
+        boolean b = (from % 2 == 1 && to % 2 == 1 ) ;
+        if (( from == 1 && to == 4 ) || ( to == 1 && from == 4) ){
+            return true;
         }
+
+        return b;
     }
+
+
 
 
 
@@ -118,6 +152,10 @@ public class DessinateurDeTuile extends JPanel {
         int diff = Math.abs(connection - index);
         Direction first = getDirectionFromPoint(index);
         Direction other = getDirectionFromPoint(connection);
+        System.out.println("Connection : "+connection + " Index : "+index);
+        System.out.println("Diff : "+diff);
+        System.out.println(first + " -> "+other);
+
         if (diff == 1 && sameSide(first,other)) {
             System.out.println("0");
             return 0;
@@ -134,6 +172,7 @@ public class DessinateurDeTuile extends JPanel {
             System.out.println("3");
             return 3;
         } else if ( (diff == 5 || diff == 3 ) && opposite(first,other) ){
+            System.out.println("DIFF 5 ET OPPOSE ");
             System.out.println("4");
             return 4;
         } else if ( (diff == 6 && adjacent(first,other) ) || ( connection == 1 && index == 3 ) || ( connection == 3 && index == 1) ) {
@@ -145,10 +184,10 @@ public class DessinateurDeTuile extends JPanel {
             return 0; }
     }
 
+
     private double calculateRotationAngle(int connection, int index) {
         Direction first = getDirectionFromPoint(index); // La direction d'entrée
         Direction other = getDirectionFromPoint(connection); // La direction de sortie
-
         // Calculer la Différence entre les deux
         int diff = Math.abs(connection - index);
 
@@ -167,6 +206,7 @@ public class DessinateurDeTuile extends JPanel {
         } else if (diff == 4 && opposite(first, other)) {
             return Math.min(first.ordinal(),other.ordinal()) * 90;
         } else if ((diff == 5 || diff == 3) && opposite(first, other)) {
+            System.out.println("DIFFF 5 ET OPPOSE ");
             return Math.min(first.ordinal(),other.ordinal())*90;
         } else if ( (diff == 3 || diff == 5 ) && adjacent(first,other) ){
             if ( diff == 5) {
@@ -186,17 +226,23 @@ public class DessinateurDeTuile extends JPanel {
 
 
 
-    public static void main(String[] args) {
-        // Création d'une nouvelle tuile à dessiner (vous devez avoir votre propre logique pour initialiser la tuile)
-        Tuile tuile = new Tuile(1, new int[]{1,0,3,2,5,4,7,6});
-        Tuile tuile2 = new Tuile (2,new int[]{6,3,4,1,2,7,0,5});
+
+        public static void main(String[] args) {
+
+        Tuile tuile = new Tuile(1, new int[]{1,0,3,2,5,4,7,6}); // Correct
+        Tuile tuile2 = new Tuile (7,new int[]{7,2,1,4,3,6,5,0}); //correct
+        Tuile tuile3 = new Tuile (3,new int[]{1,0,7,4,3,6,5,2}); // Correct prob 1->4
+        Tuile tuile6 = new Tuile (6,new int[]{5,4,7,6,1,0,3,2});
+
+
+
+
+            Tuile tuile7 = new Tuile (2,new int[]{6,3,4,1,2,7,0,5}); //
         // Tuile tuile2 = new Tuile(2,new int[]{2,7,0,5,6,3,4,1});
         //Tuile tuile3 = new Tuile (3,new int[]{6,5,4,7,2,1,0,3}); // prob
         //Tuile tuile4 = new Tuile(4,new int[]{5,4,7,6,1,0,3,2}); // prob startX and Y for the sprite
         //tuile4.getTableauChemins()[0].marquerCheminVisite(0, Joueur.Couleur.ROUGE);
         Tuile tuile5 = new Tuile (5,new int[]{4,5,6,7,0,1,2,3});
-        Tuile tuile6 = new Tuile (6,new int[]{5,4,7,6,1,0,3,2});
-        Tuile tuile7 = new Tuile (7,new int[]{7,2,1,4,3,6,5,0});
         Tuile tuile8 = new Tuile ( 8 , new int[]{3,6,5,0,7,2,1,4});
         Tuile tuile9 = new Tuile(9,new int[]{6,3,4,1,2,7,0,5});
         Tuile tuile10 = new Tuile(10,new int[]{2,7,0,5,6,3,4,1}); // FAUX 1->3 et 5->3
@@ -256,18 +302,24 @@ public class DessinateurDeTuile extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
 
+        System.out.println( "Point de sortie est " + tuile3.getPointSortieAvecRot(0));
+        tuile3.tournerTuile();
+        System.out.println( "Point de sortie est " + tuile3.getPointSortieAvecRot(0));
+        tuile3.getTableauChemins()[2].marquerCheminVisite(4, Joueur.Couleur.ROUGE);
         // Création d'un nouveau JPanel pour dessiner la tuile
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
-                dessinateur.dessinerTuile(g, tuile11, dessinateur.getSpritesSet(), 0, 0);
+                dessinateur.dessinerTuile(g, tuile3, dessinateur.getSpritesSet(), 0, 0);
 
             }
         };
 
-        // Ajout du JPanel au frame et affichage du frame
+
+
+            // Ajout du JPanel au frame et affichage du frame
         frame.add(panel);
         frame.setVisible(true);
     }
