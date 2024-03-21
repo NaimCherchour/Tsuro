@@ -88,6 +88,7 @@ public class PlateauTuiles {
             return;
         }
         plateau[ligne][colonne] = tuile;
+        actualiserPosJ(j);
     }
     public boolean isEmpty(int ligne, int colonne){
         return plateau[ligne][colonne]==null;
@@ -126,6 +127,8 @@ public class PlateauTuiles {
         Direction entree = Direction.getDirectionFromPoint(j.getEntree()).oppose(); // La direction du joueur
         int nouvelleLigne = j.getLigne() + entree.oppose().di(); // La nouvelle ligne du joueur selon sa direction
         int nouvelleColonne = j.getColonne() + entree.oppose().dj(); // La nouvelle colonne du joueur selon sa direction
+        j.setLigne(nouvelleLigne);
+        j.setColonne(nouvelleColonne);
         System.out.println("Nouvelle ligne : " + nouvelleLigne + " Nouvelle colonne : " + nouvelleColonne);
 
         // while

@@ -19,11 +19,8 @@ public class TuilePanel extends JPanel {
         return tuile;
     }
 
-    public TuilePanel() throws IOException {
-        Random random = new Random();
-        int i = random.nextInt(35);
-        List<Tuile> tuiles = TuilesGenerator.genererToutesLesTuiles();
-        this.tuile = tuiles.get(i);
+    public TuilePanel(Tuile tuile) throws IOException {
+        this.tuile = tuile;
         this.dessinateur= new DessinateurDeTuile();
         setPreferredSize(new Dimension(120, 120)); // Taille préférée du panneau de la tuile
         repaint();    }

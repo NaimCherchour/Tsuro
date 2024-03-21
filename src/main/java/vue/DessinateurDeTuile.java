@@ -49,7 +49,8 @@ public class DessinateurDeTuile extends JPanel {
     public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites, int x, int y) {
         drawnConnections.clear(); // Clear the set before drawing each tile
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            int connection = tuile.getPointSortieAvecRot(i);
+           // int connection = tuile.getPointSortieAvecRot(i);
+            int connection = tuile.getTableauChemins()[i].getPointSortie();
             if (!isConnectionDrawn(i, connection)) { // Check if connection is already drawn
                 int color = tuile.getTableauChemins()[i].getCouleur().ordinal();
                 double rotation = calculateRotationAngle(connection, i);

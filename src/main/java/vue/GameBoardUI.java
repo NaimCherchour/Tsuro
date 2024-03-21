@@ -1,5 +1,6 @@
 package main.java.vue;
 
+import main.java.model.DeckTuiles;
 import main.java.model.Joueur;
 import main.java.model.PlateauTuiles;
 import main.java.model.Tuile;
@@ -18,6 +19,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
     private PlateauTuiles board;
     private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
+    private final DeckTuiles deckTuiles;
 
     // getter
     public PlateauTuiles getBoard() {
@@ -31,6 +33,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
     public GameBoardUI(Joueur j ) throws IOException {
         this.board = new PlateauTuiles(6);
         this.joueur = j;
+        this.deckTuiles = new DeckTuiles();
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.setBackground(Color.RED);
@@ -100,7 +103,6 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
-
         drawPlayer(g, joueur);
     }
 
@@ -141,7 +143,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
             frame.add(panel, BorderLayout.CENTER); // Add the panel to the center of the frame
             SidePanel sidePanel = null; // Initialize the side panel
             try {
-                sidePanel = new SidePanel((GameBoardUI) panel);
+                sidePanel = new SidePanel((GameBoardUI) panel, ((GameBoardUI) panel).deckTuiles);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
