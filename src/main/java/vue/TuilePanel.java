@@ -1,36 +1,39 @@
 package main.java.vue;
 
 import main.java.model.Tuile;
-import main.java.model.TuilesGenerator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.List;
-import java.util.Random;
+
 
 public class TuilePanel extends JPanel {
+    private final DessinateurDeTuile dessinateur; // le dessinateur de Tuile
+    private final Tuile tuile; //La tuile à dessiner
 
-    private final DessinateurDeTuile dessinateur;
-    private final Tuile tuile;
+    private static final int TILE_SIZE = 120;
 
     //getter
     public Tuile getTuile() {
         return tuile;
     }
 
+    // Un panel de Tuile est un JPanel qui affiche une tuile.
     public TuilePanel(Tuile tuile) throws IOException {
         this.tuile = tuile;
         this.dessinateur= new DessinateurDeTuile();
-        setPreferredSize(new Dimension(120, 120)); // Taille préférée du panneau de la tuile
+        setPreferredSize(new Dimension(TILE_SIZE, TILE_SIZE)); // Taille préférée du panneau de la tuile
         repaint();    }
 
-    private void drawTile(Graphics g, int size) {
-        // Example method to draw a tile with a button below it
+    /**
+     * Dessine la tuile dans un rectangle gris avec une bordure noire.
+     * @param g
+     */
+    private void drawTile(Graphics g) {
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, size, size); // Fill rectangle representing the tile
+        g.fillRect(0, 0, TILE_SIZE, TILE_SIZE); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
-        g.drawRect(0, 0, size, size); // Draw outline of the tile
+        g.drawRect(0, 0, TILE_SIZE, TILE_SIZE); // Draw outline of the tile
         // Draw the tile's image
         dessinateur.dessinerTuile(g, tuile, dessinateur.getSpritesSet(), 0, 0);
     }
@@ -38,7 +41,6 @@ public class TuilePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawTile(g, 120);
-
+        drawTile(g);
     }
 }

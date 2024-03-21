@@ -13,6 +13,8 @@ import java.io.IOException;
 /**
  * Cette classe représente l'interface utilisateur du plateau de jeu.
  */
+
+/*
 public class PlateauUI {
 
     private static final int GRID_SIZE = 6;
@@ -32,6 +34,7 @@ public class PlateauUI {
      *
      * @param joueur Le joueur à afficher sur le plateau.
      */
+/*
     public PlateauUI(Joueur joueur) {
 
         // Initialisation du plateau et du contrôleur du plateau
@@ -114,8 +117,10 @@ public class PlateauUI {
                         //     int ligne = 0;// Calculer la ligne en fonction de la position du clic
                         //     int colonne = 0;// Calculer la colonne en fonction de la position du clic
                         //     plateauController.placerTuile(ligne, colonne, joueurActuel.getTuileJoueur(clickedIndex));
-                        int caseWidth =TILE_SIZE /* Largeur d'une case de la grille */;
+                        int caseWidth =TILE_SIZE /* Largeur d'une case de la grille */; 
+        /*
                         int caseHeight =TILE_SIZE /* Hauteur d'une case de la grille */;
+                        /*
         
                         int x = e.getX(); // Coordonnée X du clic
                         int y = e.getY(); // Coordonnée Y du clic
@@ -198,6 +203,7 @@ public class PlateauUI {
      * @param joueur Le joueur à ajouter sur le plateau.
      * @return Une instance de JoueurUI représentant l'interface du joueur.
      */
+/*
     private JoueurPanel ajouterJoueurSurPlateau(Joueur joueur) {
         JoueurPanel joueurUI = new JoueurPanel(joueur);
         return joueurUI;
@@ -208,6 +214,7 @@ public class PlateauUI {
      *
      * @param args Les arguments de la ligne de commande (non utilisés).
      */
+/*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Créer un nouveau joueur.
@@ -218,3 +225,30 @@ public class PlateauUI {
         });
     }
 }
+*/
+
+/*
+public Tuile[] GenereDeckJoueur(){
+        Random random = new Random();
+        Tuiles tuiles = new Tuiles();
+        Tuile[]ret = new Tuile[3];
+        for(int i=0;i<3;i++){
+            Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
+            ret[i]=t;
+        }
+        return ret;
+    }
+    public Tuile getTuileJoueur(int i){
+        if (i>=0 && i<3){
+            return deck[i];
+        }
+        return null;
+    }
+    public void supprimerTuile(int i){
+        Random random = new Random();
+        Tuiles tuiles = new Tuiles();
+        Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
+        deck[i]=t;
+
+    }
+ */

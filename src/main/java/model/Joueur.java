@@ -19,7 +19,6 @@ public class Joueur {
     private final String prenom; // Le prénom du joueur
     private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
     private static int indexCouleur = Couleur.NOIR.ordinal() + 1; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
-    private Tuile[] deck;
 
     public enum Couleur {
         NOIR, ROUGE,BLEU,VERT,JAUNE,ORANGE,ROSE
@@ -39,33 +38,8 @@ public class Joueur {
         this.PointEntree = PointEntree;
         this.prenom = prenom;
         this.couleur = Couleur.values()[indexCouleur];
-        deck = GenereDeckJoueur();
         Joueur.indexCouleur+=1;
     }
-    public Tuile[] GenereDeckJoueur(){
-        Random random = new Random();
-        Tuiles tuiles = new Tuiles();
-        Tuile[]ret = new Tuile[3];
-        for(int i=0;i<3;i++){
-            Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
-            ret[i]=t;
-        }
-        return ret;
-    }
-    public Tuile getTuileJoueur(int i){
-        if (i>=0 && i<3){
-            return deck[i];
-        }
-        return null;
-    }
-    public void supprimerTuile(int i){
-        Random random = new Random();
-        Tuiles tuiles = new Tuiles();
-        Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
-        deck[i]=t;
-
-    }
-
     private Couleur getNextCouleur() {
         Couleur[] couleurs = Couleur.values();
 
