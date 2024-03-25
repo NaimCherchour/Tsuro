@@ -113,12 +113,88 @@ public class BotTsuro extends Joueur {
         return score;
     }
 
-    private boolean estCoupPerdant(Mouvement mouvement, Game game) {
+    private boolean estCoupGagnant(Mouvement mouvement, Game game) {
+        for (Joueur adversaire : game.getJoueurs()) {
+            if (adversaire != this && estCoupPerdantPourAdversaire(mouvement, game, adversaire)) {
+                return true;
+            }
+        }
         return false;
     }
 
-    private boolean estCoupGagnant(Mouvement mouvement, Game game) {
-        return false;
+    private boolean estCoupPerdantPourAdversaire(Mouvement mouvement, Game game, Joueur adversaire) {
+        // Ici, on réutilise la logique de estCoupPerdant mais en appliquant la vérification à l'adversaire
+        PlateauTuiles plateau = game.getPlateau();
+        Tuile tuile = mouvement.getTuile();
+        int x = mouvement.getX();
+        int y = mouvement.getY();
+        tuile.setRotation(mouvement.getRotation());
+
+        // Calculer la sortie basée sur le point d'entrée de l'adversaire et la rotation de la tuile
+        int pointEntreeAdversaire = adversaire.getEntree(); // Remarque: Doit être calculé pour l'adversaire
+        int pointSortie = tuile.getPointSortieAvecRot(pointEntreeAdversaire, tuile.getRotation());
+
+        // Calculer la direction de sortie pour l'adversaire
+        PlateauTuiles.Direction directionSortieAdversaire = PlateauTuiles.Direction.getDirectionFromPoint(pointSortie);
+
+        // Calculer la nouvelle position pour l'adversaire
+        int nouvelleXAdversaire = x + directionSortieAdversaire.di();
+        int nouvelleYAdversaire = y + directionSortieAdversaire.dj();
+
+        // Vérifier si la nouvelle position de l'adversaire est en dehors des limites du plateau
+        if (!plateau.coordonneesValides(nouvelleXAdversaire, nouvelleYAdversaire)) {
+            return true; // Sortir du plateau est un coup perdant pour l'adversaire
+        }
+
+        // Vérifier si le chemin de sortie est emprunté pour l'adversaire (collision avec un chemin déjà occupé)
+        Tuile tuileSuivanteAdversaire = plateau.getTuile(nouvelleXAdversaire, nouvelleYAdversaire);
+        if (tuileSuivanteAdversaire != null) {
+            int[] pointsConnexionAdversaire = tuileSuivanteAdversaire.getPointsDeConnexion(directionSortieAdversaire.oppose());
+            Tuile.Chemin cheminSuivantAdversaire = tuileSuivanteAdversaire.getTableauChemins()[pointsConnexionAdversaire[0]];
+            if (cheminSuivantAdversaire.estEmprunte()) {
+                return true; // Entrer dans un chemin emprunté est un coup perdant pour l'adversaire
+            }
+        }
+
+        return false; // Si aucun des cas ci-dessus, le coup n'est pas perdant pour l'adversaire
+    }
+
+
+
+    private boolean estCoupPerdant(Mouvement mouvement, Game game) {
+        PlateauTuiles plateau = game.getPlateau();
+        int x = mouvement.getX();
+        int y = mouvement.getY();
+        Tuile tuile = mouvement.getTuile();
+        tuile.setRotation(mouvement.getRotation());
+
+        // Calculer la sortie basée sur le point d'entrée et la rotation de la tuile
+        int pointEntree = this.getEntree(); // Suppose que getEntree() renvoie le point d'entrée actuel du joueur
+        int pointSortie = tuile.getPointSortieAvecRot(pointEntree, tuile.getRotation());
+
+        // Calculer la direction de sortie
+        PlateauTuiles.Direction directionSortie = PlateauTuiles.Direction.getDirectionFromPoint(pointSortie);
+
+        // Calculer la nouvelle position
+        int nouvelleX = x + directionSortie.di();
+        int nouvelleY = y + directionSortie.dj();
+
+        // Vérifier si la nouvelle position est en dehors des limites du plateau
+        if (!plateau.coordonneesValides(nouvelleX, nouvelleY)) {
+            return true; // Sortir du plateau est un coup perdant
+        }
+
+        // Vérifier si le chemin de sortie est emprunté (collision avec un chemin déjà occupé)
+        Tuile tuileSuivante = plateau.getTuile(nouvelleX, nouvelleY);
+        if (tuileSuivante != null) {
+            int[] pointsConnexion = tuileSuivante.getPointsDeConnexion(directionSortie.oppose());
+            Tuile.Chemin cheminSuivant = tuileSuivante.getTableauChemins()[pointsConnexion[0]];
+            if (cheminSuivant.estEmprunte()) {
+                return true; // Entrer dans un chemin emprunté est un coup perdant
+            }
+        }
+
+        return false; // Si aucun des cas ci-dessus, le coup n'est pas perdant
     }
 
 
