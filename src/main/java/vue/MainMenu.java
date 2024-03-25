@@ -14,9 +14,9 @@ public class MainMenu {
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
      */
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI(JFrame frame) {
         // Création de la fenêtre principale
-        JFrame frame = new JFrame("TSURO : MENU");
+        frame = new JFrame("TSURO : MENU");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
@@ -44,10 +44,12 @@ public class MainMenu {
         rulesButton.setActionCommand("rules");
 
         // Ajoute un ActionListener au bouton "Quitter"
+        final JFrame finalFrame = frame;
         quitButton.addActionListener(e -> {
-            customDialog dialog = new customDialog(frame); // 'frame' est votre JFrame principal
+            customDialog dialog = new customDialog(finalFrame);
             dialog.setVisible(true);
-        });
+});
+
 
 
         // Personnalisation des boutons

@@ -102,11 +102,25 @@ public class Accueil {
     /**
      * Lance le menu principal.
      */
-    private void launchMainMenu() {
-        // Fermez la fenêtre d'accueil
-        frame.dispose();
+    // private void launchMainMenu() {
+    //     // Fermez la fenêtre d'accueil
+    //     frame.dispose();
 
-        // Lancer le menu principal
-        MainMenu.createAndShowGUI();
+    //     // Lancer le menu principal
+    //     MainMenu.createAndShowGUI();
+    // }
+
+    private void launchMainMenu() {
+        // Supprimez le contenu actuel de la fenêtre
+        frame.getContentPane().removeAll();
+    
+        // Lancez le menu principal en remplaçant le contenu de la fenêtre
+        MainMenu.createAndShowGUI(frame);
+    
+        // Assurez-vous que la fenêtre est redessinée
+        frame.revalidate();
+        frame.repaint();
     }
+    
+    
 }
