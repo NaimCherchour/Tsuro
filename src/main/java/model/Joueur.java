@@ -26,20 +26,41 @@ public class Joueur {
 
     /**
      * Constructeur de la classe Joueur.
-     * 
-     * @param ligne La ligne initiale du joueur sur le plateau.
-     * @param colonne La colonne initiale du joueur sur le plateau.
-     * @param PointEntree Le point d'entrée initial du joueur sur la tuile.
      * @param prenom Le prenom du joueur.
      */
-    public Joueur(int ligne, int colonne, int PointEntree, String prenom) {
-        this.ligne = ligne;
-        this.colonne = colonne;
-        this.PointEntree = PointEntree;
+
+    public Joueur( String prenom) {
+        this.PointEntree = calculPointDepart();
+        this.ligne = calculLigneDepart(PointEntree);
+        this.colonne = calculColonneDepart(PointEntree);
         this.prenom = prenom;
         this.couleur = Couleur.values()[indexCouleur];
         Joueur.indexCouleur+=1;
     }
+    public Tuile[] GenereDeckJoueur(){
+        Random random = new Random();
+        Tuiles tuiles = new Tuiles();
+        Tuile[]ret = new Tuile[3];
+        for(int i=0;i<3;i++){
+            Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
+            ret[i]=t;
+        }
+        return ret;
+    }
+    public Tuile getTuileJoueur(int i){
+        if (i>=0 && i<3){
+            return deck[i];
+        }
+        return null;
+    }
+    public void supprimerTuile(int i){
+        Random random = new Random();
+        Tuiles tuiles = new Tuiles();
+        Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
+        deck[i]=t;
+
+    }
+
     private Couleur getNextCouleur() {
         Couleur[] couleurs = Couleur.values();
 
@@ -168,6 +189,6 @@ public class Joueur {
 
     public static void main(String[] args) {
         // Exemple d'utilisation de la classe Joueur
-        Joueur joueur1 = new Joueur(3, 4, 2, "max");
+        Joueur joueur1 = new Joueur("max");
     }
 }

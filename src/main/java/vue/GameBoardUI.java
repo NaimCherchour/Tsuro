@@ -103,7 +103,12 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
-        drawPlayer(g, joueur);
+        boolean flag = true;
+        if (flag){
+            drawPlayer(g, joueur);
+            flag = false;
+
+        }
     }
 
     public void drawPlayer (Graphics g , Joueur j ){
@@ -115,6 +120,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
         int ligne = j.getLigne();
         int colonne = j.getColonne();
         board.placerTuile(ligne, colonne, tuile,j);
+        System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
         repaint();  // Rafraîchir l'affichage
     }
 
@@ -130,8 +136,9 @@ public class GameBoardUI extends JPanel implements MouseListener {
             frame.setLayout(new BorderLayout());
             JPanel panel = null;
             try {
-                 Joueur j = new Joueur(0,0,2,"RED Max"); // juste pour afficher une couleur apart le rouge car le player 1 crée est la couleur RED
-                Joueur j2 = new Joueur(0,0,2,"BLUE Max");
+                Joueur j = new Joueur("RED Max"); // juste pour afficher une couleur apart le rouge car le player 1 crée est la couleur RED
+                Joueur j2 = new Joueur("BLUE Max");
+                System.out.println("COL"+ j2.getColonne() + "LIGN" + j2.getLigne()+ "ENTR" + j2.getEntree());
                 panel = new GameBoardUI(j2);
             } catch (IOException e) {
                 throw new RuntimeException(e);

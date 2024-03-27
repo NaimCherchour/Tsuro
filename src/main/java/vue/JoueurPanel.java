@@ -42,7 +42,9 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
         
         // Calcul de la position horizontale aléatoire limitée au bord
         int posX = calculPosX(joueur);
-        int randomIndex = new Random().nextInt(10) + 1; // Exclut le premier segment de 40 pixels
+        System.out.println(posX);
+        
+        /*int randomIndex = new Random().nextInt(10) + 1; // Exclut le premier segment de 40 pixels
         posX = Math.min(Math.max(posX, MARGE_GAUCHE), getWidth() - TAILLE_PION);
         posX = MARGE_GAUCHE + (randomIndex * 40);
 
@@ -50,8 +52,9 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
             posX += 40;
         }
     
-        // Position verticale fixée sur la ligne du haut
-        int posY = MARGE_TOP;
+        // Position verticale fixée sur la ligne du haut*/
+        int posY = calculPosY(joueur); 
+        System.out.println(posY);
     
         dessinerPion(g, posX, posY);
     }
@@ -59,13 +62,31 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     private int calculPosX(Joueur j){
         int posActuelle = j.getEntree();
         int posJoueurSurBoard = 0;
-
+        if (posActuelle == 0 || posActuelle == 5){
+            posJoueurSurBoard =40;
+        }else if (posActuelle == 2 || posActuelle == 3){
+            posJoueurSurBoard =120;
+        }else if (posActuelle == 1 || posActuelle == 4){
+            posJoueurSurBoard = 80;
+        }else if (posActuelle == 6 || posActuelle == 7){
+            posJoueurSurBoard = 0;
+        }
         return MARGE_GAUCHE + j.getColonne() * TUILE_SIZE + posJoueurSurBoard;
     }
 
     private int calculPosY(Joueur j){
         int posActuelle = j.getEntree();
-        int posJoueurSurBoard=0;
+        int posJoueurSurBoard= 0;
+        if (posActuelle == 2 || posActuelle == 7){
+            posJoueurSurBoard =40;
+        }else if (posActuelle == 4 || posActuelle == 5){
+            posJoueurSurBoard = 120;
+        }else if (posActuelle == 3 || posActuelle == 6){
+            posJoueurSurBoard = 80;
+        }else if (posActuelle == 0 || posActuelle == 1){
+            posJoueurSurBoard = 0;
+        }
+        //System.out.println("LIGNEEEEE"+j.getLigne());
         return MARGE_TOP + j.getLigne() * TUILE_SIZE + posJoueurSurBoard;
     }
 
@@ -132,7 +153,7 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
      */
     public static void main(String[] args) {
         // Créer un nouveau joueur.
-        Joueur joueur = new Joueur(3, 4, 2, "Max");
+        Joueur joueur = new Joueur( "Max");
 
         // Créer la fenêtre.
         JFrame frame = new JFrame("Test JoueurPanel");

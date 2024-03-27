@@ -127,8 +127,6 @@ public class PlateauTuiles {
         Direction entree = Direction.getDirectionFromPoint(j.getEntree()).oppose(); // La direction du joueur
         int nouvelleLigne = j.getLigne() + entree.oppose().di(); // La nouvelle ligne du joueur selon sa direction
         int nouvelleColonne = j.getColonne() + entree.oppose().dj(); // La nouvelle colonne du joueur selon sa direction
-        j.setLigne(nouvelleLigne);
-        j.setColonne(nouvelleColonne);
         System.out.println("Nouvelle ligne : " + nouvelleLigne + " Nouvelle colonne : " + nouvelleColonne);
 
         // while
@@ -203,9 +201,7 @@ public class PlateauTuiles {
         plateau.afficherPlateau();
 
         System.out.println("Entrez les coordonnées de départ (ligne colonne) :");
-        int ligneDepart = 0;
-        int colonneDepart = -1;
-        Joueur joueur1 = new Joueur(ligneDepart, colonneDepart, 2, "J1");
+        Joueur joueur1 = new Joueur("J1");
         System.out.println(joueur1.getCouleur());
 
         System.out.println("Coordonnées de départ du joueur 1 : " + joueur1.getLigne() + ", " + joueur1.getColonne());

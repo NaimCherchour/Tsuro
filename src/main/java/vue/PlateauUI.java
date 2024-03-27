@@ -218,7 +218,7 @@ public class PlateauUI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Créer un nouveau joueur.
-            Joueur joueur = new Joueur(10, 10, 2, "Max");
+            Joueur joueur = new Joueur( "Max");
 
             // Créer la fenêtre du plateau avec le joueur.
             new PlateauUI(joueur);

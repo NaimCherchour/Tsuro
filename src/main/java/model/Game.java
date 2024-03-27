@@ -13,7 +13,7 @@ public class Game {
         plateau = new PlateauTuiles(taillePlateau);
         joueurs = new ArrayList<>();
         for (int i = 0; i < nombreJoueurs; i++) {
-            Joueur joueur = new Joueur(0, 0, i + 1, "Joueur " + (i + 1));
+            Joueur joueur = new Joueur( "Joueur " + (i + 1));
             joueurs.add(joueur);
         }
     }

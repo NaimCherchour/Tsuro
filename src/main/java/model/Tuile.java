@@ -104,7 +104,11 @@ public class Tuile{
 
     public Chemin trouverNouveauChemin(PlateauTuiles.Direction ancienPoint, int pointActuel) {
         int nouvelIndice = (ancienPoint.oppose().ordinal() * 2 + (pointActuel + 1) % 2) % 8;
-        return getTableauChemins()[(nouvelIndice-(2*getRotation()))%8];
+        int tmp = (nouvelIndice-(2*getRotation()))%8 ;
+        if (tmp < 0) {
+            tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
+        }
+        return getTableauChemins()[tmp];
     }
 
     public class Chemin {
