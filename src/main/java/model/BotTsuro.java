@@ -62,8 +62,6 @@ public class BotTsuro extends Joueur {
     }
 
 
-
-
     private void appliquerMouvement(Mouvement mouvement, Game game) {
         game.getPlateau().placerTuile(mouvement.getX(), mouvement.getY(), mouvement.getTuile(), this);
         game.getPlateau().actualiserPosJ(this);
@@ -74,12 +72,12 @@ public class BotTsuro extends Joueur {
     }
 
 
-    private List<Tuile> genererTuilesAleatoires(int nombreTuiles) {
+    private List<Tuile> genererTuilesAleatoires() {
         List<Tuile> toutesLesTuiles = TuilesGenerator.genererToutesLesTuiles();
         List<Tuile> tuilesAleatoires = new ArrayList<>();
         Random rand = new Random();
 
-        while (tuilesAleatoires.size() < nombreTuiles) {
+        while (tuilesAleatoires.size() < 3) {
             int indexAleatoire = rand.nextInt(toutesLesTuiles.size());
             Tuile tuileSelectionnee = toutesLesTuiles.get(indexAleatoire);
             if (!tuilesAleatoires.contains(tuileSelectionnee)) {
@@ -138,6 +136,7 @@ public class BotTsuro extends Joueur {
         PlateauTuiles.Direction directionSortieAdversaire = PlateauTuiles.Direction.getDirectionFromPoint(pointSortie);
 
         // Calculer la nouvelle position pour l'adversaire
+        assert directionSortieAdversaire != null;
         int nouvelleXAdversaire = x + directionSortieAdversaire.di();
         int nouvelleYAdversaire = y + directionSortieAdversaire.dj();
 
@@ -151,14 +150,11 @@ public class BotTsuro extends Joueur {
         if (tuileSuivanteAdversaire != null) {
             int[] pointsConnexionAdversaire = tuileSuivanteAdversaire.getPointsDeConnexion(directionSortieAdversaire.oppose());
             Tuile.Chemin cheminSuivantAdversaire = tuileSuivanteAdversaire.getTableauChemins()[pointsConnexionAdversaire[0]];
-            if (cheminSuivantAdversaire.estEmprunte()) {
-                return true; // Entrer dans un chemin emprunté est un coup perdant pour l'adversaire
-            }
+            return cheminSuivantAdversaire.estEmprunte(); // Entrer dans un chemin emprunté est un coup perdant pour l'adversaire
         }
 
         return false; // Si aucun des cas ci-dessus, le coup n'est pas perdant pour l'adversaire
     }
-
 
 
     private boolean estCoupPerdant(Mouvement mouvement, Game game) {
@@ -176,6 +172,7 @@ public class BotTsuro extends Joueur {
         PlateauTuiles.Direction directionSortie = PlateauTuiles.Direction.getDirectionFromPoint(pointSortie);
 
         // Calculer la nouvelle position
+        assert directionSortie != null;
         int nouvelleX = x + directionSortie.di();
         int nouvelleY = y + directionSortie.dj();
 
@@ -189,13 +186,74 @@ public class BotTsuro extends Joueur {
         if (tuileSuivante != null) {
             int[] pointsConnexion = tuileSuivante.getPointsDeConnexion(directionSortie.oppose());
             Tuile.Chemin cheminSuivant = tuileSuivante.getTableauChemins()[pointsConnexion[0]];
-            if (cheminSuivant.estEmprunte()) {
-                return true; // Entrer dans un chemin emprunté est un coup perdant
-            }
+            return cheminSuivant.estEmprunte(); // Entrer dans un chemin emprunté est un coup perdant
         }
 
         return false; // Si aucun des cas ci-dessus, le coup n'est pas perdant
     }
+
+    public static void main(String[] args) {
+        testGenererTuilesAleatoires();
+        System.out.println("--------------------------------");
+        testChoisirEtAppliquerMouvement();
+    }
+
+    public static void testGenererTuilesAleatoires() {
+        BotTsuro bot = new BotTsuro(0, 0, 0, "TestBot");
+        List<Tuile> tuiles = bot.genererTuilesAleatoires();
+
+        System.out.println("Test de genererTuilesAleatoires:");
+
+        if (tuiles.size() == 3) {
+            System.out.println("Succès: 3 tuiles ont été générées.");
+        } else {
+            System.out.println("Échec: le nombre de tuiles générées est incorrect.");
+        }
+
+        long uniqueCount = tuiles.stream().distinct().count();
+        if (uniqueCount == 3) {
+            System.out.println("Succès: toutes les tuiles sont uniques.");
+        } else {
+            System.out.println("Échec: certaines tuiles générées ne sont pas uniques.");
+        }
+    }
+
+    public static void testChoisirEtAppliquerMouvement() {
+        Game game = new Game(6, 2); // Ajustez selon votre implémentation
+        BotTsuro bot = new BotTsuro(3, 3, 0, "TestBot");
+        // Création de la tuile
+        Tuile tuile = new Tuile(2, new int[]{1, 0, 4, 7, 2, 6, 5, 3});
+
+        // Création de la liste contenant trois fois la même tuile
+        List<Tuile> tuilesDisponibles = new ArrayList<>();
+        tuilesDisponibles.add(tuile);
+        tuilesDisponibles.add(tuile);
+        tuilesDisponibles.add(tuile);
+
+        // Attribution de la liste de tuiles disponibles au bot
+        bot.setTuilesDisponibles(tuilesDisponibles);
+
+
+        System.out.println("Premier test de choisirEtAppliquerMouvement:");
+
+        Mouvement premierMouvement = bot.choisirEtAppliquerMouvement(game);
+        if (premierMouvement != null && game.getPlateau().getTuile(premierMouvement.getX(), premierMouvement.getY()) == premierMouvement.getTuile()) {
+            System.out.println("Succès: Un premier mouvement valide a été choisi et appliqué.");
+        } else {
+            System.out.println("Échec: Aucun mouvement valide n'a été trouvé ou appliqué lors du premier essai.");
+        }
+
+        // Réappliquer choisirEtAppliquerMouvement pour voir si le bot peut choisir un autre mouvement valide
+        System.out.println("Deuxième test de choisirEtAppliquerMouvement:");
+
+        Mouvement deuxiemeMouvement = bot.choisirEtAppliquerMouvement(game);
+        if (deuxiemeMouvement != null && game.getPlateau().getTuile(deuxiemeMouvement.getX(), deuxiemeMouvement.getY()) == deuxiemeMouvement.getTuile()) {
+            System.out.println("Succès: Un deuxième mouvement valide a été choisi et appliqué.");
+        } else {
+            System.out.println("Échec: Aucun mouvement valide n'a été trouvé ou appliqué lors du deuxième essai.");
+        }
+    }
+
 
 
     public static class Mouvement {
