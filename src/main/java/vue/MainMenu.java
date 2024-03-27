@@ -56,9 +56,9 @@ public class MainMenu {
         });
 
         // Personnalisation des boutons
-        customizeButtons(playButton, optionsButton, quitButton);
+        Button.customizeButtons(playButton, optionsButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
-        mainStyle(buttonsPanel, playButton, optionsButton, quitButton);
+        Button.mainStyle(buttonsPanel, playButton, optionsButton, quitButton);
         rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         rulesButton.setFocusPainted(false);
         rulesButton.setContentAreaFilled(false);
@@ -98,174 +98,11 @@ public class MainMenu {
         frame.setLocationRelativeTo(null);
 
         playButton.addActionListener(e -> {
-           
-            frame.setVisible(false);
-            // nouvelle scene pour choisir le mode de jeu
-            JFrame newFrame = new JFrame("Mode de jeu:");
-            newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-            newFrame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    // Affiche de la fenetre principale apres avoir fermer
-                    frame.setVisible(true);
-                }
-            });
-
-            // boutons "Jouer contre le bot" et "Jouer multijoueur"
-            JButton playAgainstBotButton = new JButton("Jouer contre le bot");
-            JButton playMultiplayerButton = new JButton("Jouer multijoueur");
-            JButton playOnLine = new JButton("Jouer en ligne");
-
-            playAgainstBotButton.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
-                    playAgainstBotButton.setForeground(Color.RED);
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    playAgainstBotButton.setForeground(Color.BLACK);
-                }
-            });
-
-            playMultiplayerButton.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
-                    playMultiplayerButton.setForeground(Color.RED);
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    playMultiplayerButton.setForeground(Color.BLACK);
-                }
-            });
-
-            playOnLine.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
-                    playOnLine.setForeground(Color.RED);
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    playOnLine.setForeground(Color.BLACK);
-                }
-            });
-
-            // Ajouter les boutons à un panneau
-            JPanel newPanel = new JPanel(new GridBagLayout()) {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    ImageIcon backgroundImage = new ImageIcon("src/main/ressources/fond.png");
-                    g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
-                }
-            };
-            newPanel.add(playAgainstBotButton);
-            newPanel.add(playMultiplayerButton);
-            newPanel.add(playOnLine);
-
-            newPanel.setBorder(BorderFactory.createEmptyBorder(68, 0, 0, 0));
-            newPanel.setOpaque(false);
-           
-            //placement des boutons en colonne et au milieu de la fenetre 
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.gridx = 0;
-            constraints.gridy = 0;
-            constraints.insets = new Insets(20, 0, 20, 0); // Espacement entre les boutons
-            constraints.anchor = GridBagConstraints.CENTER;
-
-         
-            newPanel.add(playAgainstBotButton, constraints);
-
-            constraints.gridy = 1;
-            newPanel.add(playMultiplayerButton, constraints);
-
-            constraints.gridy = 2;
-            newPanel.add(playOnLine, constraints);
-
-           
-            newFrame.getContentPane().add(newPanel);
-
-            // taille et la position de la nouvelle scène
-            newFrame.setSize(1065, 600);
-            newFrame.setLocationRelativeTo(null);
-
-            newFrame.setVisible(true);
-
+            Jouer.gererClicSurBoutonJouer(frame);
         });
 
         
         frame.setVisible(true);
 
     }
-
-    /**
-     * Applique un style spécifique au panneau principal en utilisant GridBagLayout.
-     * 
-     * @param panel   Le panneau à styliser.
-     * @param buttons Les boutons à ajouter au panneau.
-     */
-    private static void mainStyle(JPanel panel, JButton... buttons) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.anchor = GridBagConstraints.CENTER;
-
-        // Ajoute les boutons au panneau avec le style défini
-        for (JButton button : buttons) {
-            panel.add(button, gbc);
-        }
-    }
-
-    /**
-     * Personnalise l'apparence des boutons en utilisant des images.
-     * 
-     * @param buttons Les boutons à personnaliser.
-     */
-    private static void customizeButtons(JButton... buttons) {
-        for (JButton button : buttons) {
-            button.setBorder(BorderFactory.createEmptyBorder());
-            button.setFocusPainted(false);
-            button.setContentAreaFilled(false);
-
-            // Utiliser les noms de fichiers fournis pour les icônes de base
-            ImageIcon icon = new ImageIcon("src/main/ressources/" + button.getActionCommand() + "Button.png");
-            Image img = icon.getImage();
-            Image newImg = img.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
-            button.setIcon(new ImageIcon(newImg));
-
-            // Utiliser les noms de fichiers fournis pour les icônes pressées
-            ImageIcon pressedIcon = new ImageIcon(
-                    "src/main/ressources/" + button.getActionCommand() + "ButtonPressed.png");
-            Image pressedImg = pressedIcon.getImage();
-            Image newPressedImg = pressedImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
-            button.setPressedIcon(new ImageIcon(newPressedImg));
-
-            // Utiliser les noms de fichiers fournis pour les icônes de survol
-            ImageIcon rolloverIcon = new ImageIcon(
-                    "src/main/ressources/" + button.getActionCommand() + "ButtonHover.png");
-            Image rolloverImg = rolloverIcon.getImage();
-            Image newRolloverImg = rolloverImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
-            button.setRolloverIcon(new ImageIcon(newRolloverImg));
-
-            // Ajoute un MouseAdapter pour changer l'icône lors du clic
-            button.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    button.setIcon(new ImageIcon(newPressedImg));
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    button.setIcon(new ImageIcon(newImg));
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    button.setIcon(new ImageIcon(newImg));
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    button.setIcon(new ImageIcon(newRolloverImg));
-                }
-            });
-        }
-    }
-
 }
