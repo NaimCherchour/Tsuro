@@ -1,6 +1,7 @@
 package main.java.vue;
 
 import main.java.model.DeckTuiles;
+import main.java.model.Joueur;
 import main.java.model.Tuile;
 
 import javax.swing.*;
@@ -10,14 +11,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SidePanel extends JPanel {
-    private final GameBoardUI gameBoardUI; // Référence à l'interface utilisateur du plateau de jeu
-    private final DeckTuiles deckTuiles; // Référence au deck de tuiles
+    private final GameBoardUI gameBoardUI;
+    private final DeckTuiles deckTuiles;
 
 
     public SidePanel(GameBoardUI gameBoardUI,DeckTuiles deckTuiles) throws IOException {
         this.gameBoardUI = gameBoardUI;
         this.deckTuiles = deckTuiles;
-        setPreferredSize(new Dimension(200, 600));
+
+        setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur automatiquement
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les composants verticalement
         setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
         refreshDeck();
@@ -34,14 +36,15 @@ public class SidePanel extends JPanel {
                 add(tuilePanel);
                 add(Box.createRigidArea(new Dimension(0, 10)));
                 JButton bouton = createButtonRotation(tuilePanel);
-                add(bouton);
-                add(Box.createRigidArea(new Dimension(0, 10)));
+                add(bouton); // Ajouter le bouton au panneau latéral
+                add(Box.createRigidArea(new Dimension(0, 10))); // Ajuster la hauteur selon les besoins
+                // Créer un bouton de rotation et lui ajouter un ActionListener pour placer la tuile sélectionnée
                 JButton bouton2 = createButton(tuilePanel,i);
-                add(bouton2);
+                add(bouton2); // Ajouter le bouton au panneau latéral
             }
         }
-        revalidate(); // Revalider le panneau pour afficher les modifications
-        repaint(); // Redessiner le panneau
+        revalidate();
+        repaint();
     }
 
 
@@ -59,7 +62,7 @@ public class SidePanel extends JPanel {
 
     private JButton createButton(TuilePanel tuilePanel , int index) {
         JButton bouton = new JButton("Place");
-        bouton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
         bouton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,31 +77,22 @@ public class SidePanel extends JPanel {
     }
 
 
-    /**
-     * Place la tuile sélectionnée sur le plateau de jeu.
-     * @param index L'indice de la tuile sélectionnée. soit 0 ou 1 ou 2 selon l'ordre dans le panel
-     * @throws IOException
-     */
-
-    private void placerTuileFromDeck(int index) throws IOException {
+    private void placerTuileFromDeck(int index ) throws IOException {
         Tuile tuile = deckTuiles.getTuile(index);
         if (tuile != null) {
-            refreshDeck(); // Rafraîchir le deck après avoir placé la tuile
-            gameBoardUI.placerTuileSurPlateau(gameBoardUI.getJoueur(), tuile); // Appeler la méthode pour placer la tuile sur le plateau
+            refreshDeck();
+            gameBoardUI.placerTuileSurPlateau(tuile);
         } else {
-            JOptionPane.showMessageDialog(null, "No tiles placed!");
+            JOptionPane.showMessageDialog(null, "No tiles in hand!");
         }
     }
 
-    /**
-     *  Method to rotate the tile and repaint
-     * @param tuile The tile to rotate
-     */
+    // Method to rotate the tile and repaint
     private void rotateTile( Tuile tuile) {
         // Call the rotateTile method in the GameBoardUI class
-        // TODO : Model Detected
-        tuile.tournerTuile(); // Appeler la méthode pour faire pivoter la tuile du MODEL
+        tuile.tournerTuile(); // Appeler la méthode pour faire pivoter la tuile
         repaint();
+        gameBoardUI.rotateTile(tuile);
     }
 }
 

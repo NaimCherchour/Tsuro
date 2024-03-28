@@ -48,6 +48,7 @@ public class DeckTuiles {
      * une tuile du deck qui est placé sur le Plateau
      */
     public Tuile shuffleTuile() {
+        this.tuiles = TuilesGenerator.genererToutesLesTuiles();
         Random random = new Random();
         return tuiles.get(random.nextInt(tuiles.size()));
     }

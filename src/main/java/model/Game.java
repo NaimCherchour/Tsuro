@@ -36,7 +36,7 @@ public class Game {
                 Tuile tuile = tuiles.get((int) (Math.random() * 3) + 1);
 
                 // Placer la tuile sur le plateau
-                plateau.placerTuile(ligneTuile, colonneTuile, tuile, joueur);
+                plateau.placerTuile( tuile, joueur);
                 plateau.actualiserPosJ(joueur);
                 plateau.afficherPlateau();
 

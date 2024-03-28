@@ -1,16 +1,21 @@
 package main.java.model;
+import java.util.List;
 import java.util.Scanner;
 
 import main.java.model.Joueur;
 
 import main.java.model.Tuile.Chemin;
+import main.java.vue.GameBoardUI;
 
 /**
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
 public class PlateauTuiles {
 
-    private Joueur joueurActuel;
+    public void setJoueurs(List<Joueur> joueurs) {
+        this.joueurs = joueurs;
+    }
+
     // Enumération des directions
     public enum Direction {
         NORD, EST, SUD, OUEST;
@@ -41,6 +46,15 @@ public class PlateauTuiles {
         public static Direction getDirectionFromPoint ( int ind ){
             return values()[ind / 2];
         }
+
+        public static int getPointFromDirection(Direction d, int sortie){
+            // la nouvelle entrée
+            if (sortie % 2 == 0) {
+                return d.ordinal() * 2 + 1;
+            }else {
+                return d.ordinal()*2;
+            }
+        }
         // Méthode pour vérifier si deux directions sont du même côté
         public static boolean sameSide(Direction first, Direction other) {
             // Comparaison basée sur les indices (0 et 1, 2 et 3, 4 et 5, 6 et 7)
@@ -60,6 +74,8 @@ public class PlateauTuiles {
         }
     }
     private Tuile[][] plateau; // Matrice représentant le plateau de tuiles.
+    private List<Joueur> joueurs; // La liste des joueurs
+
 
     /**
      * Constructeur de la classe PlateauTuiles.
@@ -77,18 +93,17 @@ public class PlateauTuiles {
     /**
      * Place une tuile sur le plateau à la position spécifiée et vérifie si le joueur perd.
      *
-     * @param ligne La ligne où placer la tuile.
-     * @param colonne La colonne où placer la tuile.
      * @param tuile La tuile à placer.
      * @param j Le joueur associé à la tuile.
      */
-    public void placerTuile(int ligne, int colonne, Tuile tuile, Joueur j) {
-        if (ligne < 0 || ligne >= plateau.length || colonne < 0 || colonne >= plateau.length ||  plateau[ligne][colonne] != null ){
+    public boolean placerTuile(Tuile tuile, Joueur j) {
+        if (j.getLigne() < 0 || j.getLigne() >= plateau.length || j.getColonne() < 0 || j.getColonne() >= plateau.length ||  plateau[j.getLigne()][j.getColonne()] != null ){
             System.out.println("Impossible de placer une tuile ici.");
-            return;
+            return false ;
         }
-        plateau[ligne][colonne] = tuile;
+        plateau[j.getLigne()][j.getColonne()] = tuile;
         actualiserPosJ(j);
+        return true;
     }
     public boolean isEmpty(int ligne, int colonne){
         return plateau[ligne][colonne]==null;
@@ -124,31 +139,31 @@ public class PlateauTuiles {
     // Méthode pour actualiser la position du joueur après le placement d'une tuile
     public void actualiserPosJ(Joueur j) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
-        Direction entree = Direction.getDirectionFromPoint(j.getEntree()).oppose(); // La direction du joueur
-        int nouvelleLigne = j.getLigne() + entree.oppose().di(); // La nouvelle ligne du joueur selon sa direction
-        int nouvelleColonne = j.getColonne() + entree.oppose().dj(); // La nouvelle colonne du joueur selon sa direction
-        System.out.println("Nouvelle ligne : " + nouvelleLigne + " Nouvelle colonne : " + nouvelleColonne);
 
-        // while
-        if (coordonneesValides(nouvelleLigne, nouvelleColonne)) { // Si les nouvelles coordonnées sont valides
-            if (!isEmpty(nouvelleLigne, nouvelleColonne)) { // S il n y a pas une tuile on se deplace
-                j.setLigne(nouvelleLigne);
-                j.setColonne(nouvelleColonne);
-                Tuile nouvelleTuile = plateau[nouvelleLigne][nouvelleColonne]; // TODO : Le joueur place un etuile d'abord après il se déplace
-                Chemin nouveauChemin = nouvelleTuile.trouverNouveauChemin(Direction.getDirectionFromPoint(j.getEntree()), j.getEntree());
-                System.out.println("sortie du chemin :"+(nouveauChemin.getPointSortie()+2*nouvelleTuile.getRotation())%8);
-                if (nouveauChemin.estEmprunte()) {
-                    System.out.println("Vous allez rentrer en collision avec un autre joueur !\nLe joueur a perdu.");
-                } else {
-                    j.setEntree(nouveauChemin,nouvelleTuile); // On change le point d'entrée du joueur sur la tuile avec la nouvelle sortie
-                    nouveauChemin.setCouleur(j.getCouleur());
-                    actualiserPosJ(j); // ??
-                }
+        Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
+        if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
+            int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
+            if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
+                System.out.println("Lost CHEMIN DEJA VISITE");
             } else {
-                System.out.println("Déplacement impossible : aucune tuile dans la direction spécifiée.");
+                Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
+                tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
+                int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
+                j.setPointEntree(nouvelleEntree);
+                int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
+                int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
+                if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
+                    j.setLigne(nouvelleLigne);
+                    j.setColonne(nouvelleColonne);
+                    actualiserPosJ(j);
+                } else {
+                    j.setLigne(nouvelleLigne);
+                    j.setColonne(nouvelleColonne);
+                    System.out.println("Lost OUT OF BORDER");
+                }
             }
         } else {
-            System.out.println("Déplacement impossible : le joueur est sorti du plateau.");
+            System.out.println("Aucune Tuile");
         }
     }
 
@@ -212,9 +227,9 @@ public class PlateauTuiles {
         int colonneTuile = 0;
 
         // Ici vous devez choisir quel joueur va placer la tuile, puis appeler la méthode placerTuile() en conséquence
-        plateau.placerTuile(ligneTuile, colonneTuile, tuile1, joueur1); // Par exemple, placer la tuile pour le joueur 1
-        plateau.placerTuile(ligneTuile, colonneTuile+1, tuile2, joueur1); // Par exemple, placer la tuile pour le joueur 1
-        plateau.actualiserPosJ(joueur1);
+        //plateau.placerTuile(ligneTuile, colonneTuile, tuile1, joueur1); // Par exemple, placer la tuile pour le joueur 1
+        //plateau.placerTuile(ligneTuile, colonneTuile+1, tuile2, joueur1); // Par exemple, placer la tuile pour le joueur 1
+        //plateau.actualiserPosJ(joueur1);
 
         plateau.afficherPlateau();
 

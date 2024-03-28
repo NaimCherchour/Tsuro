@@ -14,32 +14,67 @@ import javax.imageio.ImageIO;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameBoardUI extends JPanel implements MouseListener {
     private PlateauTuiles board;
-    private Joueur joueur;
+    //private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
     private final DeckTuiles deckTuiles;
+
+    private List<Joueur> joueurs; // La liste des joueurs
+    private int currentPlayerIndex;
+
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
 
     // getter
     public PlateauTuiles getBoard() {
         return board;
     }
 
-    public Joueur getJoueur() {
-        return joueur;
+    public List<Joueur> getJoueurs() {
+        return joueurs;
     }
 
-    public GameBoardUI(Joueur j ) throws IOException {
+    public GameBoardUI() throws IOException {
         this.board = new PlateauTuiles(6);
-        this.joueur = j;
         this.deckTuiles = new DeckTuiles();
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
-        this.setBackground(Color.RED);
+        initializePlayers();
         addMouseListener(this);
 
     }
+
+    private void initializePlayers() {
+        joueurs = new ArrayList<>();
+        joueurs.add(new Joueur("Joueur 1"));
+        joueurs.add(new Joueur("Joueur 2"));
+        joueurs.add(new Joueur("Joueur 3"));
+        joueurs.add(new Joueur("Joueur 4"));
+        joueurs.add(new Joueur("Joueur 5"));
+        joueurs.add(new Joueur("Joueur 6"));
+        currentPlayerIndex = 0; // Initialiser à 0 pour commencer avec le premier joueur
+        this.board.setJoueurs(joueurs);
+    }
+
+    private void nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+    }
+
+    // Méthode pour gérer les actions du joueur actuel
+    private void handlePlayerAction() {
+        while (joueurs.size() > 1 ){
+            Joueur currentPlayer = joueurs.get(currentPlayerIndex);
+
+            nextPlayer(); // Passer au joueur suivant après l'action
+        }
+
+    }
+
 
     public int[] calculDePosition(int x,int y){
         int X = 0 ;
@@ -103,11 +138,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
-        boolean flag = true;
-        if (flag){
+        for (Joueur joueur : joueurs) {
             drawPlayer(g, joueur);
-            flag = false;
-
         }
     }
 
@@ -116,14 +148,22 @@ public class GameBoardUI extends JPanel implements MouseListener {
         joueurUI.paintComponent(g);
     }
 
-    public void placerTuileSurPlateau(Joueur j , Tuile tuile) {
-        int ligne = j.getLigne();
-        int colonne = j.getColonne();
-        board.placerTuile(ligne, colonne, tuile,j);
+    public void placerTuileSurPlateau(Tuile tuile) {
+        Joueur j = joueurs.get(currentPlayerIndex);
+        if ( ! board.placerTuile(tuile, j) )
+         {  // show a message error
+             joueurs.remove(joueurs.get(currentPlayerIndex));
+             JOptionPane.showMessageDialog(this,j.getPrenom() + j.getCouleur().toString() +  " a perdu ! ");
+        }
         System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+        nextPlayer();
         repaint();  // Rafraîchir l'affichage
     }
 
+    public void rotateTile(Tuile tuile) {
+        tuile.tournerTuile();
+        repaint();
+    }
 
 
     public static void main(String[] args) {
@@ -136,10 +176,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
             frame.setLayout(new BorderLayout());
             JPanel panel = null;
             try {
-                Joueur j = new Joueur("RED Max"); // juste pour afficher une couleur apart le rouge car le player 1 crée est la couleur RED
-                Joueur j2 = new Joueur("BLUE Max");
-                System.out.println("COL"+ j2.getColonne() + "LIGN" + j2.getLigne()+ "ENTR" + j2.getEntree());
-                panel = new GameBoardUI(j2);
+                panel = new GameBoardUI();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

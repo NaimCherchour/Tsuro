@@ -19,10 +19,13 @@ public class Joueur {
     private final String prenom; // Le prénom du joueur
     private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
     private static int indexCouleur = Couleur.NOIR.ordinal() + 1; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
-    private Tuile[] deck;
+
+    public String getNom() {
+        return prenom;
+    }
 
     public enum Couleur {
-        NOIR, ROUGE,BLEU,VERT,JAUNE,ORANGE,ROSE
+        NOIR,ROUGE,BLEU,VERT,JAUNE,ORANGE,ROSE,CYAN,VIOLET
     }
 
     /**
@@ -36,31 +39,7 @@ public class Joueur {
         this.colonne = calculColonneDepart(PointEntree);
         this.prenom = prenom;
         this.couleur = Couleur.values()[indexCouleur];
-        deck = GenereDeckJoueur();
         Joueur.indexCouleur+=1;
-    }
-    public Tuile[] GenereDeckJoueur(){
-        Random random = new Random();
-        Tuiles tuiles = new Tuiles();
-        Tuile[]ret = new Tuile[3];
-        for(int i=0;i<3;i++){
-            Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
-            ret[i]=t;
-        }
-        return ret;
-    }
-    public Tuile getTuileJoueur(int i){
-        if (i>=0 && i<3){
-            return deck[i];
-        }
-        return null;
-    }
-    public void supprimerTuile(int i){
-        Random random = new Random();
-        Tuiles tuiles = new Tuiles();
-        Tuile t = tuiles.getTuile(random.nextInt(36) + 1);
-        deck[i]=t;
-
     }
 
     private int calculPointDepart(){
@@ -72,7 +51,7 @@ public class Joueur {
             if (pointDepart == 0 || pointDepart ==1){
                 return 0;
             }else if(pointDepart == 4 || pointDepart ==5){
-                return 6;
+                return 5;
             }else{
                 Random random = new Random();
                 return random.nextInt(6);
@@ -83,7 +62,7 @@ public class Joueur {
         if (pointDepart == 6 || pointDepart == 7){
             return 0;
         }else if(pointDepart == 2 || pointDepart ==3){
-            return 6;
+            return 5;
         }else{
             Random random = new Random();
             return random.nextInt(6);

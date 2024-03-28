@@ -1,6 +1,7 @@
 package main.java.vue;
 
 import main.java.model.Joueur;
+import main.java.model.PlateauTuiles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,20 +43,11 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
         
         // Calcul de la position horizontale aléatoire limitée au bord
         int posX = calculPosX(joueur);
-        System.out.println(posX);
-        
-        /*int randomIndex = new Random().nextInt(10) + 1; // Exclut le premier segment de 40 pixels
-        posX = Math.min(Math.max(posX, MARGE_GAUCHE), getWidth() - TAILLE_PION);
-        posX = MARGE_GAUCHE + (randomIndex * 40);
-
-        if ((posX - MARGE_GAUCHE) % 120 == 0) {
-            posX += 40;
-        }
-    
+        System.out.println("POSX : "+posX);
         // Position verticale fixée sur la ligne du haut*/
-        int posY = calculPosY(joueur); 
-        System.out.println(posY);
-    
+        int posY = calculPosY(joueur);
+        System.out.println("POSY : "+posY);
+
         dessinerPion(g, posX, posY);
     }
     
@@ -63,11 +55,11 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
         int posActuelle = j.getEntree();
         int posJoueurSurBoard = 0;
         if (posActuelle == 0 || posActuelle == 5){
-            posJoueurSurBoard =40;
+            posJoueurSurBoard =38;
         }else if (posActuelle == 2 || posActuelle == 3){
-            posJoueurSurBoard =120;
+            posJoueurSurBoard =118;
         }else if (posActuelle == 1 || posActuelle == 4){
-            posJoueurSurBoard = 80;
+            posJoueurSurBoard = 78;
         }else if (posActuelle == 6 || posActuelle == 7){
             posJoueurSurBoard = 0;
         }
@@ -78,11 +70,11 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
         int posActuelle = j.getEntree();
         int posJoueurSurBoard= 0;
         if (posActuelle == 2 || posActuelle == 7){
-            posJoueurSurBoard =40;
+            posJoueurSurBoard =38;
         }else if (posActuelle == 4 || posActuelle == 5){
-            posJoueurSurBoard = 120;
+            posJoueurSurBoard = 118;
         }else if (posActuelle == 3 || posActuelle == 6){
-            posJoueurSurBoard = 80;
+            posJoueurSurBoard = 78;
         }else if (posActuelle == 0 || posActuelle == 1){
             posJoueurSurBoard = 0;
         }
@@ -119,6 +111,8 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
             case JAUNE -> Color.YELLOW;
             case ORANGE -> Color.ORANGE;
             case ROSE -> Color.PINK;
+            case CYAN -> Color.CYAN;
+            case VIOLET -> new Color(128, 0, 128); // Violet
         };
     }
 
