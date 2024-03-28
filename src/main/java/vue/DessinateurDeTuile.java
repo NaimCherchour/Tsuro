@@ -18,6 +18,8 @@ import javax.swing.*;
 import main.java.model.PlateauTuiles.Direction;
 import static main.java.model.PlateauTuiles.Direction.*;
 import static main.java.model.Tuile.TAILLE_DU_TABLEAU;
+import static main.java.vue.DessinateurDeTuile.ImageFlip.drawFlippedImage;
+
 
 public class DessinateurDeTuile extends JPanel {
 
@@ -50,7 +52,7 @@ public class DessinateurDeTuile extends JPanel {
         drawnConnections.clear(); // Clear the set before drawing each tile
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
            // int connection = tuile.getPointSortieAvecRot(i);
-            int connection = tuile.getTableauChemins()[i].getPointSortie();
+            int connection = tuile.getPointSortieAvecRot(i);
             if (!isConnectionDrawn(i, connection)) { // Check if connection is already drawn
                 int color = tuile.getTableauChemins()[i].getCouleur().ordinal();
                 double rotation = calculateRotationAngle(connection, i);
@@ -62,20 +64,11 @@ public class DessinateurDeTuile extends JPanel {
         }
     }
 
+
     public void test(Graphics g) {
-        BufferedImage sprite = spritesSet.getSubimage(4 * SPRITE_WIDTH, 1 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
-        AffineTransform mirrorTransform = AffineTransform.getScaleInstance(1, -1);
-        mirrorTransform.translate(0, -SPRITE_HEIGHT); // Translate by the negative height of the sprite to flip vertically
-
-        // Apply mirroring
-        BufferedImage transformedSprite = new BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = transformedSprite.createGraphics();
-        g2d.setTransform(mirrorTransform);
-        g2d.drawImage(sprite, 0, 0, null);
-        g2d.dispose();
-
-        // Draw the transformedSprite instead of sprite
-        g.drawImage(transformedSprite, 0, 0, SPRITE_WIDTH,SPRITE_HEIGHT,null);
+        BufferedImage sprite = spritesSet.getSubimage(4 * SPRITE_WIDTH, 0 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
+        BufferedImage i = drawFlippedImage(g, sprite, 0, 0);
+        g.drawImage(i,0,0,null);
     }
 
 
@@ -95,53 +88,43 @@ public class DessinateurDeTuile extends JPanel {
      * @param sprite est le sprite extrait à dessiner
      * @param rotation est l'angle de Rotation
      */
-    private void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation,int x,int y) {
+    public void drawPath(Graphics g, int from, int to, BufferedImage sprite, double rotation,int x,int y) {
         BufferedImage transformedSprite;
-        // Check if mirroring is needed
+
         if (mirrorNeeded(from, to)) {
-            // Create a new AffineTransform for mirroring Vertically
-            AffineTransform mirrorTransform = AffineTransform.getScaleInstance(1, -1);
-            mirrorTransform.translate(0, -SPRITE_HEIGHT);
-            System.out.println("MIRROR");
-            // Apply mirroring
-            transformedSprite = new BufferedImage(sprite.getWidth(), sprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = transformedSprite.createGraphics();
-            g2d.setTransform(mirrorTransform);
-            g2d.drawImage(sprite, 0, 0, null);
+            transformedSprite = drawFlippedImage(g, sprite, x, y);
+
+            AffineTransform transform = new AffineTransform();
+            transform.rotate(Math.toRadians(rotation), SPRITE_WIDTH / 2.0, SPRITE_HEIGHT / 2.0); // Rotate around the center of the sprite
+
+            // Create a new BufferedImage for the rotated sprite
+            BufferedImage rotatedSprite = new BufferedImage(SPRITE_WIDTH, SPRITE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = rotatedSprite.createGraphics();
+            g2d.setTransform(transform);
+            g2d.drawImage(transformedSprite, 0, 0, null);
             g2d.dispose();
+            g.drawImage(rotatedSprite,x,y,null);
         } else {
-            transformedSprite = sprite; // Sans Mirroir
+            transformedSprite = sprite;
+            // Apply rotation using AffineTransform
+            AffineTransform transform = new AffineTransform();
+            transform.rotate(Math.toRadians(rotation), SPRITE_WIDTH / 2.0, SPRITE_HEIGHT / 2.0); // Rotate around the center of the sprite
+
+            // Create a new BufferedImage for the rotated sprite
+            BufferedImage rotatedSprite = new BufferedImage(SPRITE_WIDTH, SPRITE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = rotatedSprite.createGraphics();
+            g2d.setTransform(transform);
+            g2d.drawImage(transformedSprite, 0, 0, null);
+            g2d.dispose();
+            g.drawImage(rotatedSprite,x,y,null);
         }
-
-        // Apply rotation using AffineTransform
-        AffineTransform transform = new AffineTransform();
-        transform.rotate(Math.toRadians(rotation), SPRITE_WIDTH / 2.0, SPRITE_HEIGHT / 2.0); // Rotate around the center of the sprite
-
-        // Create a new BufferedImage for the rotated sprite
-        BufferedImage rotatedSprite = new BufferedImage(SPRITE_WIDTH, SPRITE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = rotatedSprite.createGraphics();
-        g2d.setTransform(transform);
-        g2d.drawImage(transformedSprite, 0, 0, null);
-        g2d.dispose();
-
-        if (from == 1 && to == 4) {
-           g.drawImage(rotatedSprite, 40, 0, SPRITE_WIDTH, SPRITE_HEIGHT, null);
-           return;
-        }
-        g.drawImage(rotatedSprite,x,y,null);
-
 
     }
 
     private boolean mirrorNeeded(int from, int to) {
         // C'est le cas ou l'entrée est impair
         int enter = Math.min(from,to);
-        boolean b = (from % 2 == 1 && to % 2 == 1 ) ;
-        if (( from == 1 && to == 4 ) || ( to == 1 && from == 4) ){
-            return true;
-        }
-
-        return b;
+        return enter % 2 == 1 ;
     }
 
 
@@ -150,39 +133,52 @@ public class DessinateurDeTuile extends JPanel {
 
     // Méthode pour obtenir l'indice du sprite en fonction de la connexion et de l'indice du chemin
     private int getIndexSprite(int connection, int index) {
-        int diff = Math.abs(connection - index);
         Direction first = getDirectionFromPoint(index);
         Direction other = getDirectionFromPoint(connection);
-        System.out.println("Connection : "+connection + " Index : "+index);
-        System.out.println("Diff : "+diff);
-        System.out.println(first + " -> "+other);
 
-        if (diff == 1 && sameSide(first,other)) {
-            System.out.println("0");
-            return 0;
-        } else if ( (diff == 1 && adjacent(first,other)) || diff == 7  ) {
-            System.out.println("6");
-            return 6;
-        } else if (diff == 2 && adjacent(first,other) && !(connection == 3 && index == 1 ) && !(index == 3 && connection == 1 )) {
-            System.out.println("1");
-            return 1;
-        }else if ( (diff == 3 || diff == 5 ) && adjacent(first,other) ) {
-            System.out.println("2");
-            return 2;
-        } else if (diff == 4 && opposite(first,other) ){
-            System.out.println("3");
-            return 3;
-        } else if ( (diff == 5 || diff == 3 ) && opposite(first,other) ){
-            System.out.println("DIFF 5 ET OPPOSE ");
-            System.out.println("4");
-            return 4;
-        } else if ( (diff == 6 && adjacent(first,other) ) || ( connection == 1 && index == 3 ) || ( connection == 3 && index == 1) ) {
-            System.out.println("5");
-            System.out.println("diff 6");
-            return 5;
-        } else {
-            System.out.println("hors truc");
-            return 0; }
+        int enter = Math.min(connection, index);
+        int out = Math.max(connection,index);
+        int diff = Math.abs(connection - index);
+        if (enter == 0 ) {
+            return out-1;
+        } else if ( enter == 1) {
+            if (diff == 1 && sameSide(first,other)) {
+                return 0; }
+            else if ( (diff == 6 && adjacent(first,other)) ) {
+                return 1;
+            } else if (diff == 5  && adjacent(first,other) ) {
+                return 2; }
+            else if (diff == 4 && opposite(first,other) ){
+                return 3;
+            } else if ( (diff == 3 ) && opposite(first,other) ){
+                return 4;
+            } else if (diff == 2 && adjacent(first,other) ) {
+                return 5;
+            } else if ( diff == 1 && adjacent(first,other) ) {
+                return 6; }
+        } else if ( enter == 2 || enter == 4 ) {
+            return diff -1 ;
+        } else if ( enter == 3 ) {
+            if (diff == 1 && adjacent(first,other)) {
+                return 6;
+            } else if (diff == 4 && opposite(first,other) ){
+                return 3;
+            } else if ( diff == 3  && opposite(first,other) ){
+                return 4;
+            } else if (diff == 2 && adjacent(first,other) ) {
+                return 1;}
+        }  else if ( enter == 5 ) {
+            if ( diff == 2 && adjacent(first,other)){
+                return 1;
+            } else if ( diff == 1 && adjacent(first,other)){
+                return 6;
+            }
+        } else if ( enter == 6 ) {
+            if ( diff == 1 && sameSide(first,other)){
+                return 0 ;
+            }
+        }
+        return 0;
     }
 
 
@@ -192,37 +188,33 @@ public class DessinateurDeTuile extends JPanel {
         // Calculer la Différence entre les deux
         int diff = Math.abs(connection - index);
 
-        // Determine the angle of rotation based on the direction and entry point
-        if ((diff == 1 && sameSide(first, other))) {
-            return first.ordinal()*90;  // first or other would be the same because its on the same side
-        } else if ((diff == 2 ) && adjacent(first, other)) {
-            if ( ( connection == 5 && index == 7) || ( connection == 7 && index == 5) ) {
-                return 90 ;
-            } else if ( ( connection == 5 && index == 3) || ( connection == 3 && index == 5) ) {
+        int enter = Math.min(connection, index);
+        int out = Math.max(connection,index);
+        if ( enter == 2 ) { // aucun mirroir
+            return 90 ;
+        } else if ( enter == 3 ) {  // il y aura un mirroir
+            if (diff == 1 && adjacent(first,other)) {
+                return 90;
+            } else if (diff == 4 && opposite(first,other) ){
+                return 90;
+            } else if ( diff == 3  && opposite(first,other) ){
+                return 90;
+            } else if (diff == 2 && adjacent(first,other) ) {
+                return 180;}
+        } else if ( enter == 4 ){
+           return 180 ;
+        } else if (enter == 5 ) {
+            if ( diff == 1 && adjacent(first,other)){
                 return 180;
+            } else if ( diff == 2 && adjacent(first,other)){
+                return 270;
             }
-            System.out.println(Math.min(first.ordinal(),other.ordinal()) * 90);
-            System.out.println(connection +"->"+index);
-            return Math.min(first.ordinal(),other.ordinal()) * 90;
-        } else if (diff == 4 && opposite(first, other)) {
-            return Math.min(first.ordinal(),other.ordinal()) * 90;
-        } else if ((diff == 5 || diff == 3) && opposite(first, other)) {
-            System.out.println("DIFFF 5 ET OPPOSE ");
-            return Math.min(first.ordinal(),other.ordinal())*90;
-        } else if ( (diff == 3 || diff == 5 ) && adjacent(first,other) ){
-            if ( diff == 5) {
-                return 3*90;
+        } else if ( enter == 6 ) {
+            if ( diff == 1 && sameSide(first,other)){
+                return 270;
             }
-            return Math.min(first.ordinal(),other.ordinal())*90;
-        } else if ( (diff == 1 && adjacent(first,other)) || diff == 7  ){
-            if ( diff == 7 ) {
-                return 0;
-            }
-            return Math.max(first.ordinal(),other.ordinal())*90;
         }
-        else {
-            return 0; // Default rotation (no rotation) diff = 6
-        }
+        return 0;
     }
 
 
@@ -230,24 +222,7 @@ public class DessinateurDeTuile extends JPanel {
 
         public static void main(String[] args) {
 
-        Tuile tuile = new Tuile(1, new int[]{1,0,3,2,5,4,7,6}); // Correct
-        Tuile tuile2 = new Tuile (7,new int[]{7,2,1,4,3,6,5,0}); //correct
-        Tuile tuile3 = new Tuile (3,new int[]{1,0,7,4,3,6,5,2}); // Correct prob 1->4
-        Tuile tuile6 = new Tuile (6,new int[]{5,4,7,6,1,0,3,2});
-
-
-
-
-            Tuile tuile7 = new Tuile (2,new int[]{6,3,4,1,2,7,0,5}); //
-        // Tuile tuile2 = new Tuile(2,new int[]{2,7,0,5,6,3,4,1});
-        //Tuile tuile3 = new Tuile (3,new int[]{6,5,4,7,2,1,0,3}); // prob
-        //Tuile tuile4 = new Tuile(4,new int[]{5,4,7,6,1,0,3,2}); // prob startX and Y for the sprite
-        //tuile4.getTableauChemins()[0].marquerCheminVisite(0, Joueur.Couleur.ROUGE);
-        Tuile tuile5 = new Tuile (5,new int[]{4,5,6,7,0,1,2,3});
-        Tuile tuile8 = new Tuile ( 8 , new int[]{3,6,5,0,7,2,1,4});
-        Tuile tuile9 = new Tuile(9,new int[]{6,3,4,1,2,7,0,5});
-        Tuile tuile10 = new Tuile(10,new int[]{2,7,0,5,6,3,4,1}); // FAUX 1->3 et 5->3
-        Tuile tuile11  = new Tuile (11,new int[]{5,4,7,6,1,0,3,2});
+        Tuile tuile1 = new Tuile(1,new int[]{5,4,7,6,1,0,3,2});
 
         HashMap<Integer, Tuile> tuiles = new HashMap<>();
 
@@ -258,7 +233,6 @@ public class DessinateurDeTuile extends JPanel {
         tuiles.put(5, new Tuile(5, new int[]{4, 2, 1, 6, 0, 7, 3, 5})); //Correct
         tuiles.put(6, new Tuile(6, new int[]{1, 0, 5, 7, 6, 2, 4, 3})); //Correct
         tuiles.put(7, new Tuile(7, new int[]{2, 4, 0, 6, 1, 7, 3, 5})); //Correct
-        tuiles.get(7).getTableauChemins()[5].marquerCheminVisite(5, Joueur.Couleur.ROUGE);
         tuiles.put(8, new Tuile(8, new int[]{4, 7, 5, 6, 0, 2, 3, 1})); //FAUSSE 1->7
         tuiles.put(9, new Tuile(9, new int[]{1, 0, 7, 6, 5, 4, 3, 2})); // Correct
         tuiles.put(10, new Tuile(10, new int[]{4, 5, 6, 7, 0, 1, 2, 3}));//correct
@@ -301,20 +275,24 @@ public class DessinateurDeTuile extends JPanel {
         // Création d'un nouveau frame pour afficher la tuile
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(1400, 1000);
 
-        System.out.println( "Point de sortie est " + tuile3.getPointSortieAvecRot(0));
-        tuile3.tournerTuile();
-        System.out.println( "Point de sortie est " + tuile3.getPointSortieAvecRot(0));
-        tuile3.getTableauChemins()[2].marquerCheminVisite(4, Joueur.Couleur.ROUGE);
+            tuiles.get(1).tournerTuile();
+            //tuiles.get(1).tournerTuile();
+            //tuiles.get(1).tournerTuile();
+
         // Création d'un nouveau JPanel pour dessiner la tuile
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                //dessinateur.test(g);
                 // Appel de la méthode dessinerTuile du dessinateur avec la tuile à dessiner
-                dessinateur.dessinerTuile(g, tuile3, dessinateur.getSpritesSet(), 0, 0);
 
+                for (int i = 1; i <= 10 ; i++) {
+                    dessinateur.dessinerTuile(g, tuiles.get(i), dessinateur.getSpritesSet(), (i-1)*120 + 20*i  , 0);
+
+                }
             }
         };
 
@@ -358,6 +336,14 @@ public class DessinateurDeTuile extends JPanel {
     }
 
 
+    public static class ImageFlip {
+        public static BufferedImage drawFlippedImage(Graphics g, BufferedImage image, int x, int y) {
+            AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+            tx.translate( -image.getHeight(null),0);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            return op.filter(image, null);
+        }
+    }
 
 
 
