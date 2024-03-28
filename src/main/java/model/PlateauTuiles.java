@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import main.java.model.Joueur;
-
+import main.java.model.Joueur.Couleur;
 import main.java.model.Tuile.Chemin;
 import main.java.vue.GameBoardUI;
 
@@ -102,7 +102,7 @@ public class PlateauTuiles {
             return false ;
         }
         plateau[j.getLigne()][j.getColonne()] = tuile;
-        actualiserPosJ(j);
+        actualiserPosJ(j); // TODO : mettre la liste de joueur.
         return true;
     }
     public boolean isEmpty(int ligne, int colonne){
@@ -143,6 +143,11 @@ public class PlateauTuiles {
         Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
         if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
             int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
+            /* 
+            int cheminAdapte = (j.getEntree()-(2*tuileAjouté.getRotation()))%8;
+            if (cheminAdapte <0 ){
+                cheminAdapte+=8;
+            } */
             if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
                 System.out.println("Lost CHEMIN DEJA VISITE");
             } else {

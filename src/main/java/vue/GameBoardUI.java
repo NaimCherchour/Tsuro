@@ -18,13 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameBoardUI extends JPanel implements MouseListener {
-    private PlateauTuiles board;
+    private PlateauTuiles board; //ERREUR : MVC PASSER PAR LE CONTROLEUR 
+
+
     //private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
-    private final DeckTuiles deckTuiles;
+    private final DeckTuiles deckTuiles; // FUITE MODEL
 
     private List<Joueur> joueurs; // La liste des joueurs
     private int currentPlayerIndex;
+    private int numberOfPlayers ;
+
+    public int getNumberOfPlayers() {
+        return this.numberOfPlayers;
+    }
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
@@ -58,11 +65,12 @@ public class GameBoardUI extends JPanel implements MouseListener {
         joueurs.add(new Joueur("Joueur 5"));
         joueurs.add(new Joueur("Joueur 6"));
         currentPlayerIndex = 0; // Initialiser à 0 pour commencer avec le premier joueur
+        this.numberOfPlayers = joueurs.size();
         this.board.setJoueurs(joueurs);
     }
 
     private void nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+        currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers ;
     }
 
     // Méthode pour gérer les actions du joueur actuel
@@ -153,17 +161,18 @@ public class GameBoardUI extends JPanel implements MouseListener {
         if ( ! board.placerTuile(tuile, j) )
          {  // show a message error
              joueurs.remove(joueurs.get(currentPlayerIndex));
+             numberOfPlayers--;
              JOptionPane.showMessageDialog(this,j.getPrenom() + j.getCouleur().toString() +  " a perdu ! ");
+             System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+             repaint();  // Rafraîchir l'affichage
         }
-        System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
-        nextPlayer();
-        repaint();  // Rafraîchir l'affichage
+        else {
+            System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+            nextPlayer();
+            repaint();  // Rafraîchir l'affichage
+        }
     }
 
-    public void rotateTile(Tuile tuile) {
-        tuile.tournerTuile();
-        repaint();
-    }
 
 
     public static void main(String[] args) {

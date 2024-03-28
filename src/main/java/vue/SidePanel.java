@@ -92,7 +92,6 @@ public class SidePanel extends JPanel {
         // Call the rotateTile method in the GameBoardUI class
         tuile.tournerTuile(); // Appeler la méthode pour faire pivoter la tuile
         repaint();
-        gameBoardUI.rotateTile(tuile);
     }
 }
 
