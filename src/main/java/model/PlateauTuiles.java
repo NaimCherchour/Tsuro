@@ -155,6 +155,8 @@ public class PlateauTuiles {
                 if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
                     j.setLigne(nouvelleLigne);
                     j.setColonne(nouvelleColonne);
+                    j.incrementerCompteur();
+                    System.out.println("Longueur du chemin du joueur "+j.getCouleur()+":"+j.getCompteur());
                     actualiserPosJ(j);
                 } else {
                     j.setLigne(nouvelleLigne);

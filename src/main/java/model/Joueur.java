@@ -19,6 +19,7 @@ public class Joueur {
     private final String prenom; // Le prénom du joueur
     private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
     private static int indexCouleur = Couleur.NOIR.ordinal() + 1; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
+    private int compteur;
 
     public String getNom() {
         return prenom;
@@ -40,6 +41,15 @@ public class Joueur {
         this.prenom = prenom;
         this.couleur = Couleur.values()[indexCouleur];
         Joueur.indexCouleur+=1;
+        this.compteur = 0;
+    }
+
+    public int getCompteur() {
+        return compteur;
+    }
+
+    public void incrementerCompteur() {
+        compteur++;
     }
 
     private int calculPointDepart(){

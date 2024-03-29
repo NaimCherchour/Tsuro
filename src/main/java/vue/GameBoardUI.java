@@ -138,8 +138,18 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
+        int decalage = 0; // Décalage vertical initial pour le premier joueur a 0 
+
         for (Joueur joueur : joueurs) {
-            drawPlayer(g, joueur);
+        drawPlayer(g, joueur);
+        
+        //on affiche le compteur pour chaque joueur 
+        String texteCompteur = "Compteur du joueur " + joueur.getCouleur() + ": " + joueur.getCompteur();
+        int x = 5; //coordonée x pour l'emplacement du compteur 
+        int y = 100 + decalage; // coordonnée y pour l'emplacement du compteur 
+        g.drawString(texteCompteur, x, y);
+        
+        decalage += 30; //espace entre les compteur de chaque joueur de 30 
         }
     }
 
