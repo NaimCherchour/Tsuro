@@ -24,6 +24,7 @@ public class AudioManager {
             clip.open(audioInputStream);
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            System.out.println("Un problème est survenue.");
             e.printStackTrace();
         }
     }
