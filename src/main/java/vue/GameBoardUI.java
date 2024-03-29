@@ -167,6 +167,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
+        int decalage=0;
         for (Joueur joueur : joueurs) {
         drawPlayer(g, joueur);
         
