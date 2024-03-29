@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,13 @@ public class GameBoardUI extends JPanel implements MouseListener {
     private List<Joueur> joueurs; // La liste des joueurs
     private int currentPlayerIndex;
     private int numberOfPlayers ;
+
+    private Rectangle[][] cellRectangles;
+    private static final int BOARD_SIZE = 6;
+    private static final int CELL_SIZE = 120;
+    private static final int BOARD_START_X = 200;
+    private static final int BOARD_START_Y = 50;
+    private JPanel filtre;
 
     public int getNumberOfPlayers() {
         return this.numberOfPlayers;
@@ -51,9 +59,19 @@ public class GameBoardUI extends JPanel implements MouseListener {
         this.deckTuiles = new DeckTuiles();
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
+        
         initializePlayers();
         addMouseListener(this);
-
+        filtre = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(0, 0, 0, 100));
+                g2d.fillRect(0, 0, 120, 120);
+                g2d.dispose();
+            }
+        };
     }
 
     private void initializePlayers() {
@@ -115,7 +133,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
     public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
     public void mouseExited(MouseEvent e) {}
@@ -129,6 +148,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
         // Draw the tile's image
         dessinateurDeTuile.dessinerTuile(g, board.getTuile((y-50)/120, (x-200)/120), dessinateurDeTuile.getSpritesSet(),x,y);
     }
+    
 
 
     @Override
@@ -137,19 +157,48 @@ public class GameBoardUI extends JPanel implements MouseListener {
         // Draw background image
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(200, 50, 720, 720); // Fill the board area with a rectangle
-
+        g.setColor(Color.BLACK);
+        g.drawRect(200, 50, 720, 720);
         // Draw tiles on the board
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (board.getTuile(i, j) != null ) {
                     System.out.println(board.getTuile(i,j).getRotation()+ "   is the rotat");
-                drawTile(g, 200+j * 120, 50+i * 120, 120);}
+                    drawTile(g, 200+j * 120, 50+i * 120, 120);
+                }
+                else {
+                    g.setColor(Color.BLACK);
+                    g.drawRect(200+j*120, 50+i*120, 120, 120);
+                }
+                JPanel cellPanel = new JPanel();
+                cellPanel.setBounds(200+j*120, 50+i*120, 120, 120);
+                cellPanel.setOpaque(false); // Rendre le panneau transparent
+                cellPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent evt) {
+                        filtre.setBounds(0, 0, 120, 120);
+                        filtre.setOpaque(false);
+                        cellPanel.setOpaque(false);
+                        cellPanel.add(filtre);
+                        cellPanel.setBackground(new Color(0, 0, 0, 0));
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent evt) {
+                        cellPanel.remove(filtre);
+                        cellPanel.setBackground(null);
+                    }
+                });
+                add(cellPanel);
             }
         }
+        
         for (Joueur joueur : joueurs) {
             drawPlayer(g, joueur);
         }
     }
+
+    
 
     public void drawPlayer (Graphics g , Joueur j ){
         JoueurPanel joueurUI = new JoueurPanel(j);

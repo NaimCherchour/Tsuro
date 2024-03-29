@@ -102,7 +102,7 @@ public class PlateauTuiles {
             return false ;
         }
         plateau[j.getLigne()][j.getColonne()] = tuile;
-        actualiserPosJ(j); // TODO : mettre la liste de joueur.
+        actualiserPosJ(joueurs); // TODO : mettre la liste de joueur // FAIT
         return true;
     }
     public boolean isEmpty(int ligne, int colonne){
@@ -137,39 +137,64 @@ public class PlateauTuiles {
      */
 
     // Méthode pour actualiser la position du joueur après le placement d'une tuile
+    public void actualiserPosJ(List<Joueur> joueurs) {
+        // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
+        for (Joueur j :joueurs) {
+            Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
+            if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
+                int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
+                if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
+                    System.out.println("Lost CHEMIN DEJA VISITE");
+                } else {
+                    Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
+                    tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
+                    int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
+                    j.setPointEntree(nouvelleEntree);
+                    int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
+                    int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
+                    if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
+                        j.setLigne(nouvelleLigne);
+                        j.setColonne(nouvelleColonne);
+                        actualiserPosJ(joueurs);
+                    } else {
+                        j.setLigne(nouvelleLigne);
+                        j.setColonne(nouvelleColonne);
+                        System.out.println("Lost OUT OF BORDER");
+                    }
+                }
+            } else {
+                System.out.println("Aucune Tuile");
+            }
+        }
+    }
+
     public void actualiserPosJ(Joueur j) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
-
-        Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
-        if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
-            int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
-            /* 
-            int cheminAdapte = (j.getEntree()-(2*tuileAjouté.getRotation()))%8;
-            if (cheminAdapte <0 ){
-                cheminAdapte+=8;
-            } */
-            if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
-                System.out.println("Lost CHEMIN DEJA VISITE");
-            } else {
-                Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
-                tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
-                int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
-                j.setPointEntree(nouvelleEntree);
-                int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
-                int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
-                if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
-                    j.setLigne(nouvelleLigne);
-                    j.setColonne(nouvelleColonne);
-                    actualiserPosJ(j);
+            Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
+            if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
+                int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
+                if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
+                    System.out.println("Lost CHEMIN DEJA VISITE");
                 } else {
-                    j.setLigne(nouvelleLigne);
-                    j.setColonne(nouvelleColonne);
-                    System.out.println("Lost OUT OF BORDER");
+                    Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
+                    tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
+                    int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
+                    j.setPointEntree(nouvelleEntree);
+                    int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
+                    int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
+                    if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
+                        j.setLigne(nouvelleLigne);
+                        j.setColonne(nouvelleColonne);
+                        actualiserPosJ(j);
+                    } else {
+                        j.setLigne(nouvelleLigne);
+                        j.setColonne(nouvelleColonne);
+                        System.out.println("Lost OUT OF BORDER");
+                    }
                 }
+            } else {
+                System.out.println("Aucune Tuile");
             }
-        } else {
-            System.out.println("Aucune Tuile");
-        }
     }
 
     /**

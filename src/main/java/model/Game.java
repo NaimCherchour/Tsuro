@@ -37,7 +37,7 @@ public class Game {
 
                 // Placer la tuile sur le plateau
                 plateau.placerTuile( tuile, joueur);
-                plateau.actualiserPosJ(joueur);
+                plateau.actualiserPosJ(joueurs);
                 plateau.afficherPlateau();
 
                 // Vérifier si le joueur a perdu

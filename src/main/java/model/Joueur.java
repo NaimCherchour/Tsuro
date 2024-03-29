@@ -147,9 +147,6 @@ public class Joueur {
      * 
      * @param plateau Le plateau de jeu.
      */
-    public void deplacerJoueur(PlateauTuiles plateau) {
-        plateau.actualiserPosJ(this);
-    }
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
