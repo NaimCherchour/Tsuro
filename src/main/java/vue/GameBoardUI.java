@@ -14,17 +14,32 @@ import javax.imageio.ImageIO;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameBoardUI extends JPanel implements MouseListener {
-    private PlateauTuiles board;
+    private PlateauTuiles board; //ERREUR : MVC PASSER PAR LE CONTROLEUR 
+
+
     //private Joueur joueur;
     DessinateurDeTuile dessinateurDeTuile;
-    private final DeckTuiles deckTuiles;
+    private final DeckTuiles deckTuiles; // FUITE MODEL
 
     private List<Joueur> joueurs; // La liste des joueurs
     private int currentPlayerIndex;
+    private int numberOfPlayers ;
+
+    private Rectangle[][] cellRectangles;
+    private static final int BOARD_SIZE = 6;
+    private static final int CELL_SIZE = 120;
+    private static final int BOARD_START_X = 200;
+    private static final int BOARD_START_Y = 50;
+    private JPanel filtre;
+
+    public int getNumberOfPlayers() {
+        return this.numberOfPlayers;
+    }
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
@@ -44,9 +59,19 @@ public class GameBoardUI extends JPanel implements MouseListener {
         this.deckTuiles = new DeckTuiles();
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
+        
         initializePlayers();
         addMouseListener(this);
-
+        filtre = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(0, 0, 0, 100));
+                g2d.fillRect(0, 0, 120, 120);
+                g2d.dispose();
+            }
+        };
     }
 
     private void initializePlayers() {
@@ -58,11 +83,12 @@ public class GameBoardUI extends JPanel implements MouseListener {
         joueurs.add(new Joueur("Joueur 5"));
         joueurs.add(new Joueur("Joueur 6"));
         currentPlayerIndex = 0; // Initialiser à 0 pour commencer avec le premier joueur
+        this.numberOfPlayers = joueurs.size();
         this.board.setJoueurs(joueurs);
     }
 
     private void nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+        currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers ;
     }
 
     // Méthode pour gérer les actions du joueur actuel
@@ -107,7 +133,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
     public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
     public void mouseExited(MouseEvent e) {}
@@ -121,6 +148,7 @@ public class GameBoardUI extends JPanel implements MouseListener {
         // Draw the tile's image
         dessinateurDeTuile.dessinerTuile(g, board.getTuile((y-50)/120, (x-200)/120), dessinateurDeTuile.getSpritesSet(),x,y);
     }
+    
 
 
     @Override
@@ -129,7 +157,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
         // Draw background image
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(200, 50, 720, 720); // Fill the board area with a rectangle
-
+        g.setColor(Color.BLACK);
+        g.drawRect(200, 50, 720, 720);
         // Draw tiles on the board
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
@@ -138,8 +167,6 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 drawTile(g, 200+j * 120, 50+i * 120, 120);}
             }
         }
-        int decalage = 0; // Décalage vertical initial pour le premier joueur a 0 
-
         for (Joueur joueur : joueurs) {
         drawPlayer(g, joueur);
         
@@ -153,6 +180,8 @@ public class GameBoardUI extends JPanel implements MouseListener {
         }
     }
 
+    
+
     public void drawPlayer (Graphics g , Joueur j ){
         JoueurPanel joueurUI = new JoueurPanel(j);
         joueurUI.paintComponent(g);
@@ -163,17 +192,18 @@ public class GameBoardUI extends JPanel implements MouseListener {
         if ( ! board.placerTuile(tuile, j) )
          {  // show a message error
              joueurs.remove(joueurs.get(currentPlayerIndex));
+             numberOfPlayers--;
              JOptionPane.showMessageDialog(this,j.getPrenom() + j.getCouleur().toString() +  " a perdu ! ");
+             System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+             repaint();  // Rafraîchir l'affichage
         }
-        System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
-        nextPlayer();
-        repaint();  // Rafraîchir l'affichage
+        else {
+            System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+            nextPlayer();
+            repaint();  // Rafraîchir l'affichage
+        }
     }
 
-    public void rotateTile(Tuile tuile) {
-        tuile.tournerTuile();
-        repaint();
-    }
 
 
     public static void main(String[] args) {

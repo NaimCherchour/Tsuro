@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-
 public class TuilePanel extends JPanel {
     private final DessinateurDeTuile dessinateur; // le dessinateur de Tuile
     private final Tuile tuile; //La tuile à dessiner
