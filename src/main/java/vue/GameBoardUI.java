@@ -90,6 +90,11 @@ public class GameBoardUI extends JPanel implements MouseListener {
     private void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers ;
     }
+    private void currentPlayerIndexAct(){
+        if (currentPlayerIndex >= numberOfPlayers ){
+            currentPlayerIndex = 0;
+        }
+    }
 
     // Méthode pour gérer les actions du joueur actuel
     private void handlePlayerAction() {
@@ -164,20 +169,50 @@ public class GameBoardUI extends JPanel implements MouseListener {
             for (int j = 0; j < 6; j++) {
                 if (board.getTuile(i, j) != null ) {
                     System.out.println(board.getTuile(i,j).getRotation()+ "   is the rotat");
-                drawTile(g, 200+j * 120, 50+i * 120, 120);}
+                    drawTile(g, 200+j * 120, 50+i * 120, 120);
+                }
+                else {
+                    g.setColor(Color.BLACK);
+                    g.drawRect(200+j*120, 50+i*120, 120, 120);
+                }
+                JPanel cellPanel = new JPanel();
+                cellPanel.setBounds(200+j*120, 50+i*120, 120, 120);
+                cellPanel.setOpaque(false); // Rendre le panneau transparent
+                cellPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent evt) {
+                        filtre.setBounds(0, 0, 120, 120);
+                        filtre.setOpaque(false);
+                        cellPanel.setOpaque(false);
+                        cellPanel.add(filtre);
+                        cellPanel.setBackground(new Color(0, 0, 0, 0));
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent evt) {
+                        cellPanel.remove(filtre);
+                        cellPanel.setBackground(null);
+                    }
+                });
+                add(cellPanel);
             }
         }
         int decalage=0;
         for (Joueur joueur : joueurs) {
-        drawPlayer(g, joueur);
+            drawPlayer(g, joueur);
         
-        //on affiche le compteur pour chaque joueur 
-        String texteCompteur = "Compteur du joueur " + joueur.getCouleur() + ": " + joueur.getCompteur();
-        int x = 5; //coordonée x pour l'emplacement du compteur 
-        int y = 100 + decalage; // coordonnée y pour l'emplacement du compteur 
-        g.drawString(texteCompteur, x, y);
-        
-        decalage += 30; //espace entre les compteur de chaque joueur de 30 
+            //on affiche le compteur pour chaque joueur 
+            int x = 20; //coordonée x pour l'emplacement du compteur 
+            int y = 75 + decalage; // coordonnée y pour l'emplacement du compteur 
+            int s = 20;
+            int S = 27;
+            if (joueur == joueurs.get(currentPlayerIndex)){
+                g.fillOval(x-3, y-3, S, S);
+            }
+            else {
+                g.fillOval(x, y, s, s);
+            }
+            decalage += 30; //espace entre les compteur de chaque joueur de 30 
         }
     }
 
@@ -190,10 +225,11 @@ public class GameBoardUI extends JPanel implements MouseListener {
 
     public void placerTuileSurPlateau(Tuile tuile) {
         Joueur j = joueurs.get(currentPlayerIndex);
-        if ( ! board.placerTuile(tuile, j) )
+        if ( !board.placerTuile(tuile, j) || !j.isAlive() )
          {  // show a message error
              joueurs.remove(joueurs.get(currentPlayerIndex));
              numberOfPlayers--;
+             currentPlayerIndexAct();
              JOptionPane.showMessageDialog(this,j.getPrenom() + j.getCouleur().toString() +  " a perdu ! ");
              System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
              repaint();  // Rafraîchir l'affichage

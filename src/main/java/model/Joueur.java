@@ -20,9 +20,16 @@ public class Joueur {
     private final Couleur couleur; // La couleur du joueur; c'est ce qui identifie le joueur pour la tuile
     private static int indexCouleur = Couleur.NOIR.ordinal() + 1; //La valeur de indexCouleur est initialisée à Couleur.NOIR.ordinal() et on fait +1 pour obtenir les couleurs suivantes
     private int compteur;
+    private boolean Alive = true;
 
     public String getNom() {
         return prenom;
+    }
+    public boolean isAlive(){
+        return Alive;
+    }
+    public void setAlive(boolean x){
+        Alive = x;
     }
 
     public enum Couleur {

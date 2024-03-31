@@ -140,32 +140,40 @@ public class PlateauTuiles {
     public void actualiserPosJ(List<Joueur> joueurs) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
         for (Joueur j :joueurs) {
-            Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
-            if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
-                int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
-                if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
-                    System.out.println("Lost CHEMIN DEJA VISITE");
-                } else {
-                    Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
-                    tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
-                    int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
-                    j.setPointEntree(nouvelleEntree);
-                    int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
-                    int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
-                    if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
-                        j.setLigne(nouvelleLigne);
-                        j.setColonne(nouvelleColonne);
-                        j.incrementerCompteur();
-                        System.out.println("Longueur du chemin du joueur"+ j.getCouleur()+ " :"+j.getCompteur());
-                        actualiserPosJ(joueurs);
+            if (j.getLigne()>=0 && j.getLigne()<6 && j.getColonne()>=0 && j.getColonne()<6){
+                Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
+                if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
+                    int sortie = tuileAjouté.getPointSortieAvecRot(j.getEntree());
+                    if (tuileAjouté.getTableauChemins()[j.getEntree()].estEmprunte()) {
+                        System.out.println("Lost CHEMIN DEJA VISITE");
+                        j.setAlive(false);
                     } else {
-                        j.setLigne(nouvelleLigne);
-                        j.setColonne(nouvelleColonne);
-                        System.out.println("Lost OUT OF BORDER");
+                        Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
+                        tuileAjouté.getTableauChemins()[j.getEntree()].marquerCheminVisite(j.getEntree(), j.getCouleur());
+                        int nouvelleEntree = Direction.getPointFromDirection(newEntry.oppose(), sortie);
+                        j.setPointEntree(nouvelleEntree);
+                        int nouvelleLigne = j.getLigne() + newEntry.di(); // La nouvelle ligne du joueur selon sa direction
+                        int nouvelleColonne = j.getColonne() + newEntry.dj(); // La nouvelle colonne du joueur selon sa direction
+                        if (coordonneesValides(nouvelleLigne, nouvelleColonne)) {
+                            j.setLigne(nouvelleLigne);
+                            j.setColonne(nouvelleColonne);
+                            j.incrementerCompteur();
+                            System.out.println("Longueur du chemin du joueur"+ j.getCouleur()+ " :"+j.getCompteur());
+                            actualiserPosJ(joueurs);
+                        } else {
+                            j.setLigne(nouvelleLigne);
+                            j.setColonne(nouvelleColonne);
+                            System.out.println("Lost OUT OF BORDER");
+                            j.setAlive(false);
+                        }
                     }
+                } else {
+                    System.out.println("Aucune Tuile");
                 }
-            } else {
-                System.out.println("Aucune Tuile");
+            }
+            else {
+                System.out.println("Joueur sortie du plateau");
+                j.setAlive(false);
             }
         }
     }
