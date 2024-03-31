@@ -15,6 +15,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+
 
 /**
  * Représente le menu principal du jeu TSURO.
@@ -74,6 +79,67 @@ public class MainMenu {
         JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
         rulesButton.setActionCommand("rules");
 
+        rulesButton.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        // fenetre pour afficher les regles
+        JDialog dialog = new JDialog(frame, "Rules", true);
+
+      
+        Color color = new Color(64, 224, 208);
+        dialog.getContentPane().setBackground(color);
+
+        // Contenu de la fenêtre JDialog avec les règles
+        JTextArea rulesTextArea = new JTextArea(
+            "Objectif:\n" +
+            "Placez les carreaux et voyagez à travers le tableau pour survivre à vos adversaires.\n\n" +
+            "Composants:\n" +
+            "- 6 x 6 tiles de jeu.\n" +
+            "- 35 Tiravaillons avec des chemins différents.\n" +
+            "- 2 à 8 jetons de couleur différentes, un pour chaque joueur.\n" +
+            "- Une tuile de dragon spéciale.\n\n" +
+            "Mise en place:\n" +
+            "- Tout le monde choisit un jeton et le met sur un point de départ au bord de la planche.\n" +
+            "- Créez un tas de sillon à partir des tuiles de 35 chemins.\n" +
+            "- Chaque joueur tire trois Tiles de chemin aléatoires pour commencer, et le plus jeune joueur va en premier.\n" +
+            "- Le jeu continue dans le sens des aiguilles d'une montre autour de la planche.\n\n" +
+            "Comment jouer:\n" +
+            "Que faire à tour de votre tour :\n" +
+            "- Jouez un trait de chemin : Choisissez l'un de vos paquettes et mettez-le sur le plateau. Connectez-le à l'endroit où se trouve votre jeton maintenant.\n" +
+            "- Déplacez le (les) jeton(s) : Après avoir placé votre tuile de chemin, suivez le chemin que vous avez tracé, et déplacez votre jeton le long de ce chemin. Déplacez tout autre jeton de joueur qui se connecte également au Tile de chemin que vous avez placé.\n" +
+            "- Surveillez les collisions : Si votre jeton entre en collision avec le jeton d'un autre joueur, vous êtes tous les deux sortis du jeu. Tout jeton qui sort du plateau n'est pas non plus en jeu.\n" +
+            "- Obtenez un nouveau chemin : Quand vous aurez fini, prenez une autre tuile de chemin pour en garder trois dans votre main. Si vous n'êtes pas en jeu, alors mélangez vos tuiles à nouveau dans la pile de tirage.\n" +
+            "Comment gagner:\n" +
+            "Continuez à jouer jusqu'à ce que le jeton d'un seul joueur soit laissé sur le plateau. Ce joueur gagne.\n\n" +
+            "Règles supplémentaires:\n" +
+            "- Les chemins qui se croisent ne comptent pas comme une collision. Ce n'est que lorsque les jetons finissent sur la même voie qu'ils entrent en collision.\n" +
+            "- Vous devez placer votre Tile Path adjacent à votre jeton.\n" +
+            "- Si tout le monde sort en même temps, le jeu est une cravate.\n\n" +
+            "Variations:\n" +
+            "- Classique : Standard Tsuro.\n" +
+            "- Le plus long chemin : À la fin de la partie, le joueur avec le chemin le plus long gagne\n" +
+            "- Solo : Placez tous les Tiles du chemin tout en empêchant chaque jeton d'entrer en collision ou de sortir de la planche.\n"
+        );
+        rulesTextArea.setEditable(false);
+        rulesTextArea.setOpaque(false);
+        rulesTextArea.setWrapStyleWord(true);
+
+        rulesTextArea.setLineWrap(true);
+        rulesTextArea.setBackground(Color.WHITE);
+        
+        JScrollPane scrollPane = new JScrollPane(rulesTextArea);
+        scrollPane.getViewport().setBackground(new Color(173, 216, 230));
+        dialog.add(scrollPane, BorderLayout.CENTER);
+        
+        // Taille et position de la fenêtre JDialog
+        dialog.setSize(new Dimension(600, 400));
+        dialog.setLocationRelativeTo(frame);
+        
+        // Afficher la fenêtre JDialog
+        dialog.setVisible(true);
+    }
+});
+
+        
         // Ajoute un ActionListener au bouton "Quitter"
 
         quitButton.addActionListener(e -> {
