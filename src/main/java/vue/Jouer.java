@@ -15,15 +15,20 @@ public class Jouer {
         panel.setOpaque(false);
 
         // Créer et personnaliser les boutons pour les différents modes de jeu
-        JButton bot = new JButton(new ImageIcon("src/main/ressources/playButton.png"));
-        bot.setActionCommand("play");
-        JButton multi = new JButton(new ImageIcon("src/main/ressources/optionsButton.png"));
-        multi.setActionCommand("options");
-        JButton enligne = new JButton(new ImageIcon("src/main/ressources/quitButton.png"));
-        enligne.setActionCommand("quit");
+        JButton soloButton = new JButton(new ImageIcon("src/main/ressources/gameSolo.png")); // Nouvelle image pour le mode solo
+        soloButton.setActionCommand("solo");
+        JButton localButton = new JButton(new ImageIcon("src/main/ressources/gameLocal.png")); // Nouvelle image pour le mode local
+        localButton.setActionCommand("local");
+        JButton onlineButton = new JButton(new ImageIcon("src/main/ressources/gameOnline.png")); // Nouvelle image pour le mode en ligne
+        onlineButton.setActionCommand("online");
 
-        Button.customizeButtons(bot, multi, enligne);
-        Button.mainStyle(panel, bot, multi, enligne);
+        // Personnaliser les boutons
+        Button.customizeButtons(soloButton, localButton, onlineButton);
+
+        // Ajouter les boutons au panneau
+        panel.add(soloButton);
+        panel.add(localButton);
+        panel.add(onlineButton);
 
         // Ajouter le panneau à la frame
         frame.add(panel, BorderLayout.CENTER);
