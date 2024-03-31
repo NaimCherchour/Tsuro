@@ -17,6 +17,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+
 
 public class GameBoardUI extends JPanel implements MouseListener {
     private PlateauTuiles board; //ERREUR : MVC PASSER PAR LE CONTROLEUR 
@@ -225,21 +227,54 @@ public class GameBoardUI extends JPanel implements MouseListener {
 
     public void placerTuileSurPlateau(Tuile tuile) {
         Joueur j = joueurs.get(currentPlayerIndex);
-        if ( !board.placerTuile(tuile, j) || !j.isAlive() )
-         {  // show a message error
-             joueurs.remove(joueurs.get(currentPlayerIndex));
-             numberOfPlayers--;
-             currentPlayerIndexAct();
-             JOptionPane.showMessageDialog(this,j.getPrenom() + j.getCouleur().toString() +  " a perdu ! ");
-             System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
-             repaint();  // Rafraîchir l'affichage
-        }
-        else {
+        if ( !board.placerTuile(tuile, j) || !j.isAlive() ) {
+            // Récupérer le joueur avant de le supprimer de la liste
+            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
+            joueurs.remove(joueurPerdant);
+            numberOfPlayers--;
+            currentPlayerIndexAct();
+            JOptionPane.showMessageDialog(this, joueurPerdant.getPrenom() + " (" + joueurPerdant.getCouleur().toString() +  ") a perdu ! ");
+            System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
+            repaint();  
+    
+            // Vérifier s'il ne reste qu'un seul joueur
+            if (numberOfPlayers == 1) {
+                nextPlayer();
+                j = joueurs.get(currentPlayerIndex);
+
+                JOptionPane.showMessageDialog(this, "Félicitations " + j.getPrenom() + " (" + j.getCouleur().toString() +  ")  ! Vous avez remporté la partie !");
+                
+            }
+        } else {
             System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
             nextPlayer();
             repaint();  // Rafraîchir l'affichage
         }
     }
+
+    /* 
+
+    public void afficherClassementFinal() {
+        Collections.sort(joueurs, new Comparator<Joueur>() {
+            @Override
+            public int compare(Joueur joueur1, Joueur joueur2) {
+                return joueur1.getNombreTuilesPlacees() - joueur2.getNombreTuilesPlacees();
+            }
+        });
+    
+        // Construction du message de classement
+        StringBuilder message = new StringBuilder("Classement final :\n");
+        for (int i = 0; i < joueurs.size(); i++) {
+            Joueur joueur = joueurs.get(i);
+            message.append(i + 1).append(". ").append(joueur.getPrenom()).append(" - ").append(joueur.getNombreTuilesPlacees()).append(" tuiles placées\n");
+        }
+    
+        // Affichage du classement final dans une boîte de dialogue
+        JOptionPane.showMessageDialog(this, message.toString(), "Classement Final", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    */
+    
 
 
 
