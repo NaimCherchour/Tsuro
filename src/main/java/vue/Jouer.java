@@ -10,46 +10,60 @@ public class Jouer {
         frame.getContentPane().removeAll();
 
         // Créer le nouveau panneau pour le choix du mode de jeu
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(68, 0, 0, 0));
-        panel.setOpaque(false);
+        JPanel panel = new JPanel(new GridBagLayout()); // Utilisation de GridBagLayout
+        panel.setOpaque(false); // Panneau transparent
 
-       
+        // Ajouter une marge en haut du panneau
+        panel.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0)); // 50 pixels de marge en haut
+
+        // Créer une contrainte pour centrer les composants
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // Charger les icônes des boutons
         ImageIcon soloIcon = new ImageIcon("src/main/ressources/gameSolo.png");
         ImageIcon localIcon = new ImageIcon("src/main/ressources/gameLocal.png");
         ImageIcon onlineIcon = new ImageIcon("src/main/ressources/gameOnline.png");
-        ImageIcon playIcon = new ImageIcon("src/main/ressources/playButton.png");
 
-        // redimensionner les images
-        Image soloImage = soloIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        Image localImage = localIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        Image onlineImage = onlineIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        Image playImage = playIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        // Redimensionner les icônes
+        Image soloImage = soloIcon.getImage().getScaledInstance(220, 100, Image.SCALE_SMOOTH);
+        Image localImage = localIcon.getImage().getScaledInstance(220, 100, Image.SCALE_SMOOTH);
+        Image onlineImage = onlineIcon.getImage().getScaledInstance(220, 100, Image.SCALE_SMOOTH);
 
-        // Creation des ImageIcon redimensionnés
+        // Créer les ImageIcon redimensionnés
         ImageIcon resizedSoloIcon = new ImageIcon(soloImage);
         ImageIcon resizedLocalIcon = new ImageIcon(localImage);
         ImageIcon resizedOnlineIcon = new ImageIcon(onlineImage);
-        ImageIcon resizedPlayIcon = new ImageIcon(playImage);
 
         // Créer les boutons avec les ImageIcon redimensionnés
         JButton soloButton = new JButton(resizedSoloIcon);
         JButton localButton = new JButton(resizedLocalIcon);
         JButton onlineButton = new JButton(resizedOnlineIcon);
-       
 
-        // Définir la taille des boutons
-        soloButton.setPreferredSize(new Dimension(100, 100));
-        localButton.setPreferredSize(new Dimension(100, 100));
-        onlineButton.setPreferredSize(new Dimension(100, 100));
-        
-       
+        // Rendre le fond des boutons transparents
+        soloButton.setOpaque(false);
+        soloButton.setContentAreaFilled(false);
+        soloButton.setBorderPainted(false);
 
-        // Ajouter les boutons au panneau
-        panel.add(soloButton);
-        panel.add(localButton);
-        panel.add(onlineButton);
-        
+        localButton.setOpaque(false);
+        localButton.setContentAreaFilled(false);
+        localButton.setBorderPainted(false);
+
+        onlineButton.setOpaque(false);
+        onlineButton.setContentAreaFilled(false);
+        onlineButton.setBorderPainted(false);
+
+        // Ajouter les boutons au panneau avec la contrainte de centrage
+        panel.add(soloButton, gbc);
+        gbc.gridy++;
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(localButton, gbc);
+        gbc.gridy++;
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(onlineButton, gbc);
+
         // Ajouter le panneau à la frame
         frame.add(panel, BorderLayout.CENTER);
 
@@ -58,3 +72,4 @@ public class Jouer {
         frame.repaint();
     }
 }
+
