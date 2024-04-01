@@ -61,8 +61,10 @@ public class GameBoardUI extends JPanel implements MouseListener {
         this.deckTuiles = new DeckTuiles();
         //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
         this.dessinateurDeTuile = new DessinateurDeTuile();
+
+        int numberOfPlayers = getNumberOfPlayersFromUser();
+        initializePlayers(numberOfPlayers);
         
-        initializePlayers();
         addMouseListener(this);
         filtre = new JPanel() {
             @Override
@@ -76,16 +78,32 @@ public class GameBoardUI extends JPanel implements MouseListener {
         };
     }
 
-    private void initializePlayers() {
+    private int getNumberOfPlayersFromUser() {
+        int numberOfPlayers = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                String input = JOptionPane.showInputDialog("Entrer le nombre de joueur:");
+                numberOfPlayers = Integer.parseInt(input);
+                if (numberOfPlayers >= 1 && numberOfPlayers <= 8) {
+                    flag = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Entrer un nombre entre 1 et 8.");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Entrer un nombre valide .");
+            }
+        }
+        return numberOfPlayers;
+    }
+
+    private void initializePlayers(int numberOfPlayers) {
         joueurs = new ArrayList<>();
-        joueurs.add(new Joueur("Joueur 1"));
-        joueurs.add(new Joueur("Joueur 2"));
-        joueurs.add(new Joueur("Joueur 3"));
-        joueurs.add(new Joueur("Joueur 4"));
-        joueurs.add(new Joueur("Joueur 5"));
-        joueurs.add(new Joueur("Joueur 6"));
+        for (int i = 1; i <= numberOfPlayers; i++) {
+            joueurs.add(new Joueur("Joueur " + i));
+        }
         currentPlayerIndex = 0; // Initialiser à 0 pour commencer avec le premier joueur
-        this.numberOfPlayers = joueurs.size();
+        this.numberOfPlayers = numberOfPlayers;
         this.board.setJoueurs(joueurs);
     }
 
