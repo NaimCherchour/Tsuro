@@ -61,6 +61,15 @@ public class Joueur {
         this.compteur = 0;
         this.estBot = estBot;
     }
+    public Joueur(String prenom) {
+        this.PointEntree = calculPointDepart();
+        this.ligne = calculLigneDepart(PointEntree);
+        this.colonne = calculColonneDepart(PointEntree);
+        this.prenom = prenom;
+        this.couleur = Couleur.values()[indexCouleur];
+        Joueur.indexCouleur+=1;
+        this.compteur = 0;
+    }
 
     public int getCompteur() {
         return compteur;
