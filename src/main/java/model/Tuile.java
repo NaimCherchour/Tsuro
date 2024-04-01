@@ -1,6 +1,7 @@
 package main.java.model;
 
 import main.java.model.Joueur.Couleur;
+import main.java.model.PlateauTuiles.Direction;
 
 public class Tuile{
     private final int id; // Identifiant de la tuile ;
@@ -134,7 +135,16 @@ public class Tuile{
             return pointSortie;
         }
 
+        /**
+         * Calcule l'index dans le tableau de chemins après ajustement pour la rotation.
+         * @param index L'index original sans rotation.
+         * @return L'index ajusté pour la rotation.
+         */
+        private int ajusterIndexPourRotation(int index) {
+            return (index + rotation * 2) % TAILLE_DU_TABLEAU;
+        }
 
+        
 
     
         public Joueur.Couleur getCouleur() {
@@ -162,5 +172,36 @@ public class Tuile{
     public static void main(String[] args) {
         System.out.println();
     }
+
+    /**
+     * Calcule l'index dans le tableau de chemins après ajustement pour la rotation.
+     * @param index L'index original sans rotation.
+     * @return L'index ajusté pour la rotation.
+     */
+    private int ajusterIndexPourRotation(int index) {
+        // méthode privée si elle est seulement utilisée en interne par la classe Tuile
+        return (index + this.rotation * 2) % TAILLE_DU_TABLEAU;
+    }
+
+
+    /**
+         * Renvoie les points d'entrée et de sortie pour une direction donnée,
+         * ajustés selon la rotation actuelle de la tuile.
+         *
+         * @param direction La direction pour laquelle obtenir les points de connexion.
+         * @return Un tableau d'entiers : [point d'entrée, point de sortie].
+         */
+        public int[] getPointsDeConnexion(Direction direction) {
+            // Déterminer les points d'entrée et de sortie basiques sans rotation.
+            int indexBase = direction.ordinal() * 2;
+            int indexEntrée = ajusterIndexPourRotation(indexBase);
+            int indexSortie = ajusterIndexPourRotation((indexBase + 1) % TAILLE_DU_TABLEAU); // ajuste l'index de sortie pour la rotation
+
+            // Trouver le point de sortie effectif, qui est la destination du chemin à l'index d'entrée ajusté
+            int pointSortieEffectif = tableauChemins[indexEntrée].getPointSortie();
+            pointSortieEffectif = ajusterIndexPourRotation(pointSortieEffectif); // Ajuster le point de sortie pour la rotation
+
+            return new int[] {indexEntrée, pointSortieEffectif};
+        }
 }
 
