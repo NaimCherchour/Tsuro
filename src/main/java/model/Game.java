@@ -2,97 +2,141 @@ package main.java.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Observable;
 
-import main.java.model.BotTsuro.Mouvement;
-
-public class Game {
+public class Game extends Observable implements ReadOnlyGame {
     private PlateauTuiles plateau; // Le plateau de jeu
     private List<Joueur> joueurs; // La liste des joueurs
-    // Une liste car on peut ajouter ou supprimer des joueurs
+    private static int NB_JOUEURS; // Le nombre de joueurs dans la partie
+    private int currentPlayerIndex; // L'indice du joueur courant
+    private final DeckTuiles deckTuiles; // Le deck de tuiles
+    private List<GameObserver> observers; // Les observateurs de la partie
 
-    public Game(int taillePlateau, int nombreJoueurs) {
-        plateau = new PlateauTuiles(taillePlateau);
-        joueurs = new ArrayList<>();
-        for (int i = 0; i < nombreJoueurs; i++) {
-            boolean estBot = (i % 2 == 0); // Exemple: les joueurs pairs sont des bots, à titre d'exemple
-            Joueur joueur = new Joueur(0, 0, i + 1, "Joueur " + (i + 1), estBot);
-            joueurs.add(joueur);
-        }
+
+    public DeckTuiles getDeckTuiles() {
+        return deckTuiles;
     }
-    
     public PlateauTuiles getPlateau() {
         return plateau;
     }
 
-
-    public boolean estFinie() {
-        return joueurs.size() <= 1;
+    @Override
+    public Tuile getTuile(int i, int j) {
+        return plateau.getTuile(i, j);
     }
 
     public List<Joueur> getJoueurs() {
         return joueurs;
     }
+    public void setJoueurs(List<Joueur> joueurs) {
+        this.joueurs = joueurs;
+    }
 
-    // Cette méthode pourrait être plus complexe en réalité
-    public void appliquerMouvement(Mouvement mouvement, Joueur joueur) {
-        plateau.placerTuile( mouvement.getTuile(), joueur);
-        plateau.actualiserPosJ(joueur);
+    public int getCurrentPlayerIndex(){
+        return currentPlayerIndex;
     }
 
 
-    public void jouerPartie() {
-        Scanner scanner = new Scanner(System.in);
-        List<Tuile> tuiles = TuilesGenerator.genererToutesLesTuiles();
-        BotTsuro botTsuro = new BotTsuro(0, 0, 0, null); // Initialisation du bot
-        plateau.afficherPlateau();
-    
-        while (!estFinie()) {
-            List<Joueur> joueursAEliminer = new ArrayList<>();
-            for (Joueur joueur : joueurs) {
-                if (joueur instanceof BotTsuro) {
-                    BotTsuro bot = (BotTsuro) joueur;
-                    System.out.println(bot.getPrenom() + " (Bot) c'est à votre tour.");
-                    Mouvement mouvement = bot.choisirEtAppliquerMouvement(this); // La méthode choisirMouvement doit être adaptée
-                    appliquerMouvement(mouvement, bot);
-                } else {
-                    System.out.println(joueur.getPrenom() + " c'est à votre tour.");
-                    // Logique de jeu pour les joueurs humains
-                    System.out.println("Entrez les coordonnées de la tuile à placer (ligne colonne) :");
-                    int ligneTuile = scanner.nextInt();
-                    int colonneTuile = scanner.nextInt();
-                    // Choix aléatoire d'une tuile
-                    Tuile tuile = tuiles.get((int) (Math.random() * tuiles.size()));
-    
-                    // Placer la tuile sur le plateau
-                    plateau.placerTuile(tuile, joueur);
-                }
-                plateau.actualiserPosJ(joueur);
-                plateau.afficherPlateau();
-                // Vérifier si le joueur a perdu
-                if (plateau.joueurPerdu(joueur)) {
-                    System.out.println(joueur.getPrenom() + " a perdu !");
-                    joueursAEliminer.add(joueur);
-                }
-            }
-            // Retirer les joueurs éliminés après la fin du tour pour éviter les modifications concurrentes
-            joueurs.removeAll(joueursAEliminer);
-            // Condition de sortie de la boucle si le jeu est terminé
-            if (estFinie()) {
-                break;
-            }
+    public Game(int taillePlateau, int nombreJoueurs) {
+        this.plateau = new PlateauTuiles(taillePlateau);
+        this.deckTuiles = new DeckTuiles();
+        NB_JOUEURS = nombreJoueurs;
+        initializePlayers();
+        this.observers = new ArrayList<>();
+    }
+
+    private void initializePlayers() {
+        //TODO : le prénom sera etré par l'utilisateur dans le menu
+        currentPlayerIndex = 0;
+        joueurs = new ArrayList<>();
+        for (int i = 0; i < NB_JOUEURS; i++) {
+            Joueur joueur = new Joueur( "Joueur " + (i + 1),joueurs);
+            joueurs.add(joueur);
         }
-    
-        scanner.close();
-        System.out.println("La partie est terminée. Le gagnant est " + joueurs.get(0).getPrenom() + " !");
     }
-    
 
-    public static void main(String[] args) {
-        // Création d'une partie avec un plateau de taille 7 et 4 joueurs
-        Game game = new Game(7, 4);
-        // Lancement de la partie
-        game.jouerPartie();
+
+    public void jouerUnTour(Tuile tuile) {
+        //TODO : À améliorer
+        Joueur joueurCourant;
+        if (NB_JOUEURS == 1) { // 1 seul joueur restant
+            Joueur j = joueurs.get(0);
+            notifyObservers();
+            notifyObserversPlayerWon(j.getPrenom());
+            return;
+        }
+        joueurCourant = joueurs.get(currentPlayerIndex);
+        if ( !plateau.placerTuile(tuile, joueurCourant,joueurs) || !joueurCourant.isAlive() ) {
+            // Récupérer le joueur avant de le supprimer de la liste
+            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
+            joueurs.remove(joueurPerdant);
+            NB_JOUEURS--;
+            currentPlayerIndexAct();
+            notifyObservers();
+            notifyObserversPlayerLost(joueurPerdant.getPrenom());
+
+            //JOptionPane.showMessageDialog(this, joueurPerdant.getPrenom() + " (" + joueurPerdant.getCouleur().toString() +  ") a perdu ! ");
+            System.out.println("COL"+ joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne()+ "ENTR" + joueurCourant.getPointEntree());
+            // Vérifier s'il ne reste qu'un seul joueur
+
+        } else {
+            System.out.println("COL"+ joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne()+ "ENTR" + joueurCourant.getPointEntree());
+            nextPlayer();
+        }
     }
+
+    private void currentPlayerIndexAct(){
+        if (currentPlayerIndex >= NB_JOUEURS ){
+            currentPlayerIndex = 0;
+        }
+    }
+
+    private void nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % NB_JOUEURS;
+    }
+
+    public void addObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
+
+    /**
+     * Méthode pour notifier les observateurs de la partie pour mettre à jour la vue avec les nouvelles données
+     * mais en ReadOnly
+     */
+    @Override
+    public void notifyObservers() {
+        for (GameObserver observer : observers) {
+            observer.update(this);
+        }
+    }
+
+    /**
+     * Méthode pour notifier les observateurs de la partie que le joueur a perdu
+     * @param playerName
+     */
+    private void notifyObserversPlayerLost(String playerName) {
+        for (GameObserver observer : observers) {
+            observer.playerLost(playerName);
+        }
+    }
+
+    /**
+     * Méthode pour notifier les observateurs de la partie que le joueur a gagné
+     * @param playerName
+     */
+    private void notifyObserversPlayerWon(String playerName) {
+        for (GameObserver observer : observers) {
+            observer.playerWon(playerName);
+        }
+    }
+
+
+
 }
+
+
 

@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/* Commented to avoid errors in execution
 
 public class BotTsuro extends Joueur {
     private List<Tuile> tuilesDisponibles;
 
     public BotTsuro(int ligne, int colonne, int PointEntree, String prenom) {
-        super(ligne, colonne, PointEntree, prenom, true);
+        //super(ligne, colonne, PointEntree, prenom, true);
         this.tuilesDisponibles = new ArrayList<>();
     }
 
@@ -19,7 +20,7 @@ public class BotTsuro extends Joueur {
             tuilesDisponibles = TuilesGenerator.genererToutesLesTuiles().subList(0, 3);
         }
 
-        PlateauTuiles.Direction direction = this.getDirectionEntree();
+        //PlateauTuiles.Direction direction = this.getDirectionEntree();
         int cibleX = this.getLigne() + direction.di();
         System.out.println("x: "+cibleX);
         int cibleY = this.getColonne() + direction.dj();
@@ -290,4 +291,4 @@ public class BotTsuro extends Joueur {
             return rotation;
         }
     }
-}
+} */

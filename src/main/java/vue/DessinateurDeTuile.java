@@ -1,7 +1,6 @@
 package main.java.vue;
 
-import main.java.model.Joueur;
-import main.java.model.Tuile; // Relation Observer entre la vue et le model
+import main.java.model.Tuile;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
@@ -23,7 +22,8 @@ import static main.java.vue.DessinateurDeTuile.ImageFlip.drawFlippedImage;
 
 public class DessinateurDeTuile extends JPanel {
 
-    // todo : passer le model en attribut
+    //TODO : à voir si on doit appliquer le Observer Pattern ici
+
     private BufferedImage spritesSet;
     private final int SPRITE_WIDTH= 120;
     private final int SPRITE_HEIGHT = 120;
@@ -65,11 +65,6 @@ public class DessinateurDeTuile extends JPanel {
     }
 
 
-    public void test(Graphics g) {
-        BufferedImage sprite = spritesSet.getSubimage(4 * SPRITE_WIDTH, 0 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
-        BufferedImage i = drawFlippedImage(g, sprite, 0, 0);
-        g.drawImage(i,0,0,null);
-    }
 
 
 
@@ -142,7 +137,7 @@ public class DessinateurDeTuile extends JPanel {
         if (enter == 0 ) {
             return out-1;
         } else if ( enter == 1) {
-            if (diff == 1 && sameSide(first,other)) {
+            if (diff == 1 && first == other ) {
                 return 0; }
             else if ( (diff == 6 && adjacent(first,other)) ) {
                 return 1;
@@ -174,7 +169,7 @@ public class DessinateurDeTuile extends JPanel {
                 return 6;
             }
         } else if ( enter == 6 ) {
-            if ( diff == 1 && sameSide(first,other)){
+            if ( diff == 1 && first == other ){
                 return 0 ;
             }
         }
@@ -210,7 +205,7 @@ public class DessinateurDeTuile extends JPanel {
                 return 270;
             }
         } else if ( enter == 6 ) {
-            if ( diff == 1 && sameSide(first,other)){
+            if ( diff == 1 && first == other){
                 return 270;
             }
         }

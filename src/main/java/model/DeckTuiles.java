@@ -5,6 +5,8 @@ import java.util.Random;
 
 // cette classe permet de générer les tuiles du deck du side Panel latéral
 public class DeckTuiles {
+
+    //TODO : Voir si il faut appliquer la Relation Observer/Observable pour le DeckTuiles et le SidePanel
     private Tuile[] sideTuiles; // Sauvegarde des 3 tuiles du deck
     private static final int NB_TUILES = 3; // Nombre de tuiles dans le deck
     private List<Tuile> tuiles; // Tous les 35 Modèles du deck
@@ -17,7 +19,6 @@ public class DeckTuiles {
 
     // Initialiser le deck à 3 Tuiles
     public DeckTuiles() {
-        //TODO: generated deck tiles should be different tiles ?
         this.tuiles = TuilesGenerator.genererToutesLesTuiles();
         sideTuiles = new Tuile[NB_TUILES];
         for (int i = 0; i < NB_TUILES; i++) {
@@ -34,10 +35,13 @@ public class DeckTuiles {
      */
     public Tuile getTuile(int i) {
         // retourner la tuile à l'index i pour la placer dans le plateau et la dessiner également dans le sidePanel
-        // aussi Il faudra la remplacer avec une autre tuile
+        // On a décidé de remplacer toutes les tuiles du deck au lieu de remplacer une seule
         if (i >= 0 && i < NB_TUILES) {
             Tuile tmp = sideTuiles[i];
-            sideTuiles[i] = shuffleTuile();
+            // On remplace toutes les tuiles du deck
+            for (int j = 0; j < NB_TUILES; j++) {
+                sideTuiles[j] = shuffleTuile();
+            }
             return tmp;
         }
         return null;

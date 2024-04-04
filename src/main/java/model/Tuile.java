@@ -6,16 +6,15 @@ import main.java.model.PlateauTuiles.Direction;
 public class Tuile{
     private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
-    private  Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
+    private Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
     private int rotation = 0; // Rotation de la tuile (0, 1-> +1/4, 2->+2/4, 3-> +3/4)
 
-    
+
     // getters / setters
 
     public Chemin[] getTableauChemins(){
         return tableauChemins;
     }
-
 
     // modifie le tableau de chemins de la tuile avec Un tableau d'entiers sans avoir à créer un nouvel objet Chemin
     // Ce Setter sert à une seul chose : à la génération des tuiles
@@ -33,21 +32,17 @@ public class Tuile{
         tableauChemins = tableauSortie;
     }
 
-
     public int getRotation(){
         return rotation;
     }
-    
-    public void setRotation(int rotation){
-        this.rotation = rotation;
-    }
+
     public int getId (){
         return id;
     }
 
     /**
      * Le Tableau de chemin contient à chaque indice  le point de sortie ,la couleur du chemin
-     * L'indice représente le point d'entrée 
+     * L'indice représente le point d'entrée
      */
     public Tuile(int id, int[] tableauEntreeSortie) {
         this.id = id;
@@ -57,6 +52,7 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
+
     // Constructeur pour la génération des tuiles ; On a besoin d'une Tuile vide au début de la génération
     public Tuile ( int id ){
         // For generating Tiles
@@ -67,20 +63,7 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
-    /**
-     * Affiche les connexions actuelles de la tuile Sans tenir compte de la rotation
-     */
-        public void afficherTuileNaive() {
-        // affichage d'une tuil terminal pour aider aux tests
-        // TODO : à supprimer lors de la fin de la partie vue
-        System.out.println("Tuile ID: " + id);
-        for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-            Chemin chemin = tableauChemins[i];
-            if (chemin.getPointSortie() != -1) {
-                System.out.println("De " + i + " à " + chemin.getPointSortie() +" (Couleur: " + chemin.getCouleur() + ")" );
-            }
-        }
-    }
+
 
     public void tournerTuile(){
         // Tourne la tuile de 90° dans le sens des aiguilles d'une montre
@@ -103,58 +86,37 @@ public class Tuile{
         return (tableauChemins[tmp].getPointSortie() + rotation*2)%8;
     }
 
-    public Chemin trouverNouveauChemin(PlateauTuiles.Direction ancienPoint, int pointActuel) {
-        int nouvelIndice = (ancienPoint.oppose().ordinal() * 2 + (pointActuel + 1) % 2) % 8;
-        int tmp = (nouvelIndice-(2*getRotation()))%8 ;
-        if (tmp < 0) {
-            tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
-        }
-        return getTableauChemins()[tmp];
-    }
 
     public class Chemin {
-    
+
         private int pointSortie; // Point de sortie du chemin tel que le point d'entrée est l'indice du tableau
         private Joueur.Couleur couleur; // Couleur du chemin ; les couleurs sont définies dans l'enum Couleur
         // couleur du chemin indique aussi le joueur qui a emprunté le chemin
         // Noir indique que le chemin n'est pas emprunté
-    
+
         /**
          * @param pointSortie représente le point de sortie du chemin du joueur
-         * @Description : Le constructeur de la classe Chemin ; la couleur sera initialisée par défault à NOIR 
+         * @Description : Le constructeur de la classe Chemin ; la couleur sera initialisée par défault à NOIR
          */
         public Chemin(int pointSortie ) {
             this.pointSortie = pointSortie;
             this.couleur = Couleur.NOIR;
         }
-    
+
         // Getters / Setters
 
         public int getPointSortie() {
-        // TODO : La formule de calcul du point de sortie en fonction de la rotation
             return pointSortie;
         }
 
-        /**
-         * Calcule l'index dans le tableau de chemins après ajustement pour la rotation.
-         * @param index L'index original sans rotation.
-         * @return L'index ajusté pour la rotation.
-         */
-        private int ajusterIndexPourRotation(int index) {
-            return (index + rotation * 2) % TAILLE_DU_TABLEAU;
-        }
-
-        
-
-    
         public Joueur.Couleur getCouleur() {
             return couleur;
         }
-            
+
         public void setCouleur(Joueur.Couleur couleur) {
             this.couleur = couleur;
         }
-    
+
         public boolean estEmprunte() {
             return this.couleur != Couleur.NOIR;
         }
@@ -164,44 +126,8 @@ public class Tuile{
             // Si ROUGE a emprunté 1-> 3 il sera colorier ainsi que le doublon 3 -> 1
             tableauChemins[indiceChemin].setCouleur(couleur);;
             int tmp = getPointSortieAvecRot(indiceChemin);
-            tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons 
+            tableauChemins[tmp].setCouleur(couleur);// on doit aussi changer la couleur pour  tableauChemins[tmp] afin de gerer les doublons
         }
     }
-    
-
-    public static void main(String[] args) {
-        System.out.println();
-    }
-
-    /**
-     * Calcule l'index dans le tableau de chemins après ajustement pour la rotation.
-     * @param index L'index original sans rotation.
-     * @return L'index ajusté pour la rotation.
-     */
-    private int ajusterIndexPourRotation(int index) {
-        // méthode privée si elle est seulement utilisée en interne par la classe Tuile
-        return (index + this.rotation * 2) % TAILLE_DU_TABLEAU;
-    }
-
-
-    /**
-         * Renvoie les points d'entrée et de sortie pour une direction donnée,
-         * ajustés selon la rotation actuelle de la tuile.
-         *
-         * @param direction La direction pour laquelle obtenir les points de connexion.
-         * @return Un tableau d'entiers : [point d'entrée, point de sortie].
-         */
-        public int[] getPointsDeConnexion(Direction direction) {
-            // Déterminer les points d'entrée et de sortie basiques sans rotation.
-            int indexBase = direction.ordinal() * 2;
-            int indexEntrée = ajusterIndexPourRotation(indexBase);
-            int indexSortie = ajusterIndexPourRotation((indexBase + 1) % TAILLE_DU_TABLEAU); // ajuste l'index de sortie pour la rotation
-
-            // Trouver le point de sortie effectif, qui est la destination du chemin à l'index d'entrée ajusté
-            int pointSortieEffectif = tableauChemins[indexEntrée].getPointSortie();
-            pointSortieEffectif = ajusterIndexPourRotation(pointSortieEffectif); // Ajuster le point de sortie pour la rotation
-
-            return new int[] {indexEntrée, pointSortieEffectif};
-        }
 }
 

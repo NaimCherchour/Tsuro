@@ -1,72 +1,60 @@
 package main.java.vue;
 
-import main.java.model.DeckTuiles;
-import main.java.model.Joueur;
-import main.java.model.PlateauTuiles;
-import main.java.model.Tuile;
+import main.java.controller.Controller;
+import main.java.model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
+import java.util.Observable;
 
 
-public class GameBoardUI extends JPanel implements MouseListener {
-    private PlateauTuiles board; //ERREUR : MVC PASSER PAR LE CONTROLEUR 
+/**
+ * Classe représentant l'interface graphique du plateau de jeu.
+ * Contient 5 parties : le constructeur, l'esthétique, la gestion des événements, le dessin et la mise à jour.
+ */
+public class GameBoardUI extends JPanel implements GameObserver {
+    private ReadOnlyGame game; // Quelques éléments visibles du model
 
-
-    //private Joueur joueur;
+    // TODO : Vérifier la relation entre le controller et la vue ; Normalement la vue n'a pas de référence vers le controller
+    private Controller controller ;
     DessinateurDeTuile dessinateurDeTuile;
-    private final DeckTuiles deckTuiles; // FUITE MODEL
-
-    private List<Joueur> joueurs; // La liste des joueurs
-    private int currentPlayerIndex;
-    private int numberOfPlayers ;
-
-    private Rectangle[][] cellRectangles;
-    private static final int BOARD_SIZE = 6;
     private static final int CELL_SIZE = 120;
-    private static final int BOARD_START_X = 200;
-    private static final int BOARD_START_Y = 50;
-    private JPanel filtre;
+    private static final int LEFT_MARGIN = 200;
+    private static final int TOP_MARGIN = 50;
+    private static  final int BOARD_SIZE = 720;
+    private static final int NUMBER_DECK_TILES = 3;
+    private JPanel sidePanel;
+    private  JPanel filtre ; // esthétique
 
-    public int getNumberOfPlayers() {
-        return this.numberOfPlayers;
-    }
 
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
-    }
 
-    // getter
-    public PlateauTuiles getBoard() {
-        return board;
-    }
-
-    public List<Joueur> getJoueurs() {
-        return joueurs;
-    }
-
-    public GameBoardUI() throws IOException {
-        this.board = new PlateauTuiles(6);
-        this.deckTuiles = new DeckTuiles();
-        //setPreferredSize(new Dimension(1200, 800)); // Set preferred size of the panel
+    // PART1 : CONSTRUCTOR
+    public GameBoardUI( Controller controller) throws IOException {
         this.dessinateurDeTuile = new DessinateurDeTuile();
+        this.controller = controller; // Référence vers le controller
+        this.addMouseListener(controller);
+        this.filtre = initFiltre();
+        addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
 
-        int numberOfPlayers = getNumberOfPlayersFromUser();
-        initializePlayers(numberOfPlayers);
-        
-        addMouseListener(this);
-        filtre = new JPanel() {
+        // Créer un nouveau JPanel latéral pour le deck
+        sidePanel = new JPanel();
+        sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur automatiquement
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les composants verticalement
+        sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
+
+        // Ajout du sidePanel à la disposition de GameBoardUI
+        setLayout(new BorderLayout());
+        add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
+    }
+
+    // PART2 : AESTHETIC
+    private JPanel initFiltre() {
+        JPanel filtre = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -76,202 +64,206 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 g2d.dispose();
             }
         };
+        return filtre;
     }
 
-    private int getNumberOfPlayersFromUser() {
-        int numberOfPlayers = 0;
-        boolean flag = false;
-        while (!flag) {
-            try {
-                String input = JOptionPane.showInputDialog("Entrer le nombre de joueur:");
-                numberOfPlayers = Integer.parseInt(input);
-                if (numberOfPlayers >= 1 && numberOfPlayers <= 8) {
-                    flag = true;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Entrer un nombre entre 1 et 8.");
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Entrer un nombre valide .");
+    private void addCellPanels() {
+        for (int i = 0; i < BOARD_SIZE / CELL_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE / CELL_SIZE; j++) {
+                JPanel cellPanel = new JPanel();
+                cellPanel.setBounds(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                cellPanel.setOpaque(false);
+                addMouseListeners(cellPanel);
+                add(cellPanel);
             }
         }
-        return numberOfPlayers;
     }
 
-    private void initializePlayers(int numberOfPlayers) {
-        joueurs = new ArrayList<>();
-        for (int i = 1; i <= numberOfPlayers; i++) {
-            joueurs.add(new Joueur("Joueur " + i));
-        }
-        currentPlayerIndex = 0; // Initialiser à 0 pour commencer avec le premier joueur
-        this.numberOfPlayers = numberOfPlayers;
-        this.board.setJoueurs(joueurs);
-    }
-
-    private void nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers ;
-    }
-    private void currentPlayerIndexAct(){
-        if (currentPlayerIndex >= numberOfPlayers ){
-            currentPlayerIndex = 0;
-        }
-    }
-
-    // Méthode pour gérer les actions du joueur actuel
-    private void handlePlayerAction() {
-        while (joueurs.size() > 1 ){
-            Joueur currentPlayer = joueurs.get(currentPlayerIndex);
-
-            nextPlayer(); // Passer au joueur suivant après l'action
-        }
-
-    }
-
-
-    public int[] calculDePosition(int x,int y){
-        int X = 0 ;
-        int Y = 0 ;
-        while (x > 320 || y > 170){
-            if (x > 320){
-                x-=120;
-                X+=1;
+    private void addMouseListeners(JPanel cellPanel) {
+        cellPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                filtre.setBounds(0, 0, 120, 120);
+                filtre.setOpaque(false);
+                cellPanel.setOpaque(false);
+                cellPanel.add(filtre);
+                cellPanel.setBackground(new Color(0, 0, 0, 0));
             }
-            if (y > 170){
-                y-=120;
-                Y+=1;
+
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                cellPanel.remove(filtre);
+                cellPanel.setBackground(null);
+            }
+        });
+    }
+
+
+
+    // PART3 : EVENT HANDLING
+    private void refreshDeck() throws IOException {
+        sidePanel.removeAll(); // Effacez les composants précédents du sidePanel
+        for (int i = 0; i < NUMBER_DECK_TILES; i++) {
+            Tuile tuile = game.getDeckTuiles().getSideTuiles()[i];
+            if (tuile != null) {
+                sidePanel.add(Box.createVerticalGlue());
+                // TODO : Revoir cette logique , je pense ca ne devrait pas être ici plutot dans le controller mais comment faire
+                // TODO : pour que le controller sache quel tuile a été cliqué
+                TuilePanel tuilePanel = new TuilePanel(tuile);
+                int x = i;
+                tuilePanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        filtre.setBounds(0, 0, 120, 120);
+                        filtre.setOpaque(false);
+                        tuilePanel.setOpaque(false);
+                        tuilePanel.add(filtre);
+                        tuilePanel.setBackground(new Color(0, 0, 0, 0));
+                    }
+                    public void mouseExited(MouseEvent e) {
+                        tuilePanel.remove(filtre);
+                        tuilePanel.setBackground(null);
+                    }
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        try {
+                            placerTuileFromDeck(x);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+
+                    }
+                });
+                sidePanel.add(tuilePanel);
+                sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+                JButton bouton = createButtonRotation(tuilePanel);
+                sidePanel.add(bouton); // Ajouter le bouton au panneau latéral
+                sidePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Ajuster la hauteur selon les besoins
             }
         }
-        int t[]= {X,Y};
-        return t;
+        sidePanel.revalidate(); // Revalider le sidePanel pour mettre à jour les modifications
+        sidePanel.repaint(); // Redessiner le sidePanel
+    }
+
+    private void placerTuileFromDeck(int index) throws IOException {
+        Tuile tuile = this.game.getDeckTuiles().getTuile(index);
+        if (tuile != null) {
+            refreshDeck();
+            controller.handleTilePlacement(tuile);
+        } else {
+            JOptionPane.showMessageDialog(null, "No tiles in hand!");
+        }
     }
 
 
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX(); // Coordonnée x du clic
-        int y = e.getY(); // Coordonnée y du clic
-        int XY[]= calculDePosition( x, y);
-        System.out.println("Coordonnées du clic : (" + XY[0] + ", " + XY[1] + ")");
-    }
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
+    private JButton createButtonRotation(TuilePanel tuilePanel) {
+        JButton bouton = new JButton("Rotate");
+        bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
+        bouton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.rotateTile(tuilePanel.getTuile());
+            }
+        });
+        return bouton;
     }
 
-    @Override
-    public void mouseExited(MouseEvent e) {}
 
-    private void drawTile(Graphics g, int x, int y, int size) {
+
+    // PART4 : DRAWING
+    private void drawTile(Graphics g, int x, int y) {
         // Example method to draw a tile at a specified position and size
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(x, y, size, size); // Fill rectangle representing the tile
+        g.fillRect(x, y, CELL_SIZE, CELL_SIZE); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
-        g.drawRect(x, y, size, size); // Draw outline of the tile
+        g.drawRect(x, y, CELL_SIZE, CELL_SIZE); // Draw outline of the tile
         // Draw the tile's image
-        dessinateurDeTuile.dessinerTuile(g, board.getTuile((y-50)/120, (x-200)/120), dessinateurDeTuile.getSpritesSet(),x,y);
+        dessinateurDeTuile.dessinerTuile(g, game.getTuile((y-TOP_MARGIN)/CELL_SIZE, (x-LEFT_MARGIN)/CELL_SIZE), dessinateurDeTuile.getSpritesSet(),x,y);
     }
-    
 
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         // Draw background image
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(200, 50, 720, 720); // Fill the board area with a rectangle
+        g.fillRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE); // Fill the board area with a rectangle
         g.setColor(Color.BLACK);
-        g.drawRect(200, 50, 720, 720);
+        g.drawRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE);
+
+
+
         // Draw tiles on the board
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (board.getTuile(i, j) != null ) {
-                    System.out.println(board.getTuile(i,j).getRotation()+ "   is the rotat");
-                    drawTile(g, 200+j * 120, 50+i * 120, 120);
+        for (int i = 0; i < BOARD_SIZE/CELL_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE/CELL_SIZE; j++) {
+                if (game.getTuile(i, j) != null ) {
+                    drawTile(g, LEFT_MARGIN+ j*CELL_SIZE, TOP_MARGIN+i*CELL_SIZE);
                 }
                 else {
                     g.setColor(Color.BLACK);
-                    g.drawRect(200+j*120, 50+i*120, 120, 120);
+                    g.drawRect(LEFT_MARGIN+j*CELL_SIZE, TOP_MARGIN+i*CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 }
-                JPanel cellPanel = new JPanel();
-                cellPanel.setBounds(200+j*120, 50+i*120, 120, 120);
-                cellPanel.setOpaque(false); // Rendre le panneau transparent
-                cellPanel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseEntered(MouseEvent evt) {
-                        filtre.setBounds(0, 0, 120, 120);
-                        filtre.setOpaque(false);
-                        cellPanel.setOpaque(false);
-                        cellPanel.add(filtre);
-                        cellPanel.setBackground(new Color(0, 0, 0, 0));
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent evt) {
-                        cellPanel.remove(filtre);
-                        cellPanel.setBackground(null);
-                    }
-                });
-                add(cellPanel);
             }
         }
+
         int decalage=0;
-        for (Joueur joueur : joueurs) {
+        for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
-        
-            //on affiche le compteur pour chaque joueur 
-            int x = 20; //coordonée x pour l'emplacement du compteur 
-            int y = 75 + decalage; // coordonnée y pour l'emplacement du compteur 
+
+            //on affiche le compteur pour chaque joueur
+            int x = 20; //coordonée x pour l'emplacement du compteur
+            int y = 75 + decalage; // coordonnée y pour l'emplacement du compteur
             int s = 20;
             int S = 27;
-            if (joueur == joueurs.get(currentPlayerIndex)){
+            if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())){
                 g.fillOval(x-3, y-3, S, S);
             }
             else {
                 g.fillOval(x, y, s, s);
             }
-            decalage += 30; //espace entre les compteur de chaque joueur de 30 
+            decalage += 30; //espace entre les compteur de chaque joueur de 30
         }
     }
-
-    
 
     public void drawPlayer (Graphics g , Joueur j ){
         JoueurPanel joueurUI = new JoueurPanel(j);
         joueurUI.paintComponent(g);
     }
 
-    public void placerTuileSurPlateau(Tuile tuile) {
-        Joueur j = joueurs.get(currentPlayerIndex);
-        if ( !board.placerTuile(tuile, j) || !j.isAlive() ) {
-            // Récupérer le joueur avant de le supprimer de la liste
-            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
-            joueurs.remove(joueurPerdant);
-            numberOfPlayers--;
-            currentPlayerIndexAct();
-            JOptionPane.showMessageDialog(this, joueurPerdant.getPrenom() + " (" + joueurPerdant.getCouleur().toString() +  ") a perdu ! ");
-            System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
-            repaint();  
-    
-            // Vérifier s'il ne reste qu'un seul joueur
-            if (numberOfPlayers == 1) {
-                nextPlayer();
-                j = joueurs.get(currentPlayerIndex);
 
-                JOptionPane.showMessageDialog(this, "Félicitations " + j.getPrenom() + " (" + j.getCouleur().toString() +  ")  ! Vous avez remporté la partie !");
-                
-            }
-        } else {
-            System.out.println("COL"+ j.getColonne() + "LIGN" + j.getLigne()+ "ENTR" + j.getEntree());
-            nextPlayer();
-            repaint();  // Rafraîchir l'affichage
+    // PART5 : UPDATE-Observer Pattern
+    @Override
+    public void update(ReadOnlyGame game) {
+        this.game = game;
+        try {
+            refreshDeck(); // Refresh the deck of tiles car les tuiles ont changé
+            //TODO : Revoir la logique de rafraichissement du deck , je ne pense pas que ca doit être la
+            //TODO : Plutôt dans la vue et puis on notifie le sidePanel que le deck a changé
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        revalidate();
+        repaint();
     }
 
-    /* 
+    @Override
+    public void playerLost(String joueur) {
+        JOptionPane.showMessageDialog(this, joueur + " a perdu ! ");
+    }
 
+    @Override
+    public void playerWon(String joueur) {
+        JOptionPane.showMessageDialog(this, "Félicitations " + joueur + " ! Vous avez remporté la partie !");
+    }
+
+    // pour ne pas avoir d'erreur d'exécution
+    @Override
+    public void update(Observable o, Object arg) {
+    }
+
+
+    /*
     public void afficherClassementFinal() {
         Collections.sort(joueurs, new Comparator<Joueur>() {
             @Override
@@ -279,52 +271,21 @@ public class GameBoardUI extends JPanel implements MouseListener {
                 return joueur1.getNombreTuilesPlacees() - joueur2.getNombreTuilesPlacees();
             }
         });
-    
+
         // Construction du message de classement
         StringBuilder message = new StringBuilder("Classement final :\n");
         for (int i = 0; i < joueurs.size(); i++) {
             Joueur joueur = joueurs.get(i);
             message.append(i + 1).append(". ").append(joueur.getPrenom()).append(" - ").append(joueur.getNombreTuilesPlacees()).append(" tuiles placées\n");
         }
-    
+
         // Affichage du classement final dans une boîte de dialogue
         JOptionPane.showMessageDialog(this, message.toString(), "Classement Final", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     */
-    
-
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Game Board");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1200, 850);
-            frame.setResizable(false);
-
-            frame.setLayout(new BorderLayout());
-            JPanel panel = null;
-            try {
-                panel = new GameBoardUI();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            frame.add(panel, BorderLayout.CENTER); // Add the panel to the center of the frame
-            SidePanel sidePanel = null; // Initialize the side panel
-            try {
-                sidePanel = new SidePanel((GameBoardUI) panel, ((GameBoardUI) panel).deckTuiles);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            sidePanel.setPreferredSize(new Dimension(200, 600)); // Set fixed width and adjust height automatically
-            frame.add(sidePanel, BorderLayout.EAST); // Add the side panel to the right
-            frame.setLocationRelativeTo(null); // Center the frame on the screen
-            //frame.pack();
-            frame.setVisible(true);
-        });
-    }
-
 
 }
+
+
 

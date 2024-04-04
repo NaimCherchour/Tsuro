@@ -1,18 +1,17 @@
 package main.java.vue;
 
 import main.java.model.Joueur;
-import main.java.model.PlateauTuiles;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Random;
+
 
 /**
  * Cette classe représente l'interface utilisateur d'un joueur dans un jeu.
  */
-public class JoueurPanel extends JPanel implements PropertyChangeListener {
+public class JoueurPanel extends JPanel {
+    //TODO : à voir si on doit appliquer le Observer Pattern ici
+
     private Joueur joueur;
     private static final int TAILLE_PION = 15; // La taille du pion du joueur
     private static final int MARGE_GAUCHE = 195;
@@ -23,18 +22,15 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
 
     /**
      * Constructeur de la classe JoueurUI.
-     *
      * @param joueur Le joueur associé à cette interface utilisateur.
      */
     public JoueurPanel(Joueur joueur) {
         this.joueur = joueur;
-        joueur.addPropertyChangeListener(this);
         setPreferredSize(new Dimension(TAILLE_PION, TAILLE_PION));
     }
 
     /**
      * Redessine le composant de l'interface utilisateur du joueur.
-     *
      * @param g L'objet Graphics utilisé pour dessiner le composant.
      */
     @Override
@@ -43,16 +39,14 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
         
         // Calcul de la position horizontale aléatoire limitée au bord
         int posX = calculPosX(joueur);
-        System.out.println("POSX : "+posX);
         // Position verticale fixée sur la ligne du haut*/
         int posY = calculPosY(joueur);
-        System.out.println("POSY : "+posY);
 
         dessinerPion(g, posX, posY);
     }
     
     private int calculPosX(Joueur j){
-        int posActuelle = j.getEntree();
+        int posActuelle = j.getPointEntree();
         int posJoueurSurBoard = 0;
         if (posActuelle == 0 || posActuelle == 5){
             posJoueurSurBoard =38;
@@ -67,7 +61,7 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
     }
 
     private int calculPosY(Joueur j){
-        int posActuelle = j.getEntree();
+        int posActuelle = j.getPointEntree();
         int posJoueurSurBoard= 0;
         if (posActuelle == 2 || posActuelle == 7){
             posJoueurSurBoard =38;
@@ -110,73 +104,21 @@ public class JoueurPanel extends JPanel implements PropertyChangeListener {
             case VERT -> Color.GREEN;
             case JAUNE -> Color.YELLOW;
             case ORANGE -> Color.ORANGE;
-            case ROSE -> Color.PINK;
+            case ROSE ->new Color(220, 12, 253); //rose
             case CYAN -> Color.CYAN;
             case VIOLET -> new Color(128, 0, 128); // Violet
         };
     }
 
-    /**
-     * Gère les modifications de propriété du joueur.
-     *
-     * @param evt L'événement de changement de propriété.
-     */
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        // Supposons que la propriété qui change est la position du joueur
-        if ("position".equals(evt.getPropertyName())) {
-            this.repaint(); // redessine le pion avec la nouvelle position
-        }
-    }
 
     /**
      * Définit le joueur associé à cette interface utilisateur.
-     *
      * @param joueur Le joueur associé.
      */
     public void setJoueur(Joueur joueur) {
         this.joueur = joueur;
-        joueur.addPropertyChangeListener(this);
         this.repaint();
     }
 
-    /**
-     * Méthode principale utilisée pour tester cette classe.
-     *
-     * @param args Les arguments de la ligne de commande (non utilisés dans cette application).
-     */
-    public static void main(String[] args) {
-        // Créer un nouveau joueur.
-        Joueur joueur = new Joueur( "Max");
 
-        // Créer la fenêtre.
-        JFrame frame = new JFrame("Test JoueurPanel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-
-        // Créer l'UI du joueur.
-        JoueurPanel JoueurPanel = new JoueurPanel(joueur);
-
-        // Ajouter l'UI du joueur à la fenêtre.
-        frame.add(JoueurPanel);
-
-        // Centrer le pion du joueur dans la fenêtre (à titre d'exemple).
-        JoueurPanel.setLocation(390, 290); // À ajuster en fonction de la position réelle du joueur sur le plateau.
-
-        // Afficher la fenêtre.
-        frame.setVisible(true);
-
-        // Pour tester la mise à jour de la position:
-        // Modifier la position du joueur après un certain délai.
-        SwingUtilities.invokeLater(() -> {
-            try {
-                Thread.sleep(2000); // Attendre 2 secondes.
-                joueur.setLigne(4); // Nouvelle position.
-                joueur.setColonne(5);
-                //joueurUI.updatePosition(joueur);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-    }
 }
