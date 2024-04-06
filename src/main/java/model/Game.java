@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import javax.swing.JOptionPane;
+
 public class Game extends Observable implements ReadOnlyGame {
     private PlateauTuiles plateau; // Le plateau de jeu
     private List<Joueur> joueurs; // La liste des joueurs
@@ -40,16 +42,37 @@ public class Game extends Observable implements ReadOnlyGame {
     public Game(int taillePlateau, int nombreJoueurs) {
         this.plateau = new PlateauTuiles(taillePlateau);
         this.deckTuiles = new DeckTuiles();
-        NB_JOUEURS = nombreJoueurs;
-        initializePlayers();
+        NB_JOUEURS =  getNumberOfPlayersFromUser();
+
+        initializePlayers(NB_JOUEURS);
         this.observers = new ArrayList<>();
     }
 
-    private void initializePlayers() {
+    private int getNumberOfPlayersFromUser() {
+        int numberOfPlayers = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                String input = JOptionPane.showInputDialog("Entrer le nombre de joueur:");
+                numberOfPlayers = Integer.parseInt(input);
+                if (numberOfPlayers >= 1 && numberOfPlayers <= 8) {
+                    flag = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Entrer un nombre entre 1 et 8.");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Entrer un nombre valide .");
+            }
+        }
+        return numberOfPlayers;
+    }
+
+
+    private void initializePlayers(int numberOfPlayers) {
         //TODO : le prénom sera etré par l'utilisateur dans le menu
         currentPlayerIndex = 0;
         joueurs = new ArrayList<>();
-        for (int i = 0; i < NB_JOUEURS; i++) {
+        for (int i = 0; i <  numberOfPlayers; i++) {
             Joueur joueur = new Joueur( "Joueur " + (i + 1),joueurs);
             joueurs.add(joueur);
         }
