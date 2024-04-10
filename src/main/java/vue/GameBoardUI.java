@@ -4,6 +4,7 @@ import main.java.controller.Controller;
 import main.java.model.*;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,7 +110,16 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 sidePanel.add(Box.createVerticalGlue());
                 // TODO : Revoir cette logique , je pense ca ne devrait pas être ici plutot dans le controller mais comment faire
                 // TODO : pour que le controller sache quel tuile a été cliqué
-                TuilePanel tuilePanel = new TuilePanel(tuile);
+                TuilePanel tuilePanel = new TuilePanel(tuile){
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        super.paintComponent(g);
+                        Graphics2D g2d = (Graphics2D) g;
+                        g2d.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                        g2d.setStroke(new BasicStroke(3)); // Définir l'épaisseur de la bordure
+                        g2d.drawRect(0, 0, 120 - 1, 120 - 1); // Dessiner une bordure rouge autour de la tuile
+                    }
+                };
                 int x = i;
                 tuilePanel.addMouseListener(new MouseAdapter() {
                     @Override
@@ -206,29 +216,35 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 }
             }
         }
-
-        int decalage=0;
         for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
-
-            //on affiche le compteur pour chaque joueur
-            int x = 20; //coordonée x pour l'emplacement du compteur
-            int y = 75 + decalage; // coordonnée y pour l'emplacement du compteur
-            int s = 20;
-            int S = 27;
-            if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())){
-                g.fillOval(x-3, y-3, S, S);
-            }
-            else {
-                g.fillOval(x, y, s, s);
-            }
-            decalage += 30; //espace entre les compteur de chaque joueur de 30
         }
+
+        Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
+        String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
+        Font font = new Font("Arial", Font.BOLD, 16);
+        g.setFont(font);
+        g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
+        g.drawString(tourDuJoueur, 10, 410); // Position du texte
     }
 
     public void drawPlayer (Graphics g , Joueur j ){
         JoueurPanel joueurUI = new JoueurPanel(j);
         joueurUI.paintComponent(g);
+    }
+
+    private Color convertirCouleur(Joueur.Couleur couleur) {
+        return switch (couleur) {
+            case NOIR -> Color.BLACK;
+            case ROUGE -> Color.RED;
+            case BLEU -> Color.BLUE;
+            case VERT -> Color.GREEN;
+            case JAUNE -> Color.YELLOW;
+            case ORANGE -> Color.ORANGE;
+            case ROSE ->new Color(220, 12, 253); //rose
+            case CYAN -> Color.CYAN;
+            case VIOLET -> new Color(128, 0, 128); // Violet
+        };
     }
 
 
