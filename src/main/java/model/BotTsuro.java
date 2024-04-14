@@ -5,54 +5,47 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-/* Commented to avoid errors in execution
-
 public class BotTsuro extends Joueur {
-    private List<Tuile> tuilesDisponibles;
 
-    public BotTsuro(int ligne, int colonne, int PointEntree, String prenom) {
-        //super(ligne, colonne, PointEntree, prenom, true);
-        this.tuilesDisponibles = new ArrayList<>();
+    public BotTsuro(String prenom, List<Joueur> joueurs) {
+        super(prenom, joueurs);
     }
 
     public Mouvement choisirEtAppliquerMouvement(Game game) {
-        if (tuilesDisponibles.isEmpty()) {
-            tuilesDisponibles = TuilesGenerator.genererToutesLesTuiles().subList(0, 3);
-        }
+        Tuile[] tuilesDisponibles = game.getDeckTuiles().getSideTuiles();
+        System.out.println("Nombre de tuiles disponibles: " + tuilesDisponibles.length);
 
-        //PlateauTuiles.Direction direction = this.getDirectionEntree();
-        int cibleX = this.getLigne() + direction.di();
-        System.out.println("x: "+cibleX);
-        int cibleY = this.getColonne() + direction.dj();
-        System.out.println("y: "+cibleY);
+        PlateauTuiles.Direction directionActuelle = PlateauTuiles.Direction.getDirectionFromPoint(this.getPointEntree());
+        int cibleX = this.getLigne() ;
+        int cibleY = this.getColonne() ;
+        System.out.println("Direction actuelle: " + directionActuelle + ", cibleX: " + cibleX + ", cibleY: " + cibleY);
 
         Mouvement mouvementOptimal = null;
         int scoreMax = Integer.MIN_VALUE;
 
         for (Tuile tuile : tuilesDisponibles) {
             for (int rotation = 0; rotation < 4; rotation++) {
-                Tuile copie = new Tuile(tuile.getId()); // Créer une copie de la tuile pour tester les rotations
+                Tuile copie = new Tuile(tuile.getId());
                 copie.setTableauChemins(Arrays.copyOf(tuile.getTableauChemins(), tuile.getTableauChemins().length));
-
-                copie.setRotation(rotation);
-                if (game.getPlateau().peutPlacerTuile(cibleX, cibleY, tuile)) {
-                    // Création d'un objet Mouvement pour l'évaluation
-                    Mouvement mouvementTemporaire = new Mouvement(tuile, 0, cibleX, cibleY, 0); // Le score est mis à 0 ici car il sera calculé par evaluerMouvement
-                    int score = evaluerMouvement(mouvementTemporaire, game); // Utilisation de evaluerMouvement
-                    System.out.println("Score: "+score);
+                for (int r = 0; r <= rotation; r++) {
+                    copie.tournerTuile();  // Tourner la tuile pour chaque rotation
+                }
+                System.out.println("Tuile ID: " + tuile.getId() + ", Rotation appliquée: " + rotation);
+                if (game.getPlateau().peutPlacerTuile(cibleX,cibleY) ) {
+                    Mouvement mouvementTemporaire = new Mouvement(copie, rotation, cibleX, cibleY, 0);
+                    int score = evaluerMouvement(mouvementTemporaire, game);
+                    System.out.println("Score du mouvement testé: " + score);
                     if (score > scoreMax) {
                         scoreMax = score;
-                        System.out.println("scoreMax après la valuation = "+scoreMax);
                         mouvementOptimal = mouvementTemporaire;
-                        mouvementOptimal.score = score; // Mettre à jour le score du mouvement optimal
-                        System.out.println("score du Mouvement optimal = "+scoreMax);
-
-
+                        mouvementOptimal.score = score;
                     }
+                } else {
+                    System.out.println("Position hors limites: (" + cibleX + ", " + cibleY + ")");
                 }
             }
         }
-
+        System.out.println("Score max après évaluation: " + scoreMax);
         if (mouvementOptimal != null) {
             appliquerMouvement(mouvementOptimal, game);
         } else {
@@ -62,53 +55,27 @@ public class BotTsuro extends Joueur {
         return mouvementOptimal;
     }
 
-
     private void appliquerMouvement(Mouvement mouvement, Game game) {
-        game.getPlateau().placerTuile( mouvement.getTuile(), this);
-        game.getPlateau().actualiserPosJ(this);
+        System.out.println("Appliquer mouvement: Tuile ID " + mouvement.getTuile().getId() + " à la position [" + mouvement.getX() + "," + mouvement.getY() + "]");
+        game.getPlateau().placerTuile(mouvement.getTuile(), this, game.getJoueurs());
+        game.getPlateau().actualiserPosJ(game.getJoueurs());
     }
-
-    public void setTuilesDisponibles(List<Tuile> tuilesDisponibles) {
-        this.tuilesDisponibles = tuilesDisponibles;
-    }
-
-
-    private List<Tuile> genererTuilesAleatoires() {
-        List<Tuile> toutesLesTuiles = TuilesGenerator.genererToutesLesTuiles();
-        List<Tuile> tuilesAleatoires = new ArrayList<>();
-        Random rand = new Random();
-
-        while (tuilesAleatoires.size() < 3) {
-            int indexAleatoire = rand.nextInt(toutesLesTuiles.size());
-            Tuile tuileSelectionnee = toutesLesTuiles.get(indexAleatoire);
-            if (!tuilesAleatoires.contains(tuileSelectionnee)) {
-                tuilesAleatoires.add(tuileSelectionnee);
-            }
-        }
-
-        return tuilesAleatoires;
-    }
-
 
     private int evaluerMouvement(Mouvement mouvement, Game game) {
         int score = 0;
-
-        // Privilégier les coups gagnants / qui font perdre les adversaires
         if (estCoupGagnant(mouvement, game)) {
             score += 1000;
+            System.out.println("Mouvement gagnant détecté.");
         }
-
-        // Éviter de perdre
         if (estCoupPerdant(mouvement, game)) {
             score -= 1000;
+            System.out.println("Mouvement perdant détecté.");
         }
-
-        // Essayer de rester dans les cases centrales
-        int centre = game.getPlateau().getTaille() / 2;
+        int centre = 3;  // Suppose un centre hypothétique pour des raisons de scoring
         if (Math.abs(mouvement.getX() - centre) <= 1 && Math.abs(mouvement.getY() - centre) <= 1) {
             score += 500;
+            System.out.println("Mouvement proche du centre, score bonus ajouté.");
         }
-
         return score;
     }
 
@@ -127,10 +94,10 @@ public class BotTsuro extends Joueur {
         Tuile tuile = mouvement.getTuile();
         int x = mouvement.getX();
         int y = mouvement.getY();
-        tuile.setRotation(mouvement.getRotation());
+        tuile.tournerTuile(mouvement.getRotation());
 
         // Calculer la sortie basée sur le point d'entrée de l'adversaire et la rotation de la tuile
-        int pointEntreeAdversaire = adversaire.getEntree(); // Remarque: Doit être calculé pour l'adversaire
+        int pointEntreeAdversaire = adversaire.getPointEntree(); // Remarque: Doit être calculé pour l'adversaire
         int pointSortie = tuile.getPointSortieAvecRot(tuile.getRotation());
 
         // Calculer la direction de sortie pour l'adversaire
@@ -163,10 +130,10 @@ public class BotTsuro extends Joueur {
         int x = mouvement.getX();
         int y = mouvement.getY();
         Tuile tuile = mouvement.getTuile();
-        tuile.setRotation(mouvement.getRotation());
+        tuile.tournerTuile(mouvement.getRotation());
 
         // Calculer la sortie basée sur le point d'entrée et la rotation de la tuile
-        int pointEntree = this.getEntree(); // Suppose que getEntree() renvoie le point d'entrée actuel du joueur
+        int pointEntree = this.getPointEntree();
         int pointSortie = tuile.getPointSortieAvecRot(tuile.getRotation());
 
         // Calculer la direction de sortie
@@ -192,69 +159,6 @@ public class BotTsuro extends Joueur {
 
         return false; // Si aucun des cas ci-dessus, le coup n'est pas perdant
     }
-
-    public static void main(String[] args) {
-        testGenererTuilesAleatoires();
-        System.out.println("--------------------------------");
-        testChoisirEtAppliquerMouvement();
-    }
-
-    public static void testGenererTuilesAleatoires() {
-        BotTsuro bot = new BotTsuro(0, 0, 0, "TestBot");
-        List<Tuile> tuiles = bot.genererTuilesAleatoires();
-
-        System.out.println("Test de genererTuilesAleatoires:");
-
-        if (tuiles.size() == 3) {
-            System.out.println("Succès: 3 tuiles ont été générées.");
-        } else {
-            System.out.println("Échec: le nombre de tuiles générées est incorrect.");
-        }
-
-        long uniqueCount = tuiles.stream().distinct().count();
-        if (uniqueCount == 3) {
-            System.out.println("Succès: toutes les tuiles sont uniques.");
-        } else {
-            System.out.println("Échec: certaines tuiles générées ne sont pas uniques.");
-        }
-    }
-
-    public static void testChoisirEtAppliquerMouvement() {
-        Game game = new Game(6, 2); // Ajustez selon votre implémentation
-        BotTsuro bot = new BotTsuro(3, 3, 0, "TestBot");
-        // Création de la tuile
-        Tuile tuile = new Tuile(2, new int[]{1, 0, 4, 7, 2, 6, 5, 3});
-
-        // Création de la liste contenant trois fois la même tuile
-        List<Tuile> tuilesDisponibles = new ArrayList<>();
-        tuilesDisponibles.add(tuile);
-        tuilesDisponibles.add(tuile);
-        tuilesDisponibles.add(tuile);
-
-        // Attribution de la liste de tuiles disponibles au bot
-        bot.setTuilesDisponibles(tuilesDisponibles);
-
-
-        System.out.println("Premier test de choisirEtAppliquerMouvement:");
-
-        Mouvement premierMouvement = bot.choisirEtAppliquerMouvement(game);
-        if (premierMouvement != null && game.getPlateau().getTuile(premierMouvement.getX(), premierMouvement.getY()) == premierMouvement.getTuile()) {
-            System.out.println("Succès: Un premier mouvement valide a été choisi et appliqué.");
-        } else {
-            System.out.println("Échec: Aucun mouvement valide n'a été trouvé ou appliqué lors du premier essai.");
-        }
-
-        // Réappliquer choisirEtAppliquerMouvement pour voir si le bot peut choisir un autre mouvement valide
-        System.out.println("Deuxième test de choisirEtAppliquerMouvement:");
-
-        Mouvement deuxiemeMouvement = bot.choisirEtAppliquerMouvement(game);
-        if (deuxiemeMouvement != null && game.getPlateau().getTuile(deuxiemeMouvement.getX(), deuxiemeMouvement.getY()) == deuxiemeMouvement.getTuile()) {
-            System.out.println("Succès: Un deuxième mouvement valide a été choisi et appliqué.");
-        } else {
-            System.out.println("Échec: Aucun mouvement valide n'a été trouvé ou appliqué lors du deuxième essai.");
-        }
-    }
-
 
 
     public static class Mouvement {
@@ -291,4 +195,4 @@ public class BotTsuro extends Joueur {
             return rotation;
         }
     }
-} */
+}

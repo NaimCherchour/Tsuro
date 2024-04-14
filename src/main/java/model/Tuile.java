@@ -52,6 +52,15 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
+    public int[] getPointsDeConnexion(Direction directionOpposee) {
+        int[] pointsConnexion = new int[2];
+        // Le point de sortie basé sur la direction opposée (entrée pour la tuile actuelle)
+        int baseIndex = directionOpposee.ordinal() * 2;
+        pointsConnexion[0] = baseIndex; // Point de connexion principal
+        pointsConnexion[1] = baseIndex + 1; // Point de connexion secondaire
+        return pointsConnexion;
+    }
+
 
     // Constructeur pour la génération des tuiles ; On a besoin d'une Tuile vide au début de la génération
     public Tuile ( int id ){
@@ -70,6 +79,11 @@ public class Tuile{
         // Les chemins changent mais celà ne change pas l'identité de la tuile
         // On a une formule pour calculer le nouveau point de sortie selon la rotation
         this.rotation += 1;
+        this.rotation = this.rotation % 4;
+    }
+    public void tournerTuile(int m){
+        // Tourne la tuile m fois
+        this.rotation += m;
         this.rotation = this.rotation % 4;
     }
 

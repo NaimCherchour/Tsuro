@@ -39,71 +39,86 @@ public class Game extends Observable implements ReadOnlyGame {
     }
 
 
-    public Game(int taillePlateau, int nombreJoueurs) {
+    public Game(int taillePlateau) {
         this.plateau = new PlateauTuiles(taillePlateau);
         this.deckTuiles = new DeckTuiles();
-        NB_JOUEURS =  getNumberOfPlayersFromUser();
-
-        initializePlayers(NB_JOUEURS);
         this.observers = new ArrayList<>();
+        initializeGame();
+    }
+    private void initializeGame() {
+        Object[] options = {"1v1 against Bot", "Multiplayer (2-8 players)"};
+        int response = JOptionPane.showOptionDialog(null, "Choose the game mode:", "Game Mode",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+
+        if (response == 0) {
+            initializePlayers(2, true);
+        } else {
+            int numberOfPlayers = getNumberOfPlayersFromUser();
+            initializePlayers(numberOfPlayers, false);
+        }
     }
 
     private int getNumberOfPlayersFromUser() {
-        int numberOfPlayers = 0;
-        boolean flag = false;
-        while (!flag) {
+        while (true) {
+            String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
             try {
-                String input = JOptionPane.showInputDialog("Entrer le nombre de joueur:");
-                numberOfPlayers = Integer.parseInt(input);
-                if (numberOfPlayers >= 1 && numberOfPlayers <= 8) {
-                    flag = true;
+                int numberOfPlayers = Integer.parseInt(input);
+                if (numberOfPlayers >= 2 && numberOfPlayers <= 8) {
+                    return numberOfPlayers;
                 } else {
-                    JOptionPane.showMessageDialog(null, "Entrer un nombre entre 1 et 8.");
+                    JOptionPane.showMessageDialog(null, "Enter a number between 2 and 8.");
                 }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Entrer un nombre valide .");
+                JOptionPane.showMessageDialog(null, "Enter a valid number.");
             }
         }
-        return numberOfPlayers;
     }
 
 
-    private void initializePlayers(int numberOfPlayers) {
-        //TODO : le prénom sera etré par l'utilisateur dans le menu
-        currentPlayerIndex = 0;
+    private void initializePlayers(int numberOfPlayers, boolean vsBot) {
         joueurs = new ArrayList<>();
-        for (int i = 0; i <  numberOfPlayers; i++) {
-            Joueur joueur = new Joueur( "Joueur " + (i + 1),joueurs);
-            joueurs.add(joueur);
+        if (vsBot) {
+            joueurs.add(new Joueur("Human Player", joueurs));
+            joueurs.add(new BotTsuro("Bot", joueurs));
+            currentPlayerIndex = 0;
+        } else {
+            for (int i = 0; i < numberOfPlayers; i++) {
+                joueurs.add(new Joueur("Player " + (i + 1), joueurs));
+            }
+            currentPlayerIndex = 0;
         }
     }
 
 
     public void jouerUnTour(Tuile tuile) {
-        //TODO : À améliorer
-        Joueur joueurCourant;
-        if (NB_JOUEURS == 1) { // 1 seul joueur restant
-            Joueur j = joueurs.get(0);
-            notifyObservers();
-            notifyObserversPlayerWon(j.getPrenom());
-            return;
-        }
-        joueurCourant = joueurs.get(currentPlayerIndex);
-        if ( !plateau.placerTuile(tuile, joueurCourant,joueurs) || !joueurCourant.isAlive() ) {
-            // Récupérer le joueur avant de le supprimer de la liste
-            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
-            joueurs.remove(joueurPerdant);
-            NB_JOUEURS--;
-            currentPlayerIndexAct();
-            notifyObservers();
-            notifyObserversPlayerLost(joueurPerdant.getPrenom());
+        Joueur joueurCourant = joueurs.get(currentPlayerIndex);
 
-            //JOptionPane.showMessageDialog(this, joueurPerdant.getPrenom() + " (" + joueurPerdant.getCouleur().toString() +  ") a perdu ! ");
-            System.out.println("COL"+ joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne()+ "ENTR" + joueurCourant.getPointEntree());
-            // Vérifier s'il ne reste qu'un seul joueur
-
+        if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
+            // Le joueur courant perd son tour ou meurt
+            joueurs.remove(joueurCourant);
+            notifyObserversPlayerLost(joueurCourant.getPrenom());
+            if (joueurs.size() == 1) {
+                // S'il reste un seul joueur, il est le gagnant
+                notifyObserversPlayerWon(joueurs.get(0).getPrenom());
+                return;
+            }
         } else {
-            System.out.println("COL"+ joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne()+ "ENTR" + joueurCourant.getPointEntree());
+            // Le mouvement est valide et le joueur est toujours en vie
+            System.out.println("Position après mouvement: COL" + joueurCourant.getColonne() + " LIGN" + joueurCourant.getLigne() + " ENTR" + joueurCourant.getPointEntree());
+        }
+
+        // Passer au joueur suivant
+        nextPlayer();
+
+        // Vérifier si le prochain joueur est un bot et jouer son tour automatiquement
+        if (joueurs.get(currentPlayerIndex) instanceof BotTsuro) {
+            BotTsuro bot = (BotTsuro) joueurs.get(currentPlayerIndex);
+            BotTsuro.Mouvement success = bot.choisirEtAppliquerMouvement(this); // Le bot choisit et joue son mouvement
+            if (success == null) {
+                System.out.println("Le bot ne peut pas jouer de mouvement valide.");
+            }
+            // Passer automatiquement au joueur humain suivant après que le bot ait joué
             nextPlayer();
         }
     }
@@ -115,9 +130,8 @@ public class Game extends Observable implements ReadOnlyGame {
     }
 
     private void nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % NB_JOUEURS;
+        currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
     }
-
     public void addObserver(GameObserver observer) {
         observers.add(observer);
     }
@@ -160,6 +174,3 @@ public class Game extends Observable implements ReadOnlyGame {
 
 
 }
-
-
-

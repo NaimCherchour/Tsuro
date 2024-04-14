@@ -103,8 +103,16 @@ public class PlateauTuiles {
         return plateau[ligne][colonne]==null;
     }
 
-    private boolean coordonneesValides(int ligne, int colonne) {
+    protected boolean coordonneesValides(int ligne, int colonne) {
         return (ligne >= 0 && ligne < plateau.length && colonne >= 0 && colonne < plateau[0].length);
+    }
+    public boolean peutPlacerTuile(int x, int y) {
+        // Vérifier si les coordonnées sont dans les limites du plateau
+        if (!coordonneesValides(x, y)) {
+            return false;
+        }
+        // Vérifier si l'emplacement est déjà occupé par une autre tuile
+        return isEmpty(x, y);
     }
 
     /**
