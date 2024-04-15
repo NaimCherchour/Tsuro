@@ -44,6 +44,10 @@ public class MainMenu {
         JLabel background = new JLabel(new ImageIcon("src/main/ressources/fond.png"));
         frame.setContentPane(background);
         frame.setLayout(new BorderLayout());
+        AnimatedCursorFrame cursorFrame = new AnimatedCursorFrame(
+                "src/main/ressources/defaultCursor.png", // Remplacer avec le chemin réel de l'image par défaut
+                "src/main/ressources/hoverCursor.png"    // Remplacer avec le chemin réel de l'image de survol
+        );
 
         try {
             // Création de l'audioInputStream à partir du fichier audio
@@ -78,6 +82,32 @@ public class MainMenu {
         quitButton.setActionCommand("quit");
         JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
         rulesButton.setActionCommand("rules");
+        // Récupération des curseurs de AnimatedCursorFrame
+        Cursor defaultCursor = cursorFrame.getDefaultCursor();
+        Cursor hoverCursor = cursorFrame.getHoverCursor();
+
+        // Affectation du curseur par défaut à la frame
+        frame.setCursor(defaultCursor);
+
+        // Création de l'adaptateur de la souris pour le changement de curseur
+        MouseAdapter buttonHoverAdapter = new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                frame.setCursor(hoverCursor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                frame.setCursor(defaultCursor);
+            }
+        };
+
+        // Ajout de l'adaptateur de la souris aux boutons
+        playButton.addMouseListener(buttonHoverAdapter);
+        optionsButton.addMouseListener(buttonHoverAdapter);
+        quitButton.addMouseListener(buttonHoverAdapter);
+        rulesButton.addMouseListener(buttonHoverAdapter);
+
 
         rulesButton.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent e) {
