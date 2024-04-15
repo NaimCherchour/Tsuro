@@ -5,13 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * La classe Accueil représente l'écran d'accueil du jeu TSURO, lancé avant le Menu. Elle permet d'accéder au menu grâce à son unique bouton.
- */
 public class Accueil {
 
     private JFrame frame;
     private boolean startButtonClicked = false;
+    private AnimatedCursorFrame animatedCursor;
     //private JProgressBar progressBar;
 
     /**
@@ -34,23 +32,14 @@ public class Accueil {
         startButton.setContentAreaFilled(false);
         startButton.setFocusPainted(false);
         startButton.setOpaque(false);
-
         Font buttonFont = new Font("Arial", Font.BOLD, 20);
         startButton.setFont(buttonFont);
-
-        // Création de la barre de progression
-        // progressBar = new JProgressBar(0, 100);
-        // progressBar.setStringPainted(true);
-        // progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
-        // progressBar.setPreferredSize(new Dimension(1000, 30));
 
         // Ajout d'un écouteur pour le bouton de démarrage
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startButtonClicked = true;
-
-                // Appeler la méthode pour lancer le menu principal
                 launchMainMenu();
             }
         });
@@ -61,34 +50,40 @@ public class Accueil {
         buttonPanel.setLayout(new GridBagLayout());
         buttonPanel.add(startButton);
 
-        // Création d'un panneau pour la barre de progression
-        // JPanel progressBarPanel = new JPanel();
-        // progressBarPanel.setOpaque(false);
-        // progressBarPanel.setLayout(new BorderLayout());
-        // progressBarPanel.add(progressBar, BorderLayout.SOUTH);
-
-        // Mise en page du fond avec les panneaux de bouton et de barre de progression
+        // Mise en page du fond avec les panneaux de bouton
         background.setLayout(new BorderLayout());
         background.add(buttonPanel, BorderLayout.CENTER);
-        // background.add(progressBarPanel, BorderLayout.SOUTH);
 
         // Ajout du fond à la fenêtre principale
         frame.getContentPane().add(background);
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
 
-        // Animation de la barre de progression
-        // Timer timer = new Timer(250, new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         int value = progressBar.getValue() + 1;
-        //         if (value > progressBar.getMaximum()) {
-        //             value = progressBar.getMinimum();
-        //         }
-        //         progressBar.setValue(value);
-        //     }
-        // });
-        // timer.start();
+        // Initialise et démarre l'animation du curseur
+        animatedCursor = new AnimatedCursorFrame("src/main/ressources/defaultCursor.png", "src/main/ressources/hoverCursor.png");
+        frame.setCursor(animatedCursor.getDefaultCursor());
+        startButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                startButton.setCursor(animatedCursor.getHoverCursor());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                startButton.setCursor(animatedCursor.getDefaultCursor());
+            }
+        });
+
+        frame.setVisible(true);
+    }
+
+    /**
+     * Lance le menu principal.
+     */
+    private void launchMainMenu() {
+        frame.getContentPane().removeAll();
+        MainMenu.createAndShowGUI();
+        frame.dispose();
+        if (animatedCursor != null) {
+            animatedCursor.stopAnimation(frame);
+        }
     }
 
     /**
@@ -99,15 +94,7 @@ public class Accueil {
         return startButtonClicked;
     }
 
-    /**
-     * Lance le menu principal.
-     */
-    private void launchMainMenu() {
-        // Ferme la fenêtre d'accueil
-        frame.getContentPane().removeAll();
-        // Lance le menu principal
-        MainMenu.createAndShowGUI();   
-        frame.dispose();
+    public static void main(String[] args) {
+        new Accueil().show();
     }
-    
 }
