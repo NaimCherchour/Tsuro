@@ -78,6 +78,8 @@ public class MainMenu {
         playButton.setActionCommand("play");
         JButton optionsButton = new JButton(new ImageIcon("src/main/ressources/optionsButton.png"));
         optionsButton.setActionCommand("options");
+        JButton profilButton = new JButton(new ImageIcon("src/main/ressources/profilButton.png"));
+        profilButton.setActionCommand("profil");
         JButton quitButton = new JButton(new ImageIcon("src/main/ressources/quitButton.png"));
         quitButton.setActionCommand("quit");
         JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
@@ -105,6 +107,7 @@ public class MainMenu {
         // Ajout de l'adaptateur de la souris aux boutons
         playButton.addMouseListener(buttonHoverAdapter);
         optionsButton.addMouseListener(buttonHoverAdapter);
+        profilButton.addMouseListener(buttonHoverAdapter);
         quitButton.addMouseListener(buttonHoverAdapter);
         rulesButton.addMouseListener(buttonHoverAdapter);
 
@@ -178,10 +181,10 @@ public class MainMenu {
         });
 
         // Personnalisation des boutons
-        Button.customizeButtons(playButton, optionsButton, quitButton);
+        Button.customizeButtons(playButton, optionsButton, profilButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
-        Button.mainStyle(buttonsPanel, playButton, optionsButton, quitButton);
-        rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        Button.mainStyle(buttonsPanel, playButton, optionsButton,profilButton, quitButton);
+        rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, -40, 0));
         rulesButton.setFocusPainted(false);
         rulesButton.setContentAreaFilled(false);
         // Redimensionne l'icône du bouton
