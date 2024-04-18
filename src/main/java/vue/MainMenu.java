@@ -184,7 +184,7 @@ public class MainMenu {
         Button.customizeButtons(playButton, optionsButton, profilButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
         Button.mainStyle(buttonsPanel, playButton, optionsButton,profilButton, quitButton);
-        rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, -40, 0));
+        rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         rulesButton.setFocusPainted(false);
         rulesButton.setContentAreaFilled(false);
         // Redimensionne l'icône du bouton
