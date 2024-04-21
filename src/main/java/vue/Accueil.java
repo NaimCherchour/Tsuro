@@ -78,9 +78,7 @@ public class Accueil {
      * Lance le menu principal.
      */
     private void launchMainMenu() {
-        frame.getContentPane().removeAll();
-        MainMenu.createAndShowGUI();
-        frame.dispose();
+        MainMenu.createAndShowGUI(frame); // Utilise la fenêtre existante
         if (animatedCursor != null) {
             animatedCursor.stopAnimation(frame);
         }
