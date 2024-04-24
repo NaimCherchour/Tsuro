@@ -67,6 +67,15 @@ public class MainMenu {
         frame.setLayout(new BorderLayout());
 
 
+        /*
+        AnimatedCursorFrame cursorFrame = new AnimatedCursorFrame(
+            "src/main/ressources/defaultCursor.png", // Chemin de l'image par défaut
+            "src/main/ressources/hoverCursor.png",  // Chemin de l'image de survol
+            5, // Largeur du curseur (ajustez selon votre besoin)
+            5  // Hauteur du curseur (ajustez selon votre besoin)
+        );
+         */
+
         try {
             // Création de l'audioInputStream à partir du fichier audio
             File soundFile = new File("src/main/ressources/SoundMenu.wav");

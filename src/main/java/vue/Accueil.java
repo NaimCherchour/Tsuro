@@ -60,6 +60,16 @@ public class Accueil {
 
         // Initialise et démarre l'animation du curseur
         animatedCursor = new AnimatedCursorFrame("src/main/ressources/defaultCursor.png", "src/main/ressources/hoverCursor.png");
+
+        /*
+        AnimatedCursorFrame cursorFrame = new AnimatedCursorFrame(
+            "src/main/ressources/defaultCursor.png", // Chemin de l'image par défaut
+            "src/main/ressources/hoverCursor.png",  // Chemin de l'image de survol
+            5, // Largeur du curseur (ajustez selon votre besoin)
+            5  // Hauteur du curseur (ajustez selon votre besoin)
+        );
+         */
+        
         frame.setCursor(animatedCursor.getDefaultCursor());
         startButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
