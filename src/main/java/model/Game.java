@@ -95,32 +95,32 @@ public class Game extends Observable implements ReadOnlyGame {
         Joueur joueurCourant = joueurs.get(currentPlayerIndex);
 
         if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
-            // Le joueur courant perd son tour ou meurt
             joueurs.remove(joueurCourant);
+            NB_JOUEURS--;
+            currentPlayerIndexAct();
             notifyObserversPlayerLost(joueurCourant.getPrenom());
             if (joueurs.size() == 1) {
-                // S'il reste un seul joueur, il est le gagnant
                 notifyObserversPlayerWon(joueurs.get(0).getPrenom());
                 return;
             }
         } else {
-            // Le mouvement est valide et le joueur est toujours en vie
             System.out.println("Position après mouvement: COL" + joueurCourant.getColonne() + " LIGN" + joueurCourant.getLigne() + " ENTR" + joueurCourant.getPointEntree());
         }
 
-        // Passer au joueur suivant
         nextPlayer();
 
-        // Vérifier si le prochain joueur est un bot et jouer son tour automatiquement
         if (joueurs.get(currentPlayerIndex) instanceof BotTsuro) {
             BotTsuro bot = (BotTsuro) joueurs.get(currentPlayerIndex);
-            BotTsuro.Mouvement success = bot.choisirEtAppliquerMouvement(this); // Le bot choisit et joue son mouvement
-            if (success == null) {
-                System.out.println("Le bot ne peut pas jouer de mouvement valide.");
+            BotTsuro.Mouvement mouvement = bot.choisirEtAppliquerMouvement(this);
+            if (mouvement != null) {
+                deckTuiles.prendreTuile(mouvement.getIndexTuile());  // Retirer la tuile utilisée du deck visible
             }
-            // Passer automatiquement au joueur humain suivant après que le bot ait joué
             nextPlayer();
         }
+
+    }
+    private void updateDeck() {
+        this.deckTuiles.shuffleTuile();
     }
 
     private void currentPlayerIndexAct(){

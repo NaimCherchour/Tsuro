@@ -2,6 +2,7 @@ package main.java.model;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Collections;
 
 // cette classe permet de générer les tuiles du deck du side Panel latéral
 public class DeckTuiles {
@@ -55,6 +56,16 @@ public class DeckTuiles {
         this.tuiles = TuilesGenerator.genererToutesLesTuiles();
         Random random = new Random();
         return tuiles.get(random.nextInt(tuiles.size()));
+    }
+    public Tuile prendreTuile(int index) {
+        if (index < 0 || index >= NB_TUILES) return null;
+        Tuile tuile = sideTuiles[index];
+        if (!tuiles.isEmpty()) {
+            sideTuiles[index] = tuiles.remove(0);  // Remplacer la tuile prise par une nouvelle de la liste
+        } else {
+            sideTuiles[index] = null;  // S'il n'y a plus de tuiles à tirer
+        }
+        return tuile;
     }
 }
 

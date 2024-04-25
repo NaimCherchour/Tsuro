@@ -7,6 +7,18 @@ import java.util.List;
  */
 
 public class PlateauTuiles {
+    // Crée une copie profonde du plateau actuel.
+    public PlateauTuiles copiePlateau() {
+        PlateauTuiles copie = new PlateauTuiles(plateau.length);
+        for (int i = 0; i < plateau.length; i++) {
+            for (int j = 0; j < plateau[i].length; j++) {
+                if (plateau[i][j] != null) {
+                    copie.plateau[i][j] = plateau[i][j].copier(); // Assurez-vous que la méthode copier() de Tuile fonctionne correctement
+                }
+            }
+        }
+        return copie;
+    }
 
     // Enumération des directions
     public enum Direction {
@@ -107,13 +119,13 @@ public class PlateauTuiles {
         return (ligne >= 0 && ligne < plateau.length && colonne >= 0 && colonne < plateau[0].length);
     }
     public boolean peutPlacerTuile(int x, int y) {
-        // Vérifier si les coordonnées sont dans les limites du plateau
-        if (!coordonneesValides(x, y)) {
+        if (!coordonneesValides(x, y) || !isEmpty(x, y)) {
+            System.out.println("Placement invalide ou emplacement déjà occupé.");
             return false;
         }
-        // Vérifier si l'emplacement est déjà occupé par une autre tuile
-        return isEmpty(x, y);
+        return true;
     }
+
 
     /**
      * Actualise la position du joueur après le placement d'une tuile.

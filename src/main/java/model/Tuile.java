@@ -72,6 +72,14 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
+    public Tuile copier() {
+        Tuile copie = new Tuile(this.id);
+        copie.rotation = this.rotation;
+        for (int i = 0; i < this.tableauChemins.length; i++) {
+            copie.tableauChemins[i] = this.tableauChemins[i].copier();
+        }
+        return copie;
+    }
 
 
     public void tournerTuile(){
@@ -121,6 +129,16 @@ public class Tuile{
 
         public int getPointSortie() {
             return pointSortie;
+        }
+        // Constructeur initialisant le point de sortie avec une couleur spécifiée
+        public Chemin(int pointSortie, Joueur.Couleur couleur) {
+            this.pointSortie = pointSortie;
+            this.couleur = couleur;
+        }
+        // Méthode pour cloner les chemins
+        // Copie le chemin pour créer une nouvelle instance indépendante
+        public Chemin copier() {
+            return new Chemin(this.pointSortie, this.couleur);
         }
 
         public Joueur.Couleur getCouleur() {

@@ -18,7 +18,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
 
             // model
-            Game game = new Game(6, 2);
+            Game game =new Game(6);
             // controller
             Controller controller = null;
             try {
