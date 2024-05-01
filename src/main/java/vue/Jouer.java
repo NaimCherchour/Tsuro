@@ -1,8 +1,11 @@
 package main.java.vue;
 
+import main.java.Main;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +15,8 @@ import java.io.IOException;
  * notamment le traitement des clics sur les boutons du menu de jeu.
  */
 public class Jouer {
+
+    private static final int CHARGING_TIME = 4; // Durée de la scène de chargement
 
     /**
      * Gère les clics sur les boutons dans le menu du jeu.
@@ -63,6 +68,44 @@ public class Jouer {
             MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
         });
 
+        soloButton.addActionListener(e-> {
+            playSound("src/main/ressources/buttonClickSound.wav");
+            //TODO: Scène de Chargement Rapide 2 secondes
+            Main.solo();
+        });
+
+        localButton.addActionListener(e -> {
+            playSound("src/main/ressources/buttonClickSound.wav");
+            int numberOfPlayers = 0 ;
+            while (true) {
+                String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
+                if (input == null) {
+                    // Close the dialog without exiting the application
+                    return; // Exit the action listener
+                }
+                try {
+                    numberOfPlayers = Integer.parseInt(input);
+                    if ( !(numberOfPlayers >= 2 && numberOfPlayers <= 8) ) {
+                        JOptionPane.showMessageDialog(null, "Enter a number between 2 and 8.");
+                    } else {
+                        break;
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Enter a valid number.");
+                }
+            }
+            //TODO: Scène de Chargement Rapide 2 secondes
+            Main.multiPlayer(numberOfPlayers);
+
+        });
+
+        onlineButton.addActionListener(e-> {
+            playSound("src/main/ressources/buttonClickSound.wav");
+            //TODO: Scène de Chargement Rapide 4 secondes
+            System.out.println("Online game...");
+        });
+
+
         // Ajout du bouton de retour à un panneau en haut de la fenêtre.
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setOpaque(false);
@@ -73,6 +116,41 @@ public class Jouer {
         frame.revalidate();
         frame.repaint();
     }
+
+
+    public static void showChargingScene(JFrame frame) {
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setString("Charging...");
+        progressBar.setStringPainted(true);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(progressBar, BorderLayout.CENTER);
+
+        // Create a dialog to display the charging scene
+        JDialog dialog = new JDialog(frame, "Charging Scene", true);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // Disable closing the dialog
+        dialog.getContentPane().add(panel);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(frame);
+
+        Timer timer = new Timer(CHARGING_TIME * 1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+                // Stop the timer
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+                timer.start();
+            }
+        });
+        dialog.setVisible(true);
+    }
+
 
     /**
      * Crée un bouton avec des images personnalisées pour les états normal, survolé et pressé.
