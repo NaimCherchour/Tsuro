@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,21 +36,21 @@ public class Button {
             button.setContentAreaFilled(false);
 
             // Utiliser les noms de fichiers fournis pour les icônes de base
-            ImageIcon icon = new ImageIcon("src/main/ressources/" + button.getActionCommand() + "Button.png");
+            ImageIcon icon = new ImageIcon("src/main/resources/" + button.getActionCommand() + "Button.png");
             Image img = icon.getImage();
             Image newImg = img.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
             button.setIcon(new ImageIcon(newImg));
 
             // Utiliser les noms de fichiers fournis pour les icônes pressées
             ImageIcon pressedIcon = new ImageIcon(
-                    "src/main/ressources/" + button.getActionCommand() + "ButtonPressed.png");
+                    "src/main/resources/" + button.getActionCommand() + "ButtonPressed.png");
             Image pressedImg = pressedIcon.getImage();
             Image newPressedImg = pressedImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
             button.setPressedIcon(new ImageIcon(newPressedImg));
 
             // Utiliser les noms de fichiers fournis pour les icônes de survol
             ImageIcon rolloverIcon = new ImageIcon(
-                    "src/main/ressources/" + button.getActionCommand() + "ButtonHover.png");
+                    "src/main/resources/" + button.getActionCommand() + "ButtonHover.png");
             Image rolloverImg = rolloverIcon.getImage();
             Image newRolloverImg = rolloverImg.getScaledInstance(150, 80, java.awt.Image.SCALE_SMOOTH);
             button.setRolloverIcon(new ImageIcon(newRolloverImg));

@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import main.java.Main;
 
@@ -41,12 +41,12 @@ public class Jouer {
         gbc.anchor = GridBagConstraints.CENTER;
 
         // Création des boutons pour les différentes options de jeu.
-        JButton soloButton = createButton("src/main/ressources/gameSolo.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameSoloHovered.png", "src/main/ressources/gameSoloHovered.png");
-        JButton localButton = createButton("src/main/ressources/gameLocal.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameLocalHovered.png", "src/main/ressources/gameLocalHovered.png");
-        JButton onlineButton = createButton("src/main/ressources/gameOnline.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameOnlineHovered.png", "src/main/ressources/gameOnlineHovered.png");
+        JButton soloButton = createButton("src/main/resources/gameSolo.png", 175, hoverCursor, defaultCursor, frame, "src/main/resources/gameSoloHovered.png", "src/main/resources/gameSoloHovered.png");
+        JButton localButton = createButton("src/main/resources/gameLocal.png", 175, hoverCursor, defaultCursor, frame, "src/main/resources/gameLocalHovered.png", "src/main/resources/gameLocalHovered.png");
+        JButton onlineButton = createButton("src/main/resources/gameOnline.png", 175, hoverCursor, defaultCursor, frame, "src/main/resources/gameOnlineHovered.png", "src/main/resources/gameOnlineHovered.png");
 
         // Ajout d'une action pour jouer un son lors du clic sur un bouton.
-        ActionListener playSoundAction = e -> playSound("src/main/ressources/buttonClickSound.wav");
+        ActionListener playSoundAction = e -> playSound("src/main/resources/sound/buttonClickSound.wav");
         soloButton.addActionListener(playSoundAction);
         localButton.addActionListener(playSoundAction);
         onlineButton.addActionListener(playSoundAction);
@@ -62,20 +62,20 @@ public class Jouer {
         frame.add(panel, BorderLayout.CENTER);
 
         // Création du bouton de retour avec changement d'image au survol et lors du clic.
-        JButton backButton = createButton("src/main/ressources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/ressources/returnButtonHovered.png", "src/main/ressources/returnButtonPressed.png");
+        JButton backButton = createButton("src/main/resources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/resources/returnButtonHovered.png", "src/main/resources/returnButtonPressed.png");
         backButton.addActionListener(e -> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
         });
 
         soloButton.addActionListener(e-> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             //TODO: Scène de Chargement Rapide 2 secondes
             Main.solo();
         });
 
         localButton.addActionListener(e -> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             int numberOfPlayers = 0 ;
             while (true) {
                 String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
@@ -100,7 +100,7 @@ public class Jouer {
         });
 
         onlineButton.addActionListener(e-> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             //TODO: Scène de Chargement Rapide 4 secondes
             System.out.println("Online game...");
         });

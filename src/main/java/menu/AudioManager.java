@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;

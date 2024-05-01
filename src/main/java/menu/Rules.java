@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 public class Rules {
 

@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import javax.swing.*;
 import javax.sound.sampled.*;
@@ -24,8 +24,8 @@ public class customDialog extends JDialog {
 
         // Configuration des images pour les curseurs
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Image defaultCursorImage = toolkit.getImage("src/main/ressources/defaultCursor.png");
-        Image hoverCursorImage = toolkit.getImage("src/main/ressources/hoverCursor.png");
+        Image defaultCursorImage = toolkit.getImage("src/main/resources/defaultCursor.png");
+        Image hoverCursorImage = toolkit.getImage("src/main/resources/hoverCursor.png");
         defaultCursor = toolkit.createCustomCursor(defaultCursorImage, new Point(0, 0), "defaultCursor");
         hoverCursor = toolkit.createCustomCursor(hoverCursorImage, new Point(0, 0), "hoverCursor");
 
@@ -45,7 +45,7 @@ public class customDialog extends JDialog {
         };
 
         // Configuration de l'image de fond
-        ImageIcon backgroundImageIcon = new ImageIcon("src/main/ressources/fondConv1.png");
+        ImageIcon backgroundImageIcon = new ImageIcon("src/main/resources/fondConv1.png");
         setSize(backgroundImageIcon.getIconWidth(), backgroundImageIcon.getIconHeight());
         setLayout(new BorderLayout());
 
@@ -55,22 +55,22 @@ public class customDialog extends JDialog {
         add(background);
 
         // Configuration du bouton Oui
-        JButton yesButton = new JButton(new ImageIcon("src/main/ressources/ouiButton.png"));
+        JButton yesButton = new JButton(new ImageIcon("src/main/resources/ouiButton.png"));
         yesButton.setBorder(BorderFactory.createEmptyBorder());
         yesButton.setContentAreaFilled(false);
         yesButton.addMouseListener(buttonHoverAdapter);
         yesButton.addActionListener(e -> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             System.exit(0);  // Quitte l'application si cliqué
         });
 
         // Configuration du bouton Non
-        JButton noButton = new JButton(new ImageIcon("src/main/ressources/nonButton.png"));
+        JButton noButton = new JButton(new ImageIcon("src/main/resources/nonButton.png"));
         noButton.setBorder(BorderFactory.createEmptyBorder());
         noButton.setContentAreaFilled(false);
         noButton.addMouseListener(buttonHoverAdapter);
         noButton.addActionListener(e -> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             dispose();  // Ferme la boîte de dialogue si cliqué
         });
 

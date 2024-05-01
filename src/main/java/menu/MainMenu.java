@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -6,13 +6,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionListener;
@@ -43,8 +40,8 @@ public class MainMenu {
         // Assure l'initialisation unique de cursorFrame
         if (cursorFrame == null) {
             cursorFrame = new AnimatedCursorFrame(
-                    "src/main/ressources/defaultCursor.png",
-                    "src/main/ressources/hoverCursor.png"
+                    "src/main/resources/defaultCursor.png",
+                    "src/main/resources/hoverCursor.png"
             );
         }
 
@@ -58,19 +55,19 @@ public class MainMenu {
 
 
         // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
-        ImageIcon icone = new ImageIcon("src/main/ressources/logo.png");
+        ImageIcon icone = new ImageIcon("src/main/resources/logo.png");
         frame.setIconImage(icone.getImage());
 
         // Utilisation d'un GIF en tant que fond d'écran
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/fond.png"));
+        JLabel background = new JLabel(new ImageIcon("src/main/resources/fond.png"));
         frame.setContentPane(background);
         frame.setLayout(new BorderLayout());
 
 
         /*
         AnimatedCursorFrame cursorFrame = new AnimatedCursorFrame(
-            "src/main/ressources/defaultCursor.png", // Chemin de l'image par défaut
-            "src/main/ressources/hoverCursor.png",  // Chemin de l'image de survol
+            "src/main/resources/defaultCursor.png", // Chemin de l'image par défaut
+            "src/main/resources/hoverCursor.png",  // Chemin de l'image de survol
             5, // Largeur du curseur (ajustez selon votre besoin)
             5  // Hauteur du curseur (ajustez selon votre besoin)
         );
@@ -78,7 +75,7 @@ public class MainMenu {
 
         try {
             // Création de l'audioInputStream à partir du fichier audio
-            File soundFile = new File("src/main/ressources/SoundMenu.wav");
+            File soundFile = new File("src/main/resources/sound/SoundMenu.wav");
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
 
             // Lecture du son en boucle
@@ -98,15 +95,15 @@ public class MainMenu {
         buttonsPanel.setOpaque(false);
 
         // Création des boutons avec des images personnalisées
-        JButton playButton = new JButton(new ImageIcon("src/main/ressources/playButton.png"));
+        JButton playButton = new JButton(new ImageIcon("src/main/resources/playButton.png"));
         playButton.setActionCommand("play");
-        JButton optionsButton = new JButton(new ImageIcon("src/main/ressources/optionsButton.png"));
+        JButton optionsButton = new JButton(new ImageIcon("src/main/resources/optionsButton.png"));
         optionsButton.setActionCommand("options");
-        JButton profilButton = new JButton(new ImageIcon("src/main/ressources/profilButton.png"));
+        JButton profilButton = new JButton(new ImageIcon("src/main/resources/profilButton.png"));
         profilButton.setActionCommand("profil");
-        JButton quitButton = new JButton(new ImageIcon("src/main/ressources/quitButton.png"));
+        JButton quitButton = new JButton(new ImageIcon("src/main/resources/quitButton.png"));
         quitButton.setActionCommand("quit");
-        JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
+        JButton rulesButton = new JButton(new ImageIcon("src/main/resources/rulesButton.png"));
         rulesButton.setActionCommand("rules");
 
         optionsButton.addActionListener(new ActionListener() {
@@ -213,7 +210,7 @@ public class MainMenu {
         
 
         // Personnalisation des boutons
-        Button.customizeButtons(playButton, optionsButton, profilButton, quitButton);
+        main.java.menu.Button.customizeButtons(playButton, optionsButton, profilButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
         Button.mainStyle(buttonsPanel, playButton, optionsButton,profilButton, quitButton);
         rulesButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -224,13 +221,13 @@ public class MainMenu {
         Image img = icon.getImage();
         Image newimg = img.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH);
         rulesButton.setIcon(new ImageIcon(newimg));
-        ImageIcon pressedIconRules = new ImageIcon("src/main/ressources/rulesButtonPressed.png");
+        ImageIcon pressedIconRules = new ImageIcon("src/main/resources/rulesButtonPressed.png");
         Image pressedImgRules = pressedIconRules.getImage();
         Image newPressedImgRules = pressedImgRules.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH);
         // Taille personnalisée pour l'état pressé
         rulesButton.setPressedIcon(new ImageIcon(newPressedImgRules)); // Définit l'icône pour l'état pressé // Assigner
         // l'icône de hover au bouton 'rules'
-        ImageIcon hoverIconRules = new ImageIcon("src/main/ressources/rulesButtonHover.png");
+        ImageIcon hoverIconRules = new ImageIcon("src/main/resources/rulesButtonHover.png");
         Image hoverImgRules = hoverIconRules.getImage();
         Image newHoverImgRules = hoverImgRules.getScaledInstance(90, 45, java.awt.Image.SCALE_SMOOTH);
         // Taille personnalisée pour le hover
@@ -322,7 +319,7 @@ public class MainMenu {
         });
 
         button.addActionListener(e -> {
-            playSound("src/main/ressources/buttonClickSound.wav");
+            playSound("src/main/resources/sound/buttonClickSound.wav");
             action.run();
         });
     }

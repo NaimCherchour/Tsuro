@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -14,7 +14,7 @@ private static boolean soundMuted = false; // Indicateur de son coupé
 public static void gererClicSurBoutonOption(JFrame frame, Clip clips) {
 frame.getContentPane().removeAll();
 
-ImageIcon backgroundIcon = new ImageIcon("src/main/ressources/fond.png");
+ImageIcon backgroundIcon = new ImageIcon("src/main/resources/fond.png");
 JLabel background = new JLabel(backgroundIcon);
 background.setLayout(new BorderLayout());
 frame.setContentPane(background);

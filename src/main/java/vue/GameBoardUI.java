@@ -198,8 +198,17 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 }
             }
         }
+        int espace = 75;
         for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
+            g.setColor(convertirCouleur(joueur.getCouleur())); // Couleur du texte
+            espace=espace+30;
+            if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())){
+                g.fillOval(17, espace-4, 28, 28);
+            }
+            else {
+                g.fillOval(20, espace, 20, 20);
+            }
         }
         if (game.getGameState()) {
             Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());

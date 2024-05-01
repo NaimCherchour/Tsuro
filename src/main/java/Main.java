@@ -2,10 +2,8 @@ package main.java;
 
 import main.java.controller.Controller;
 import main.java.model.Game;
-import main.java.model.Joueur;
 import main.java.model.ReadOnlyGame;
 import main.java.vue.GameBoardUI;
-import main.java.vue.Jouer;
 
 import javax.swing.*;
 import java.awt.*;

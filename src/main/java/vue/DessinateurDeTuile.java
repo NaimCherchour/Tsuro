@@ -35,7 +35,7 @@ public class DessinateurDeTuile extends JPanel {
 
     public DessinateurDeTuile() throws IOException {
         try {
-            this.spritesSet = ImageIO.read(new File("src/main/resources/sprites_tsuro.png"));
+            this.spritesSet = ImageIO.read(new File("src/main/resources/sprites/sprites_tsuro.png"));
         }
         catch (IOException e) {
             e.printStackTrace();

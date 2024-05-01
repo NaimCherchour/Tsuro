@@ -1,4 +1,4 @@
-package main.java.vue;
+package main.java.menu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,13 +18,13 @@ public class Accueil {
     public void show() {
         // Création de la fenêtre principale
         frame = new JFrame("TSURO");
-        ImageIcon icon = new ImageIcon("src/main/ressources/logo.png");
+        ImageIcon icon = new ImageIcon("src/main/resources/logo.png");
         frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1065, 600);
 
         // Utilisation d'un GIF en tant que fond
-        JLabel background = new JLabel(new ImageIcon("src/main/ressources/accueil.gif"));
+        JLabel background = new JLabel(new ImageIcon("src/main/resources/accueil.gif"));
 
         // Création du bouton de démarrage
         JButton startButton = new JButton();
@@ -59,12 +59,12 @@ public class Accueil {
         frame.setLocationRelativeTo(null);
 
         // Initialise et démarre l'animation du curseur
-        animatedCursor = new AnimatedCursorFrame("src/main/ressources/defaultCursor.png", "src/main/ressources/hoverCursor.png");
+        animatedCursor = new AnimatedCursorFrame("src/main/resources/defaultCursor.png", "src/main/resources/hoverCursor.png");
 
         /*
         AnimatedCursorFrame cursorFrame = new AnimatedCursorFrame(
-            "src/main/ressources/defaultCursor.png", // Chemin de l'image par défaut
-            "src/main/ressources/hoverCursor.png",  // Chemin de l'image de survol
+            "src/main/resources/defaultCursor.png", // Chemin de l'image par défaut
+            "src/main/resources/hoverCursor.png",  // Chemin de l'image de survol
             5, // Largeur du curseur (ajustez selon votre besoin)
             5  // Hauteur du curseur (ajustez selon votre besoin)
         );
