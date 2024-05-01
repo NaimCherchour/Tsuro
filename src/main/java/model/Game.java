@@ -54,7 +54,6 @@ public class Game extends Observable implements ReadOnlyGame {
         initializeGame(type,numberOfPlayers);
         gameState = true ;
     }
-
     private void initializeGame(int type,int numberOfPlayers) {
         if (type == 0) {
             initializePlayers(2, true);
