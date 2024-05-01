@@ -9,6 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import main.java.controller.Controller;
+import main.java.model.Game;
+import main.java.model.ReadOnlyGame;
+import main.java.vue.GameBoardUI;
 
 /**
  * Classe responsable de gérer l'interaction utilisateur dans le cadre d'un jeu,
@@ -47,9 +51,78 @@ public class Jouer {
 
         // Ajout d'une action pour jouer un son lors du clic sur un bouton.
         ActionListener playSoundAction = e -> playSound("src/main/ressources/buttonClickSound.wav");
+        ActionListener soloVSbot = e -> {
+            SwingUtilities.invokeLater(() -> {
+
+                // model
+                Game game =new Game(0,1);
+                // controller
+                Controller controller = null;
+                try {
+                    controller = new Controller(game);
+                } catch (IOException E) {
+                    throw new RuntimeException(E);
+                }
+                // view
+                GameBoardUI gameBoardUI = null;
+                try {
+                    gameBoardUI = new GameBoardUI();
+                } catch (IOException E) {
+                    throw new RuntimeException(E);
+                }
+    
+                game.addObserver(gameBoardUI); // View observes the game
+                gameBoardUI.update((ReadOnlyGame) game); // first update to show the view
+                JFrame Frame = new JFrame("Tsuro Game");
+                Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                Frame.setSize(1200, 850);
+                Frame.setResizable(false);
+    
+                Frame.setLayout(new BorderLayout());
+                Frame.add(gameBoardUI, BorderLayout.CENTER);
+                Frame.setLocationRelativeTo(null);
+                Frame.setVisible(true);
+            });
+        };
+        ActionListener MultiLocal = e -> {
+            SwingUtilities.invokeLater(() -> {
+
+                // model
+                Game game =new Game(6,0);
+                // controller
+                Controller controller = null;
+                try {
+                    controller = new Controller(game);
+                } catch (IOException E) {
+                    throw new RuntimeException(E);
+                }
+                // view
+                GameBoardUI gameBoardUI = null;
+                try {
+                    gameBoardUI = new GameBoardUI();
+                } catch (IOException E) {
+                    throw new RuntimeException(E);
+                }
+    
+                game.addObserver(gameBoardUI); // View observes the game
+                gameBoardUI.update((ReadOnlyGame) game); // first update to show the view
+                JFrame Frame = new JFrame("Tsuro Game");
+                Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                Frame.setSize(1200, 850);
+                Frame.setResizable(false);
+    
+                Frame.setLayout(new BorderLayout());
+                Frame.add(gameBoardUI, BorderLayout.CENTER);
+                Frame.setLocationRelativeTo(null);
+                Frame.setVisible(true);
+            });
+        };
         soloButton.addActionListener(playSoundAction);
         localButton.addActionListener(playSoundAction);
         onlineButton.addActionListener(playSoundAction);
+
+        soloButton.addActionListener(soloVSbot);
+        localButton.addActionListener(MultiLocal);
 
         // Ajout des boutons au panneau.
         panel.add(soloButton, gbc);
