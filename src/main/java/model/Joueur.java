@@ -59,6 +59,11 @@ public class Joueur implements Cloneable {
         this.compteur = 0;
     }
 
+    public void setCompteur(int value) {
+        this.compteur = value;
+    }
+    
+
 
     /**
      * Vérifie si la position donnée est déjà occupée par un autre joueur.
