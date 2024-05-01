@@ -1,0 +1,132 @@
+package main.java.vue;
+
+import javax.sound.sampled.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * Classe responsable de gérer l'interaction utilisateur dans le cadre d'un jeu,
+ * notamment le traitement des clics sur les boutons du menu de jeu.
+ */
+public class Jouer {
+
+    /**
+     * Gère les clics sur les boutons dans le menu du jeu.
+     * @param frame La fenêtre principale dans laquelle les éléments du jeu sont chargés.
+     * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs personnalisés.
+     */
+    public static void gererClicSurBoutonJouer(JFrame frame, AnimatedCursorFrame cursorFrame) {
+        Cursor hoverCursor = cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
+        Cursor defaultCursor = cursorFrame.getDefaultCursor();  // Curseur par défaut.
+
+        // Suppression de tous les composants actuellement présents dans le conteneur principal de la fenêtre.
+        frame.getContentPane().removeAll();
+
+        // Création et configuration d'un nouveau panneau pour les options de jeu.
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setOpaque(false);  // Rendre le panneau transparent.
+        panel.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));  // Ajout d'une marge en haut du panneau.
+
+        GridBagConstraints gbc = new GridBagConstraints();  // Contraintes pour le positionnement des composants.
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // Création des boutons pour les différentes options de jeu.
+        JButton soloButton = createButton("src/main/ressources/gameSolo.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameSoloHovered.png", "src/main/ressources/gameSoloHovered.png");
+        JButton localButton = createButton("src/main/ressources/gameLocal.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameLocalHovered.png", "src/main/ressources/gameLocalHovered.png");
+        JButton onlineButton = createButton("src/main/ressources/gameOnline.png", 175, hoverCursor, defaultCursor, frame, "src/main/ressources/gameOnlineHovered.png", "src/main/ressources/gameOnlineHovered.png");
+
+        // Ajout d'une action pour jouer un son lors du clic sur un bouton.
+        ActionListener playSoundAction = e -> playSound("src/main/ressources/buttonClickSound.wav");
+        soloButton.addActionListener(playSoundAction);
+        localButton.addActionListener(playSoundAction);
+        onlineButton.addActionListener(playSoundAction);
+
+        // Ajout des boutons au panneau.
+        panel.add(soloButton, gbc);
+        gbc.gridy++;
+        panel.add(localButton, gbc);
+        gbc.gridy++;
+        panel.add(onlineButton, gbc);
+
+        // Ajout du panneau à la fenêtre principale.
+        frame.add(panel, BorderLayout.CENTER);
+
+        // Création du bouton de retour avec changement d'image au survol et lors du clic.
+        JButton backButton = createButton("src/main/ressources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/ressources/returnButtonHovered.png", "src/main/ressources/returnButtonPressed.png");
+        backButton.addActionListener(e -> {
+            playSound("src/main/ressources/buttonClickSound.wav");
+            MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
+        });
+
+        // Ajout du bouton de retour à un panneau en haut de la fenêtre.
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.setOpaque(false);
+        topPanel.add(backButton);
+        frame.add(topPanel, BorderLayout.NORTH);
+
+        // Mise à jour et rafraîchissement de la fenêtre pour afficher les modifications.
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    /**
+     * Crée un bouton avec des images personnalisées pour les états normal, survolé et pressé.
+     * @param imagePath Chemin de l'image normale.
+     * @param width Largeur du bouton.
+     * @param hoverCursor Curseur lors du survol.
+     * @param defaultCursor Curseur par défaut.
+     * @param frame Fenêtre contenant le bouton.
+     * @param hoverImagePath Chemin de l'image lors du survol.
+     * @param pressedImagePath Chemin de l'image lors du clic.
+     * @return Un JButton configuré avec les images et les curseurs spécifiés.
+     */
+    private static JButton createButton(String imagePath, int width, Cursor hoverCursor, Cursor defaultCursor, JFrame frame, String hoverImagePath, String pressedImagePath) {
+        ImageIcon normalIcon = new ImageIcon(imagePath);
+        ImageIcon hoverIcon = new ImageIcon(hoverImagePath);
+        ImageIcon pressedIcon = new ImageIcon(pressedImagePath);
+        double aspectRatio = (double) normalIcon.getIconWidth() / (double) normalIcon.getIconHeight();
+        int height = (int) (width / aspectRatio);
+        Image image = normalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setRolloverIcon(new ImageIcon(hoverIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+        button.setPressedIcon(new ImageIcon(pressedIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                frame.getContentPane().setCursor(hoverCursor);  // Change le curseur pour tout le contenu de la fenêtre lors du survol.
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                frame.getContentPane().setCursor(defaultCursor);  // Réinitialise le curseur pour tout le contenu de la fenêtre après le survol.
+            }
+        });
+
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        return button;
+    }
+
+    /**
+     * Joue un fichier sonore spécifié.
+     * @param soundFileName Chemin vers le fichier sonore à jouer.
+     */
+    private static void playSound(String soundFileName) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+}
