@@ -57,15 +57,18 @@ public class DeckTuiles {
         Random random = new Random();
         return tuiles.get(random.nextInt(tuiles.size()));
     }
-    public Tuile prendreTuile(int index) {
-        if (index < 0 || index >= NB_TUILES) return null;
-        Tuile tuile = sideTuiles[index];
-        if (!tuiles.isEmpty()) {
-            sideTuiles[index] = tuiles.remove(0);  // Remplacer la tuile prise par une nouvelle de la liste
-        } else {
-            sideTuiles[index] = null;  // S'il n'y a plus de tuiles à tirer
+
+
+    /**
+     * Copie du tableau de 3 tuiles sideTuiles ; qui est une copie donc des tuiles du deck
+     * @return copieTuiles ; tableau de 3 tuiles copies dde celles du deck
+     */
+    public Tuile[] copy(){
+        Tuile[] copieTuiles = new Tuile[3];
+        for (int i = 0; i < NB_TUILES; i++) {
+            copieTuiles[i] = sideTuiles[i].clone();
         }
-        return tuile;
+        return copieTuiles;
     }
 }
 

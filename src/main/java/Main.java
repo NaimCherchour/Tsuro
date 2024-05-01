@@ -15,10 +15,38 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+        // choisir le type et le nombre de joueur
+        Object[] options = {"1v1 against Bot", "Multiplayer (2-8 players)"};
+        int type = JOptionPane.showOptionDialog(null, "Choose the game mode:", "Game Mode",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (type == -1) {
+            System.exit(0); // Exit the program if we click on X
+        }
 
+        int numberOfPlayers = 0 ;
+        if ( type == 1) {
+            while (true) {
+                String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
+                if (input == null) {
+                    System.exit(0);
+                }
+                try {
+                    numberOfPlayers = Integer.parseInt(input);
+                    if ( !(numberOfPlayers >= 2 && numberOfPlayers <= 8) ) {
+                        JOptionPane.showMessageDialog(null, "Enter a number between 2 and 8.");
+                    } else {
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Enter a valid number.");
+                }
+            }
+        }
+
+        int finalNumberOfPlayers = numberOfPlayers;
+        SwingUtilities.invokeLater(() -> {
             // model
-            Game game =new Game(6);
+            Game game =new Game(type, finalNumberOfPlayers);
             // controller
             Controller controller = null;
             try {
@@ -29,16 +57,15 @@ public class Main {
             // view
             GameBoardUI gameBoardUI = null;
             try {
-                gameBoardUI = new GameBoardUI(controller);
+                gameBoardUI = new GameBoardUI();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
+            gameBoardUI.addMouseListener(controller);
             game.addObserver(gameBoardUI); // View observes the game
             gameBoardUI.update((ReadOnlyGame) game); // first update to show the view
 
-            //gameBoardUI.addMouseListener(controller); // Controller listens to the view , already in the view ??
-            //gameBoardUI.update((ReadOnlyGame) game);
 
 
 

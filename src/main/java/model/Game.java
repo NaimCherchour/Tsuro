@@ -1,23 +1,26 @@
 package main.java.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
-import javax.swing.JOptionPane;
-
 public class Game extends Observable implements ReadOnlyGame {
     private PlateauTuiles plateau; // Le plateau de jeu
+    private static final int TAILLE_PLATEAU = 6 ;
     private List<Joueur> joueurs; // La liste des joueurs
     private static int NB_JOUEURS; // Le nombre de joueurs dans la partie
     private int currentPlayerIndex; // L'indice du joueur courant
     private final DeckTuiles deckTuiles; // Le deck de tuiles
     private List<GameObserver> observers; // Les observateurs de la partie
+    private boolean gameState ; // true for Playing and false for the end of the Game
 
 
     public DeckTuiles getDeckTuiles() {
         return deckTuiles;
     }
+
     public PlateauTuiles getPlateau() {
         return plateau;
     }
@@ -25,6 +28,11 @@ public class Game extends Observable implements ReadOnlyGame {
     @Override
     public Tuile getTuile(int i, int j) {
         return plateau.getTuile(i, j);
+    }
+
+    @Override
+    public boolean getGameState() {
+        return gameState;
     }
 
     public List<Joueur> getJoueurs() {
@@ -39,88 +47,134 @@ public class Game extends Observable implements ReadOnlyGame {
     }
 
 
-    public Game(int taillePlateau) {
-        this.plateau = new PlateauTuiles(taillePlateau);
+    public Game(int type, int numberOfPlayers) {
+        this.plateau = new PlateauTuiles(TAILLE_PLATEAU);
         this.deckTuiles = new DeckTuiles();
         this.observers = new ArrayList<>();
-        initializeGame();
+        initializeGame(type,numberOfPlayers);
+        gameState = true ;
     }
-    private void initializeGame() {
-        Object[] options = {"1v1 against Bot", "Multiplayer (2-8 players)"};
-        int response = JOptionPane.showOptionDialog(null, "Choose the game mode:", "Game Mode",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, options[0]);
-
-        if (response == 0) {
+    private void initializeGame(int type,int numberOfPlayers) {
+        if (type == 0) {
             initializePlayers(2, true);
         } else {
-            int numberOfPlayers = getNumberOfPlayersFromUser();
             initializePlayers(numberOfPlayers, false);
         }
     }
-
-    private int getNumberOfPlayersFromUser() {
-        while (true) {
-            String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
-            try {
-                int numberOfPlayers = Integer.parseInt(input);
-                if (numberOfPlayers >= 2 && numberOfPlayers <= 8) {
-                    return numberOfPlayers;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Enter a number between 2 and 8.");
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Enter a valid number.");
-            }
-        }
-    }
-
 
     private void initializePlayers(int numberOfPlayers, boolean vsBot) {
         joueurs = new ArrayList<>();
         if (vsBot) {
             joueurs.add(new Joueur("Human Player", joueurs));
             joueurs.add(new BotTsuro("Bot", joueurs));
+            NB_JOUEURS = 2 ;
             currentPlayerIndex = 0;
         } else {
             for (int i = 0; i < numberOfPlayers; i++) {
                 joueurs.add(new Joueur("Player " + (i + 1), joueurs));
             }
+            NB_JOUEURS = numberOfPlayers ;
             currentPlayerIndex = 0;
         }
     }
 
 
+
     public void jouerUnTour(Tuile tuile) {
-        Joueur joueurCourant = joueurs.get(currentPlayerIndex);
-
-        if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
-            joueurs.remove(joueurCourant);
-            NB_JOUEURS--;
-            currentPlayerIndexAct();
-            notifyObserversPlayerLost(joueurCourant.getPrenom());
-            if (joueurs.size() == 1) {
-                notifyObserversPlayerWon(joueurs.get(0).getPrenom());
-                return;
+        if (!joueurs.isEmpty()){
+            verifierJoueursElimines();
+            if (!joueurs.isEmpty()) {
+                System.out.println("Nombre de Joueurs" + NB_JOUEURS);
+                Joueur joueurCourant = joueurs.get(currentPlayerIndex);
+                if (isCurrentPlayerBot()) { // Check if the current player is a bot
+                    try {
+                        playBotTurn((BotTsuro) joueurCourant); // Call the method to play the bot's turn
+                        if (!joueurCourant.isAlive()) { // Check if the bot is still alive after its turn
+                            joueurs.remove(joueurCourant); // Remove the bot from the player list
+                            NB_JOUEURS--;
+                            currentPlayerIndexAct();
+                            notifyObservers();
+                            notifyObserversPlayerLost(joueurCourant.getPrenom()); // Notify observers of bot's loss
+                            verifierJoueursElimines();
+                        } else {
+                            nextPlayer(); // Move to the next player's turn
+                            jouerUnTour(null); // pour le bot
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (tuile != null) { // Ensure the tile is not null (for human player's turn)
+                        if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
+                            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
+                            joueurs.remove(joueurPerdant);
+                            NB_JOUEURS--;
+                            currentPlayerIndexAct();
+                            notifyObservers();
+                            notifyObserversPlayerLost(joueurPerdant.getPrenom());
+                            verifierJoueursElimines();
+                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
+                        } else {
+                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
+                            nextPlayer();
+                            jouerUnTour(null);
+                        }
+                    }
+                }
             }
-        } else {
-            System.out.println("Position après mouvement: COL" + joueurCourant.getColonne() + " LIGN" + joueurCourant.getLigne() + " ENTR" + joueurCourant.getPointEntree());
         }
-
-        nextPlayer();
-
-        if (joueurs.get(currentPlayerIndex) instanceof BotTsuro) {
-            BotTsuro bot = (BotTsuro) joueurs.get(currentPlayerIndex);
-            BotTsuro.Mouvement mouvement = bot.choisirEtAppliquerMouvement(this);
-            if (mouvement != null) {
-                deckTuiles.prendreTuile(mouvement.getIndexTuile());  // Retirer la tuile utilisée du deck visible
-            }
-            nextPlayer();
-        }
-
     }
-    private void updateDeck() {
-        this.deckTuiles.shuffleTuile();
+
+
+    /**
+     * -> Élimine les joueurs qui ont perdu à chaque placement de Tuile
+     *    Si il y'a plus de joueurs on arrête le jeu ou on déclare égalité s'il y'a
+     *    Si il reste 1 Joueur, on le déclare gagnant
+     */
+    private void verifierJoueursElimines() {
+        Iterator<Joueur> iterator = joueurs.iterator();
+        while (iterator.hasNext()) {
+            Joueur joueur = iterator.next();
+            if (!joueur.isAlive()) {
+                iterator.remove();
+                NB_JOUEURS--;
+                currentPlayerIndexAct();
+                if(joueurs.isEmpty()){ // pour éviter une erreur de length = 0 quand on appelle notifyObservers
+                                       // ceci reste correct , juste inconvénient c'est la chronologie des actions
+                    gameState = false ; }
+                notifyObservers();
+                notifyObserversPlayerLost(joueur.getPrenom());
+            }
+        }
+        if(joueurs.isEmpty()){
+            gameState = false ;
+            if (plateau.isTie()) { //égalité
+                notifyObserversWinnersTie();
+                notifyGameEnd();
+             }
+        }
+        if(joueurs.size() == 1 ){
+                Joueur j = joueurs.get(0);
+                System.out.println("REMOVING THE LAST PLAYER");
+                notifyObserversPlayerWon(j.getPrenom());
+                joueurs.remove(j);
+                gameState = false ;
+                notifyGameEnd();
+        }
+    }
+
+
+    public void playBotTurn(BotTsuro bot) throws IOException {
+        bot.choisirEtAppliquerMouvement(this);
+    }
+
+    public boolean isCurrentPlayerBot() {
+        if (joueurs.isEmpty()) {
+            return false;
+        } else {
+            Joueur currentPlayer = joueurs.get(currentPlayerIndex);
+            return currentPlayer instanceof BotTsuro;
+        }
     }
 
     private void currentPlayerIndexAct(){
@@ -128,14 +182,12 @@ public class Game extends Observable implements ReadOnlyGame {
             currentPlayerIndex = 0;
         }
     }
-
     private void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
     }
     public void addObserver(GameObserver observer) {
         observers.add(observer);
     }
-
     public void removeObserver(GameObserver observer) {
         observers.remove(observer);
     }
@@ -168,6 +220,21 @@ public class Game extends Observable implements ReadOnlyGame {
     private void notifyObserversPlayerWon(String playerName) {
         for (GameObserver observer : observers) {
             observer.playerWon(playerName);
+        }
+    }
+
+    /**
+     * Méthode pour notifier que la partie est finie
+     */
+    private void notifyGameEnd (){
+        for (GameObserver observer : observers) {
+            observer.gameFinish();
+        }
+    }
+
+    private void notifyObserversWinnersTie() {
+        for (GameObserver observer : observers) {
+            observer.gameWinnersTie();
         }
     }
 

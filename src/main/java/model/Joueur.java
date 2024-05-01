@@ -12,7 +12,7 @@ import java.util.Random;
  * La classe Joueur représente un joueur dans le jeu.
  */
 
-public class Joueur {
+public class Joueur implements Cloneable {
     private int ligne; // La ligne actuelle ( de la tuile ) du joueur sur le plateau
     private int colonne; // La colonne actuelle ( de la tuile ) du joueur sur le plateau
     private int PointEntree; // Le point d'entrée du joueur sur le plateau et SA POSITION ACTUELLE dans le plateau par rapport à la tuile
@@ -46,6 +46,16 @@ public class Joueur {
         System.out.println(prenom+ " " + indexCouleur);
         this.couleur = Couleur.values()[indexCouleur];
         Joueur.indexCouleur+=1;
+        this.compteur = 0;
+    }
+
+
+    public Joueur( int ligne , int colonne, int pointEntree , Couleur col ,String prenom ) {
+        this.ligne = ligne;
+        this.colonne = colonne;
+        this.PointEntree = pointEntree;
+        this.couleur = col;
+        this.prenom = prenom;
         this.compteur = 0;
     }
 
@@ -165,7 +175,18 @@ public class Joueur {
     }
 
 
-
+    /**
+     * Créer une Copie superficielle du Joueur
+     * @return copie superficielle du Joueur
+     */
+    @Override
+    protected Joueur clone() {
+        try {
+            return (Joueur) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     /**
      * Trouve le joueur ayant le chemin le plus long parmi une liste de joueurs

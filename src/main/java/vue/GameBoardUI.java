@@ -22,7 +22,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
 
     // TODO : Vérifier la relation entre le controller et la vue ; Normalement la vue n'a pas de référence vers le controller
-    private Controller controller ;
     DessinateurDeTuile dessinateurDeTuile;
     private static final int CELL_SIZE = 120;
     private static final int LEFT_MARGIN = 200;
@@ -35,10 +34,8 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI( Controller controller) throws IOException {
+    public GameBoardUI() throws IOException {
         this.dessinateurDeTuile = new DessinateurDeTuile();
-        this.controller = controller; // Référence vers le controller
-        this.addMouseListener(controller);
         this.filtre = initFiltre();
         addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
 
@@ -115,12 +112,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
                     protected void paintComponent(Graphics g) {
                         super.paintComponent(g);
                         Graphics2D g2d = (Graphics2D) g;
-                        g2d.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                        if (game.getGameState()) {
+                            g2d.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                        }
                         g2d.setStroke(new BasicStroke(3)); // Définir l'épaisseur de la bordure
                         g2d.drawRect(0, 0, 120 - 1, 120 - 1); // Dessiner une bordure rouge autour de la tuile
                     }
                 };
-                int x = i;
                 tuilePanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseEntered(MouseEvent e) {
@@ -134,16 +132,8 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         tuilePanel.remove(filtre);
                         tuilePanel.setBackground(null);
                     }
-                    public void mouseClicked(MouseEvent e) {
-                        super.mouseClicked(e);
-                        try {
-                            placerTuileFromDeck(x);
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-
-                    }
                 });
+                tuilePanel.addMouseListener(this.getMouseListeners()[0]);
                 sidePanel.add(tuilePanel);
                 sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
                 JButton bouton = createButtonRotation(tuilePanel);
@@ -155,26 +145,12 @@ public class GameBoardUI extends JPanel implements GameObserver {
         sidePanel.repaint(); // Redessiner le sidePanel
     }
 
-    private void placerTuileFromDeck(int index) throws IOException {
-        Tuile tuile = this.game.getDeckTuiles().getTuile(index);
-        if (tuile != null) {
-            refreshDeck();
-            controller.handleTilePlacement(tuile);
-        } else {
-            JOptionPane.showMessageDialog(null, "No tiles in hand!");
-        }
-    }
-
-
     private JButton createButtonRotation(TuilePanel tuilePanel) {
         JButton bouton = new JButton("Rotate");
         bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
-        bouton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.rotateTile(tuilePanel.getTuile());
-            }
-        });
+        bouton.putClientProperty("tuilePanel", tuilePanel);
+        //  the controller is the action listener to rotate
+        bouton.addActionListener((ActionListener) this.getMouseListeners()[0]);
         return bouton;
     }
 
@@ -196,8 +172,14 @@ public class GameBoardUI extends JPanel implements GameObserver {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Draw background image
-        g.setColor(Color.LIGHT_GRAY);
+        // Draw background color in gradient
+        Color startColor = new Color(85, 171, 85); // Pine green
+        Color endColor = new Color(0, 158, 255); // Sky blue
+        GradientPaint gradientPaint = new GradientPaint(0, 0, startColor, getWidth(), getHeight(), endColor);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setPaint(gradientPaint);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
         g.fillRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE); // Fill the board area with a rectangle
         g.setColor(Color.BLACK);
         g.drawRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE);
@@ -219,13 +201,14 @@ public class GameBoardUI extends JPanel implements GameObserver {
         for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
         }
-
-        Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
-        String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
-        Font font = new Font("Arial", Font.BOLD, 16);
-        g.setFont(font);
-        g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
-        g.drawString(tourDuJoueur, 10, 410); // Position du texte
+        if (game.getGameState()) {
+            Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
+            String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
+            Font font = new Font("Arial", Font.BOLD, 16);
+            g.setFont(font);
+            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
+            g.drawString(tourDuJoueur, 10, 410); // Position du texte
+        }
     }
 
     public void drawPlayer (Graphics g , Joueur j ){
@@ -272,6 +255,17 @@ public class GameBoardUI extends JPanel implements GameObserver {
     public void playerWon(String joueur) {
         JOptionPane.showMessageDialog(this, "Félicitations " + joueur + " ! Vous avez remporté la partie !");
     }
+
+    @Override
+    public void gameWinnersTie() {
+        JOptionPane.showMessageDialog(this,"Égalité, Aucun Gagnant");
+    }
+
+    @Override
+    public void gameFinish(){
+        JOptionPane.showMessageDialog(this,"Game is Finished");
+    }
+
 
     // pour ne pas avoir d'erreur d'exécution
     @Override

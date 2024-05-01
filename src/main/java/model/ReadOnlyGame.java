@@ -31,4 +31,6 @@ public interface ReadOnlyGame {
      * @return
      */
     DeckTuiles getDeckTuiles();
+
+    boolean getGameState();
 }

@@ -3,7 +3,7 @@ package main.java.model;
 import main.java.model.Joueur.Couleur;
 import main.java.model.PlateauTuiles.Direction;
 
-public class Tuile{
+public class Tuile implements Cloneable {
     private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
     private Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
@@ -11,7 +11,6 @@ public class Tuile{
 
 
     // getters / setters
-
     public Chemin[] getTableauChemins(){
         return tableauChemins;
     }
@@ -36,6 +35,10 @@ public class Tuile{
         return rotation;
     }
 
+    public void setRotation (int rot) {
+        this.rotation = rot % 4 ;
+    }
+
     public int getId (){
         return id;
     }
@@ -52,15 +55,6 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
-    public int[] getPointsDeConnexion(Direction directionOpposee) {
-        int[] pointsConnexion = new int[2];
-        // Le point de sortie basé sur la direction opposée (entrée pour la tuile actuelle)
-        int baseIndex = directionOpposee.ordinal() * 2;
-        pointsConnexion[0] = baseIndex; // Point de connexion principal
-        pointsConnexion[1] = baseIndex + 1; // Point de connexion secondaire
-        return pointsConnexion;
-    }
-
 
     // Constructeur pour la génération des tuiles ; On a besoin d'une Tuile vide au début de la génération
     public Tuile ( int id ){
@@ -72,26 +66,34 @@ public class Tuile{
         }
         this.rotation = 0; // rotation à 0 par défaut
     }
-    public Tuile copier() {
-        Tuile copie = new Tuile(this.id);
-        copie.rotation = this.rotation;
-        for (int i = 0; i < this.tableauChemins.length; i++) {
-            copie.tableauChemins[i] = this.tableauChemins[i].copier();
-        }
-        return copie;
-    }
 
+
+    /**
+     * copie profonde de la Tuile
+     * @return copie ; la copie de la tuile actuel avec un Id + 200
+     */
+    @Override
+    public Tuile clone() {
+        try {
+            Tuile clone = (Tuile) super.clone();
+            // On copie l'identité de la Tuile
+            int[] tab = new int[8];
+            for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
+                tab[i] = this.tableauChemins[i].getPointSortie();
+            }
+            clone = new Tuile(this.id + 200,tab);
+            clone.rotation = this.rotation;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     public void tournerTuile(){
         // Tourne la tuile de 90° dans le sens des aiguilles d'une montre
         // Les chemins changent mais celà ne change pas l'identité de la tuile
         // On a une formule pour calculer le nouveau point de sortie selon la rotation
         this.rotation += 1;
-        this.rotation = this.rotation % 4;
-    }
-    public void tournerTuile(int m){
-        // Tourne la tuile m fois
-        this.rotation += m;
         this.rotation = this.rotation % 4;
     }
 
@@ -129,16 +131,6 @@ public class Tuile{
 
         public int getPointSortie() {
             return pointSortie;
-        }
-        // Constructeur initialisant le point de sortie avec une couleur spécifiée
-        public Chemin(int pointSortie, Joueur.Couleur couleur) {
-            this.pointSortie = pointSortie;
-            this.couleur = couleur;
-        }
-        // Méthode pour cloner les chemins
-        // Copie le chemin pour créer une nouvelle instance indépendante
-        public Chemin copier() {
-            return new Chemin(this.pointSortie, this.couleur);
         }
 
         public Joueur.Couleur getCouleur() {

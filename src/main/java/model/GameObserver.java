@@ -26,4 +26,14 @@ public interface GameObserver extends Observer {
      * @param joueur
      */
     void playerWon(String joueur);
+
+    /**
+     * Méthode pour notifier que la partie est finie
+     */
+    void gameFinish ();
+
+    /**
+     * Méthode pour notifier que la partie se termine sur une égalité de deux Joueurs
+     */
+    void gameWinnersTie();
 }

@@ -6,19 +6,7 @@ import java.util.List;
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
 
-public class PlateauTuiles {
-    // Crée une copie profonde du plateau actuel.
-    public PlateauTuiles copiePlateau() {
-        PlateauTuiles copie = new PlateauTuiles(plateau.length);
-        for (int i = 0; i < plateau.length; i++) {
-            for (int j = 0; j < plateau[i].length; j++) {
-                if (plateau[i][j] != null) {
-                    copie.plateau[i][j] = plateau[i][j].copier(); // Assurez-vous que la méthode copier() de Tuile fonctionne correctement
-                }
-            }
-        }
-        return copie;
-    }
+public class PlateauTuiles implements Cloneable {
 
     // Enumération des directions
     public enum Direction {
@@ -79,6 +67,7 @@ public class PlateauTuiles {
     }
 
     private Tuile[][] plateau; // Matrice représentant le plateau de tuiles.
+    private boolean tie = false; // pour voir si 2 joueurs sont en égalité lors de la collision
 
 
     /**
@@ -93,7 +82,36 @@ public class PlateauTuiles {
         return plateau[ligne][colonne];
     }
 
+    public boolean isTie() {
+        return tie;
+    }
 
+    public void setTie(boolean egalite) {
+        this.tie = egalite;
+    }
+
+    /**
+     * Créer une copie profonde du PlateauTuiles actuel donc copier la Matrices de Tuiles en copiant les Tuiles
+     * @return clone ; copie du PlateauTuiles
+     */
+    @Override
+    public PlateauTuiles clone() {
+        try {
+            PlateauTuiles clone = (PlateauTuiles) super.clone();
+            clone.plateau = new Tuile[plateau.length][];
+            for (int i = 0; i < plateau.length; i++) {
+                clone.plateau[i] = plateau[i].clone();
+                for (int j = 0; j < plateau[i].length; j++) {
+                    if (plateau[i][j] != null) {
+                        clone.plateau[i][j] = plateau[i][j].clone();
+                    }
+                }
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     /**
      * Place une tuile sur le plateau à la position spécifiée et vérifie si le joueur perd.
@@ -118,14 +136,6 @@ public class PlateauTuiles {
     protected boolean coordonneesValides(int ligne, int colonne) {
         return (ligne >= 0 && ligne < plateau.length && colonne >= 0 && colonne < plateau[0].length);
     }
-    public boolean peutPlacerTuile(int x, int y) {
-        if (!coordonneesValides(x, y) || !isEmpty(x, y)) {
-            System.out.println("Placement invalide ou emplacement déjà occupé.");
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * Actualise la position du joueur après le placement d'une tuile.
@@ -134,14 +144,26 @@ public class PlateauTuiles {
 
     public void actualiserPosJ(List<Joueur> joueurs) {
         // Cette méthode est censé être dans la classe Joueur et non dans PlateauTuiles
-        for (Joueur j :joueurs) {
-            if (j.getLigne()>=0 && j.getLigne()<6 && j.getColonne()>=0 && j.getColonne()<6){
+        for (Joueur j : joueurs) {
+            if (j.getLigne() >= 0 && j.getLigne() < 6 && j.getColonne() >= 0 && j.getColonne() < 6) {
                 Tuile tuileAjouté = plateau[j.getLigne()][j.getColonne()];
-                if ( !isEmpty(j.getLigne(),j.getColonne()) ) {
+                if (!isEmpty(j.getLigne(), j.getColonne())) {
                     int sortie = tuileAjouté.getPointSortieAvecRot(j.getPointEntree());
                     if (tuileAjouté.getTableauChemins()[j.getPointEntree()].estEmprunte()) {
+                        Joueur.Couleur color = tuileAjouté.getTableauChemins()[j.getPointEntree()].getCouleur();
+                        //Tie
                         System.out.println("Lost CHEMIN DEJA VISITE");
                         j.setAlive(false);
+                        // Trouver l'autre joueur sur la même tuile
+                        for (Joueur autreJoueur : joueurs) {
+                            if (autreJoueur != j && autreJoueur.getLigne() == j.getLigne() && autreJoueur.getColonne() == j.getColonne() && autreJoueur.getCouleur().equals(color))
+                            {
+                                autreJoueur.setAlive(false);
+                                break;
+                            }
+                        }
+                        // Marquer la partie comme terminée en raison d'une égalité
+                        this.setTie(true);
                     } else {
                         Direction newEntry = Direction.getDirectionFromPoint(sortie); //vers newEntry
                         tuileAjouté.getTableauChemins()[j.getPointEntree()].marquerCheminVisite(j.getPointEntree(), j.getCouleur());
@@ -153,7 +175,7 @@ public class PlateauTuiles {
                             j.setLigne(nouvelleLigne);
                             j.setColonne(nouvelleColonne);
                             j.incrementerCompteur();
-                            System.out.println("Longueur du chemin du joueur"+ j.getCouleur()+ " :"+j.getCompteur());
+                            System.out.println("Longueur du chemin du joueur" + j.getCouleur() + " :" + j.getCompteur());
                             actualiserPosJ(joueurs);
                         } else {
                             j.setLigne(nouvelleLigne);
@@ -165,11 +187,17 @@ public class PlateauTuiles {
                 } else {
                     System.out.println("Aucune Tuile");
                 }
-            }
-            else {
+            } else {
                 System.out.println("Joueur sortie du plateau");
                 j.setAlive(false);
             }
+        }
+    }
+
+
+    public void enleverTuile ( int x , int y ){
+        if (coordonneesValides(x,y)) {
+            this.plateau[x][y] = null ;
         }
     }
 
@@ -189,7 +217,7 @@ public class PlateauTuiles {
     /**
      * Réinitialise le plateau de tuiles en le remettant à zéro.
      */
-    public void reinitialiserPlateau() {
+    public void reinitializePlateau() {
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 plateau[i][j] = null;
