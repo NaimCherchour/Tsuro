@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Color;
 
 
 
@@ -29,6 +28,7 @@ public class MainMenu {
     private static String playerName = "";
     private static JFrame frame; // La déclare comme variable de classe (static)
     private static AnimatedCursorFrame cursorFrame;
+    private static Clip clip;
 
 
     /**
@@ -108,6 +108,15 @@ public class MainMenu {
         quitButton.setActionCommand("quit");
         JButton rulesButton = new JButton(new ImageIcon("src/main/ressources/rulesButton.png"));
         rulesButton.setActionCommand("rules");
+
+        optionsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Appel de la méthode gererClicSurBoutonOption de la classe Option
+                Option.gererClicSurBoutonOption(frame, clip);
+            }
+        });
+        
 
         // Affectation du curseur par défaut à la frame
         frame.setCursor(cursorFrame.getDefaultCursor());
@@ -201,6 +210,8 @@ public class MainMenu {
             dialog.setVisible(true);
         });
 
+        
+
         // Personnalisation des boutons
         Button.customizeButtons(playButton, optionsButton, profilButton, quitButton);
         // Applique le style principal aux boutons, à l'exception du bouton 'rules'
@@ -261,6 +272,10 @@ public class MainMenu {
 
         playButton.addActionListener(e -> {
             Jouer.gererClicSurBoutonJouer(frame,cursorFrame);
+        });
+
+        optionsButton.addActionListener(e -> {
+            Option.gererClicSurBoutonOption(existingFrame, clip);
         });
 
 
