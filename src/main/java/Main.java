@@ -38,7 +38,7 @@ public class Main {
             // view
             GameBoardUI gameBoardUI = null;
             try {
-                gameBoardUI = new GameBoardUI();
+                gameBoardUI = new GameBoardUI(null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

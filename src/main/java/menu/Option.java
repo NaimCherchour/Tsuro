@@ -3,19 +3,9 @@ package main.java.menu;
 import javax.swing.*;
 
 import javax.sound.sampled.*;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Option {
     private static Clip clip; // Déclarer la variable Clip pour le son
@@ -51,8 +41,6 @@ public class Option {
         });
         // Ajouter le bouton en haut à gauche
         background.add(returnButton, BorderLayout.WEST);
-        background.add(returnButton, BorderLayout.NORTH);
-
 
 
         // Reste du code pour les boutons d'option...

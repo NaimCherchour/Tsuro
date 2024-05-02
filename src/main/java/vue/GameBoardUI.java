@@ -1,5 +1,10 @@
 package main.java.vue;
 
+import main.java.Main;
+
+import javax.sound.sampled.*;
+import java.io.File;
+
 import main.java.controller.Controller;
 import main.java.model.*;
 
@@ -12,6 +17,10 @@ import java.io.IOException;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.util.Observable;
+
+import main.java.menu.*;
+
+import main.java.*;
 
 
 /**
@@ -31,24 +40,101 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private JPanel sidePanel;
     private  JPanel filtre ; // esthétique
 
+    /**
+     * Gère les clics sur les boutons dans le menu du jeu.
+     * @param frame La fenêtre principale dans laquelle les éléments du jeu sont chargés.
+     * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs personnalisés.
+     */
+
+
+
 
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI() throws IOException {
-        this.dessinateurDeTuile = new DessinateurDeTuile();
-        this.filtre = initFiltre();
-        addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
+public GameBoardUI(JFrame frame) throws IOException {
+//public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws IOException {
 
-        // Créer un nouveau JPanel latéral pour le deck
-        sidePanel = new JPanel();
-        sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur automatiquement
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les composants verticalement
-        sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
 
-        // Ajout du sidePanel à la disposition de GameBoardUI
-        setLayout(new BorderLayout());
-        add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
+
+    this.dessinateurDeTuile = new DessinateurDeTuile();
+    this.filtre = initFiltre();
+    addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
+
+    // Créer un nouveau JPanel latéral pour le deck
+    sidePanel = new JPanel();
+    sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur automatiquement
+    sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les composants verticalement
+    sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
+
+    // Ajout du sidePanel à la disposition de GameBoardUI
+    setLayout(new BorderLayout());
+    add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
+
+/*
+    Cursor hoverCursor = cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
+    Cursor defaultCursor = cursorFrame.getDefaultCursor();  // Curseur par défaut.
+    // Création du bouton de retour avec changement d'image au survol et lors du clic.
+    JButton backButton = createButton("src/main/resources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/resources/returnButtonHovered.png", "src/main/resources/returnButtonPressed.png");
+    backButton.addActionListener(e -> {
+        //playSound("src/main/resources/sound/buttonClickSound.wav");
+        MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
+    });
+    // Ajout du bouton de retour à un panneau en haut de la fenêtre.
+    JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    topPanel.setOpaque(false);
+    topPanel.add(backButton);
+    add(topPanel, BorderLayout.NORTH); // Ajouter le panneau en haut de GameBoardUI
+}
+
+ */
+
+ /*
+    /**
+     * Crée un bouton avec des images personnalisées pour les états normal, survolé et pressé.
+     * @param imagePath Chemin de l'image normale.
+     * @param width Largeur du bouton.
+     * @param hoverCursor Curseur lors du survol.
+     * @param defaultCursor Curseur par défaut.
+     * @param frame Fenêtre contenant le bouton.
+     * @param hoverImagePath Chemin de l'image lors du survol.
+     * @param pressedImagePath Chemin de l'image lors du clic.
+     * @return Un JButton configuré avec les images et les curseurs spécifiés.
+     
+    public static JButton createButton(String imagePath, int width, Cursor hoverCursor, Cursor defaultCursor, JFrame frame, String hoverImagePath, String pressedImagePath) {
+        ImageIcon normalIcon = new ImageIcon(imagePath);
+        ImageIcon hoverIcon = new ImageIcon(hoverImagePath);
+        ImageIcon pressedIcon = new ImageIcon(pressedImagePath);
+        double aspectRatio = (double) normalIcon.getIconWidth() / (double) normalIcon.getIconHeight();
+        int height = (int) (width / aspectRatio);
+        Image image = normalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setRolloverIcon(new ImageIcon(hoverIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+        button.setPressedIcon(new ImageIcon(pressedIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                frame.getContentPane().setCursor(hoverCursor);  // Change le curseur pour tout le contenu de la fenêtre lors du survol.
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                frame.getContentPane().setCursor(defaultCursor);  // Réinitialise le curseur pour tout le contenu de la fenêtre après le survol.
+            }
+        });
+
+        
+
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        return button;
+          */
     }
+
+    
+
 
     // PART2 : AESTHETIC
     private JPanel initFiltre() {
@@ -218,7 +304,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
             g.drawString(tourDuJoueur, 10, 410); // Position du texte
         }
+
+
     }
+
+
 
     public void drawPlayer (Graphics g , Joueur j ){
         JoueurPanel joueurUI = new JoueurPanel(j);
