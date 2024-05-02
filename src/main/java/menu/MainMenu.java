@@ -79,7 +79,7 @@ public class MainMenu {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
 
             // Lecture du son en boucle
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
 
