@@ -30,6 +30,11 @@ import main.java.*;
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
 
+    private int secondsElapsed = 0;
+    private Timer timer;
+
+
+
     // TODO : Vérifier la relation entre le controller et la vue ; Normalement la vue n'a pas de référence vers le controller
     DessinateurDeTuile dessinateurDeTuile;
     private static final int CELL_SIZE = 120;
@@ -54,6 +59,16 @@ public class GameBoardUI extends JPanel implements GameObserver {
 public GameBoardUI(JFrame frame) throws IOException {
 //public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws IOException {
 
+   // Initialiser le timer avec une durée de 1 seconde entre chaque tick
+timer = new Timer(1000, new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+        repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
+        System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le terminal
+    }
+});
+timer.start(); // Démarrer le timer
 
 
     this.dessinateurDeTuile = new DessinateurDeTuile();
@@ -305,7 +320,12 @@ public GameBoardUI(JFrame frame) throws IOException {
             g.drawString(tourDuJoueur, 10, 410); // Position du texte
         }
 
-
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        g.setFont(font);
+        g.setColor(Color.BLACK); // Couleur du texte
+        int x = getWidth() - 150; // Position en X pour afficher le chronomètre
+        int y = 20; // Position en Y pour afficher le chronomètre
+        g.drawString("Temps écoulé: " + secondsElapsed + " secondes", x, y);
     }
 
 
