@@ -1,0 +1,91 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "BotTsuro",
+            "request": "launch",
+            "mainClass": "main.java.model.BotTsuro",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "TestBotTsuro",
+            "request": "launch",
+            "mainClass": "main.java.model.TestBotTsuro",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Game",
+            "request": "launch",
+            "mainClass": "Game",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "Joueur",
+            "request": "launch",
+            "mainClass": "Joueur",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "PlateauTuiles",
+            "request": "launch",
+            "mainClass": "PlateauTuiles",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "Tuile",
+            "request": "launch",
+            "mainClass": "Tuile",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "Tuiles",
+            "request": "launch",
+            "mainClass": "Tuiles",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "TuilesGenerator",
+            "request": "launch",
+            "mainClass": "TuilesGenerator",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "DessinateurDeTuile",
+            "request": "launch",
+            "mainClass": "main.java.vue.DessinateurDeTuile",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "JoueurUI",
+            "request": "launch",
+            "mainClass": "main.java.vue.JoueurUI",
+            "projectName": "projettsuro_b822d05d"
+        },
+        {
+            "type": "java",
+            "name": "PlateauUI",
+            "request": "launch",
+            "mainClass": "main.java.vue.PlateauUI",
+            "projectName": "projettsuro_b822d05d"
+        }
+    ]
+}
