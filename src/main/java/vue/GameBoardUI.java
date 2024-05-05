@@ -22,10 +22,10 @@ import main.java.menu.*;
 
 import main.java.*;
 
-
 /**
  * Classe représentant l'interface graphique du plateau de jeu.
- * Contient 5 parties : le constructeur, l'esthétique, la gestion des événements, le dessin et la mise à jour.
+ * Contient 5 parties : le constructeur, l'esthétique, la gestion des
+ * événements, le dessin et la mise à jour.
  */
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
@@ -33,123 +33,154 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private int secondsElapsed = 0;
     private Timer timer;
 
-
-
-    // TODO : Vérifier la relation entre le controller et la vue ; Normalement la vue n'a pas de référence vers le controller
+    // TODO : Vérifier la relation entre le controller et la vue ; Normalement la
+    // vue n'a pas de référence vers le controller
     DessinateurDeTuile dessinateurDeTuile;
     private static final int CELL_SIZE = 120;
     private static final int LEFT_MARGIN = 200;
     private static final int TOP_MARGIN = 50;
-    private static  final int BOARD_SIZE = 720;
+    private static final int BOARD_SIZE = 720;
     private static final int NUMBER_DECK_TILES = 3;
     private JPanel sidePanel;
-    private  JPanel filtre ; // esthétique
+    private JPanel filtre; // esthétique
+    private boolean VisuActif = false; // esthétique
+    private Tuile VisuSelect; // esthétique
 
     /**
      * Gère les clics sur les boutons dans le menu du jeu.
-     * @param frame La fenêtre principale dans laquelle les éléments du jeu sont chargés.
-     * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs personnalisés.
+     * 
+     * @param frame       La fenêtre principale dans laquelle les éléments du jeu
+     *                    sont chargés.
+     * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
+     *                    personnalisés.
      */
 
-
-
-
-
     // PART1 : CONSTRUCTOR
-public GameBoardUI(JFrame frame) throws IOException {
-//public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws IOException {
+    public GameBoardUI(JFrame frame) throws IOException {
+        // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
+        // IOException {
 
-   // Initialiser le timer avec une durée de 1 seconde entre chaque tick
-timer = new Timer(1000, new ActionListener() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-        repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-        System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le terminal
-    }
-});
-timer.start(); // Démarrer le timer
-
-
-    this.dessinateurDeTuile = new DessinateurDeTuile();
-    this.filtre = initFiltre();
-    addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
-
-    // Créer un nouveau JPanel latéral pour le deck
-    sidePanel = new JPanel();
-    sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur automatiquement
-    sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les composants verticalement
-    sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
-
-    // Ajout du sidePanel à la disposition de GameBoardUI
-    setLayout(new BorderLayout());
-    add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
-
-/*
-    Cursor hoverCursor = cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
-    Cursor defaultCursor = cursorFrame.getDefaultCursor();  // Curseur par défaut.
-    // Création du bouton de retour avec changement d'image au survol et lors du clic.
-    JButton backButton = createButton("src/main/resources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/resources/returnButtonHovered.png", "src/main/resources/returnButtonPressed.png");
-    backButton.addActionListener(e -> {
-        //playSound("src/main/resources/sound/buttonClickSound.wav");
-        MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
-    });
-    // Ajout du bouton de retour à un panneau en haut de la fenêtre.
-    JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    topPanel.setOpaque(false);
-    topPanel.add(backButton);
-    add(topPanel, BorderLayout.NORTH); // Ajouter le panneau en haut de GameBoardUI
-}
-
- */
-
- /*
-    /**
-     * Crée un bouton avec des images personnalisées pour les états normal, survolé et pressé.
-     * @param imagePath Chemin de l'image normale.
-     * @param width Largeur du bouton.
-     * @param hoverCursor Curseur lors du survol.
-     * @param defaultCursor Curseur par défaut.
-     * @param frame Fenêtre contenant le bouton.
-     * @param hoverImagePath Chemin de l'image lors du survol.
-     * @param pressedImagePath Chemin de l'image lors du clic.
-     * @return Un JButton configuré avec les images et les curseurs spécifiés.
-     
-    public static JButton createButton(String imagePath, int width, Cursor hoverCursor, Cursor defaultCursor, JFrame frame, String hoverImagePath, String pressedImagePath) {
-        ImageIcon normalIcon = new ImageIcon(imagePath);
-        ImageIcon hoverIcon = new ImageIcon(hoverImagePath);
-        ImageIcon pressedIcon = new ImageIcon(pressedImagePath);
-        double aspectRatio = (double) normalIcon.getIconWidth() / (double) normalIcon.getIconHeight();
-        int height = (int) (width / aspectRatio);
-        Image image = normalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        JButton button = new JButton(new ImageIcon(image));
-        button.setRolloverIcon(new ImageIcon(hoverIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-        button.setPressedIcon(new ImageIcon(pressedIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
+        // Initialiser le timer avec une durée de 1 seconde entre chaque tick
+        timer = new Timer(1000, new ActionListener() {
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                frame.getContentPane().setCursor(hoverCursor);  // Change le curseur pour tout le contenu de la fenêtre lors du survol.
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                frame.getContentPane().setCursor(defaultCursor);  // Réinitialise le curseur pour tout le contenu de la fenêtre après le survol.
+            public void actionPerformed(ActionEvent e) {
+                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
+                System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le
+                                                                                     // terminal
             }
         });
+        timer.start(); // Démarrer le timer
 
-        
+        this.dessinateurDeTuile = new DessinateurDeTuile();
+        this.filtre = initFiltre();
+        addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
 
-        button.setOpaque(false);
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        return button;
-          */
+        // Créer un nouveau JPanel latéral pour le deck
+        sidePanel = new JPanel();
+        sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur
+                                                             // automatiquement
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les
+                                                                         // composants verticalement
+        sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
+
+        filtre.setOpaque(true);
+        sidePanel.setOpaque(true);
+        sidePanel.add(filtre);
+        sidePanel.setBackground(new Color(0, 0, 0, 0));
+        // Ajout du sidePanel à la disposition de GameBoardUI
+        setLayout(new BorderLayout());
+        add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
+
+        /*
+         * Cursor hoverCursor = cursorFrame.getHoverCursor(); // Curseur lors du survol
+         * d'un bouton.
+         * Cursor defaultCursor = cursorFrame.getDefaultCursor(); // Curseur par défaut.
+         * // Création du bouton de retour avec changement d'image au survol et lors du
+         * clic.
+         * JButton backButton = createButton("src/main/resources/returnButton.png", 75,
+         * hoverCursor, defaultCursor, frame,
+         * "src/main/resources/returnButtonHovered.png",
+         * "src/main/resources/returnButtonPressed.png");
+         * backButton.addActionListener(e -> {
+         * //playSound("src/main/resources/sound/buttonClickSound.wav");
+         * MainMenu.createAndShowGUI(frame); // Assurer que le menu principal gère
+         * également correctement le curseur.
+         * });
+         * // Ajout du bouton de retour à un panneau en haut de la fenêtre.
+         * JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+         * topPanel.setOpaque(false);
+         * topPanel.add(backButton);
+         * add(topPanel, BorderLayout.NORTH); // Ajouter le panneau en haut de
+         * GameBoardUI
+         * }
+         * 
+         */
+
+        /*
+         * /**
+         * Crée un bouton avec des images personnalisées pour les états normal, survolé
+         * et pressé.
+         * 
+         * @param imagePath Chemin de l'image normale.
+         * 
+         * @param width Largeur du bouton.
+         * 
+         * @param hoverCursor Curseur lors du survol.
+         * 
+         * @param defaultCursor Curseur par défaut.
+         * 
+         * @param frame Fenêtre contenant le bouton.
+         * 
+         * @param hoverImagePath Chemin de l'image lors du survol.
+         * 
+         * @param pressedImagePath Chemin de l'image lors du clic.
+         * 
+         * @return Un JButton configuré avec les images et les curseurs spécifiés.
+         * 
+         * public static JButton createButton(String imagePath, int width, Cursor
+         * hoverCursor, Cursor defaultCursor, JFrame frame, String hoverImagePath,
+         * String pressedImagePath) {
+         * ImageIcon normalIcon = new ImageIcon(imagePath);
+         * ImageIcon hoverIcon = new ImageIcon(hoverImagePath);
+         * ImageIcon pressedIcon = new ImageIcon(pressedImagePath);
+         * double aspectRatio = (double) normalIcon.getIconWidth() / (double)
+         * normalIcon.getIconHeight();
+         * int height = (int) (width / aspectRatio);
+         * Image image = normalIcon.getImage().getScaledInstance(width, height,
+         * Image.SCALE_SMOOTH);
+         * JButton button = new JButton(new ImageIcon(image));
+         * button.setRolloverIcon(new
+         * ImageIcon(hoverIcon.getImage().getScaledInstance(width, height,
+         * Image.SCALE_SMOOTH)));
+         * button.setPressedIcon(new
+         * ImageIcon(pressedIcon.getImage().getScaledInstance(width, height,
+         * Image.SCALE_SMOOTH)));
+         * 
+         * button.addMouseListener(new java.awt.event.MouseAdapter() {
+         * 
+         * @Override
+         * public void mouseEntered(java.awt.event.MouseEvent evt) {
+         * frame.getContentPane().setCursor(hoverCursor); // Change le curseur pour tout
+         * le contenu de la fenêtre lors du survol.
+         * }
+         * 
+         * @Override
+         * public void mouseExited(java.awt.event.MouseEvent evt) {
+         * frame.getContentPane().setCursor(defaultCursor); // Réinitialise le curseur
+         * pour tout le contenu de la fenêtre après le survol.
+         * }
+         * });
+         * 
+         * 
+         * 
+         * button.setOpaque(false);
+         * button.setContentAreaFilled(false);
+         * button.setBorderPainted(false);
+         * button.setFocusPainted(false);
+         * return button;
+         */
     }
-
-    
-
 
     // PART2 : AESTHETIC
     private JPanel initFiltre() {
@@ -197,8 +228,6 @@ timer.start(); // Démarrer le timer
         });
     }
 
-
-
     // PART3 : EVENT HANDLING
     private void refreshDeck() throws IOException {
         sidePanel.removeAll(); // Effacez les composants précédents du sidePanel
@@ -206,32 +235,51 @@ timer.start(); // Démarrer le timer
             Tuile tuile = game.getDeckTuiles().getSideTuiles()[i];
             if (tuile != null) {
                 sidePanel.add(Box.createVerticalGlue());
-                // TODO : Revoir cette logique , je pense ca ne devrait pas être ici plutot dans le controller mais comment faire
+                // TODO : Revoir cette logique , je pense ca ne devrait pas être ici plutot dans
+                // le controller mais comment faire
                 // TODO : pour que le controller sache quel tuile a été cliqué
-                TuilePanel tuilePanel = new TuilePanel(tuile){
+                TuilePanel tuilePanel = new TuilePanel(tuile) {
                     @Override
                     protected void paintComponent(Graphics g) {
                         super.paintComponent(g);
                         Graphics2D g2d = (Graphics2D) g;
                         if (game.getGameState()) {
-                            g2d.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                            g2d.setColor(
+                                    convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
                         }
                         g2d.setStroke(new BasicStroke(3)); // Définir l'épaisseur de la bordure
-                        g2d.drawRect(0, 0, 120 - 1, 120 - 1); // Dessiner une bordure rouge autour de la tuile
+                        g2d.drawRoundRect(0, 0, 120 - 1, 120 - 1, 10, 10); // Dessiner une bordure rouge autour de la
+                                                                           // tuile
                     }
                 };
+                tuilePanel.setOpaque(false);
+                Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
+                int ligne = tmp.getLigne();
+                int col = tmp.getColonne();
                 tuilePanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         filtre.setBounds(0, 0, 120, 120);
                         filtre.setOpaque(false);
-                        tuilePanel.setOpaque(false);
                         tuilePanel.add(filtre);
                         tuilePanel.setBackground(new Color(0, 0, 0, 0));
+                        VisuActif = true;
+                        VisuSelect = tuile;
+                        repaint();
+                        System.out.println("tuile visu bien visible ");
                     }
+
+                    public void mouseClicked(MouseEvent e) {
+                        VisuActif = false;
+                    }
+
                     public void mouseExited(MouseEvent e) {
                         tuilePanel.remove(filtre);
                         tuilePanel.setBackground(null);
+                        VisuActif = false;
+
+                        repaint();
+                        System.out.println("tuile visu bien invisible ");
                     }
                 });
                 tuilePanel.addMouseListener(this.getMouseListeners()[0]);
@@ -250,24 +298,38 @@ timer.start(); // Démarrer le timer
         JButton bouton = new JButton("Rotate");
         bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
         bouton.putClientProperty("tuilePanel", tuilePanel);
-        //  the controller is the action listener to rotate
+        // the controller is the action listener to rotate
         bouton.addActionListener((ActionListener) this.getMouseListeners()[0]);
         return bouton;
     }
 
-
-
     // PART4 : DRAWING
-    private void drawTile(Graphics g, int x, int y) {
+
+    private void drawTileVisu(Graphics g, int x, int y, Tuile X) {
         // Example method to draw a tile at a specified position and size
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(x, y, CELL_SIZE, CELL_SIZE); // Fill rectangle representing the tile
+
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setColor(new Color(0, 0, 0, 80));
+        int arcWidth = 10; // Adjust the roundness of the corners as needed
+        int arcHeight = 10; // Adjust the roundness of the corners as needed
+        g2d.fillRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight);
         g.setColor(Color.BLACK);
-        g.drawRect(x, y, CELL_SIZE, CELL_SIZE); // Draw outline of the tile
+        g.drawRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight); // Draw outline of the tile
+                                                                                            // with rounded corners
         // Draw the tile's image
-        dessinateurDeTuile.dessinerTuile(g, game.getTuile((y-TOP_MARGIN)/CELL_SIZE, (x-LEFT_MARGIN)/CELL_SIZE), dessinateurDeTuile.getSpritesSet(),x,y);
+        dessinateurDeTuile.dessinerTuile(g, X, dessinateurDeTuile.getSpritesSet(), x, y);
     }
 
+    private void drawTile(Graphics g, int x, int y) {
+        // Example method to draw a tile at a specified position and size
+        g.setColor(new Color(255, 240, 230));
+        g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Fill rectangle representing the tile
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Draw outline of the tile
+        // Draw the tile's image
+        dessinateurDeTuile.dessinerTuile(g, game.getTuile((y - TOP_MARGIN) / CELL_SIZE, (x - LEFT_MARGIN) / CELL_SIZE),
+                dessinateurDeTuile.getSpritesSet(), x, y);
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -281,21 +343,27 @@ timer.start(); // Démarrer le timer
         g2d.setPaint(gradientPaint);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        g.fillRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE); // Fill the board area with a rectangle
+        g.fillRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10); // Fill the board area with a
+                                                                                  // rectangle
         g.setColor(Color.BLACK);
-        g.drawRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE);
+        g.drawRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
 
-
+        if (VisuActif) {
+            Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
+            int ligne = tmp.getLigne();
+            int col = tmp.getColonne();
+            drawTileVisu(g, LEFT_MARGIN + col * CELL_SIZE, TOP_MARGIN + ligne * CELL_SIZE, VisuSelect);
+        }
 
         // Draw tiles on the board
-        for (int i = 0; i < BOARD_SIZE/CELL_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE/CELL_SIZE; j++) {
-                if (game.getTuile(i, j) != null ) {
-                    drawTile(g, LEFT_MARGIN+ j*CELL_SIZE, TOP_MARGIN+i*CELL_SIZE);
-                }
-                else {
+        for (int i = 0; i < BOARD_SIZE / CELL_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE / CELL_SIZE; j++) {
+                if (game.getTuile(i, j) != null) {
+                    drawTile(g, LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE);
+                } else {
                     g.setColor(Color.BLACK);
-                    g.drawRect(LEFT_MARGIN+j*CELL_SIZE, TOP_MARGIN+i*CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    g.drawRoundRect(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE, 10,
+                            10);
                 }
             }
         }
@@ -303,11 +371,10 @@ timer.start(); // Démarrer le timer
         for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
             g.setColor(convertirCouleur(joueur.getCouleur())); // Couleur du texte
-            espace=espace+30;
-            if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())){
-                g.fillOval(17, espace-4, 28, 28);
-            }
-            else {
+            espace = espace + 30;
+            if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())) {
+                g.fillOval(17, espace - 4, 28, 28);
+            } else {
                 g.fillOval(20, espace, 20, 20);
             }
         }
@@ -316,7 +383,8 @@ timer.start(); // Démarrer le timer
             String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
             Font font = new Font("Arial", Font.BOLD, 16);
             g.setFont(font);
-            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
+            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur
+                                                                                                            // du texte
             g.drawString(tourDuJoueur, 10, 410); // Position du texte
         }
 
@@ -328,9 +396,7 @@ timer.start(); // Démarrer le timer
         g.drawString("Temps écoulé: " + secondsElapsed + " secondes", x, y);
     }
 
-
-
-    public void drawPlayer (Graphics g , Joueur j ){
+    public void drawPlayer(Graphics g, Joueur j) {
         JoueurPanel joueurUI = new JoueurPanel(j);
         joueurUI.paintComponent(g);
     }
@@ -343,12 +409,11 @@ timer.start(); // Démarrer le timer
             case VERT -> Color.GREEN;
             case JAUNE -> Color.YELLOW;
             case ORANGE -> Color.ORANGE;
-            case ROSE ->new Color(220, 12, 253); //rose
+            case ROSE -> new Color(220, 12, 253); // rose
             case CYAN -> Color.CYAN;
             case VIOLET -> new Color(128, 0, 128); // Violet
         };
     }
-
 
     // PART5 : UPDATE-Observer Pattern
     @Override
@@ -356,8 +421,10 @@ timer.start(); // Démarrer le timer
         this.game = game;
         try {
             refreshDeck(); // Refresh the deck of tiles car les tuiles ont changé
-            //TODO : Revoir la logique de rafraichissement du deck , je ne pense pas que ca doit être la
-            //TODO : Plutôt dans la vue et puis on notifie le sidePanel que le deck a changé
+            // TODO : Revoir la logique de rafraichissement du deck , je ne pense pas que ca
+            // doit être la
+            // TODO : Plutôt dans la vue et puis on notifie le sidePanel que le deck a
+            // changé
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -377,44 +444,43 @@ timer.start(); // Démarrer le timer
 
     @Override
     public void gameWinnersTie() {
-        JOptionPane.showMessageDialog(this,"Égalité, Aucun Gagnant");
+        JOptionPane.showMessageDialog(this, "Égalité, Aucun Gagnant");
     }
 
     @Override
-    public void gameFinish(){
-        JOptionPane.showMessageDialog(this,"Game is Finished");
+    public void gameFinish() {
+        JOptionPane.showMessageDialog(this, "Game is Finished");
     }
-
 
     // pour ne pas avoir d'erreur d'exécution
     @Override
     public void update(Observable o, Object arg) {
     }
 
-
     /*
-    public void afficherClassementFinal() {
-        Collections.sort(joueurs, new Comparator<Joueur>() {
-            @Override
-            public int compare(Joueur joueur1, Joueur joueur2) {
-                return joueur1.getNombreTuilesPlacees() - joueur2.getNombreTuilesPlacees();
-            }
-        });
-
-        // Construction du message de classement
-        StringBuilder message = new StringBuilder("Classement final :\n");
-        for (int i = 0; i < joueurs.size(); i++) {
-            Joueur joueur = joueurs.get(i);
-            message.append(i + 1).append(". ").append(joueur.getPrenom()).append(" - ").append(joueur.getNombreTuilesPlacees()).append(" tuiles placées\n");
-        }
-
-        // Affichage du classement final dans une boîte de dialogue
-        JOptionPane.showMessageDialog(this, message.toString(), "Classement Final", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    */
+     * public void afficherClassementFinal() {
+     * Collections.sort(joueurs, new Comparator<Joueur>() {
+     * 
+     * @Override
+     * public int compare(Joueur joueur1, Joueur joueur2) {
+     * return joueur1.getNombreTuilesPlacees() - joueur2.getNombreTuilesPlacees();
+     * }
+     * });
+     * 
+     * // Construction du message de classement
+     * StringBuilder message = new StringBuilder("Classement final :\n");
+     * for (int i = 0; i < joueurs.size(); i++) {
+     * Joueur joueur = joueurs.get(i);
+     * message.append(i +
+     * 1).append(". ").append(joueur.getPrenom()).append(" - ").append(joueur.
+     * getNombreTuilesPlacees()).append(" tuiles placées\n");
+     * }
+     * 
+     * // Affichage du classement final dans une boîte de dialogue
+     * JOptionPane.showMessageDialog(this, message.toString(), "Classement Final",
+     * JOptionPane.INFORMATION_MESSAGE);
+     * }
+     * 
+     */
 
 }
-
-
-
