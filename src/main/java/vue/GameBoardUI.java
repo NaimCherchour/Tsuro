@@ -29,8 +29,9 @@ import main.java.*;
  */
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
+    private Game games;
 
-    private int secondsElapsed = 0;
+    private static int secondsElapsed = 0;
     private Timer timer;
 
     // TODO : Vérifier la relation entre le controller et la vue ; Normalement la
@@ -56,9 +57,10 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(JFrame frame) throws IOException {
+    public GameBoardUI(JFrame frame,Game game) throws IOException {
         // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
         // IOException {
+            this.games=game;
 
         // Initialiser le timer avec une durée de 1 seconde entre chaque tick
         timer = new Timer(1000, new ActionListener() {
@@ -68,6 +70,16 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
                 System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le
                                                                                      // terminal
+
+            // Vérifier si le temps écoulé dépasse 10 secondes
+        if (secondsElapsed > 10) {
+            // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
+            games.passerAuJoueurSuivant();;
+            // Actualiser le GameBoard avec la couleur du joueur suivant
+            repaint();
+            // Réinitialiser le compteur de temps écoulé
+            secondsElapsed = 0;
+        }
             }
         });
         timer.start(); // Démarrer le timer
@@ -430,6 +442,10 @@ public class GameBoardUI extends JPanel implements GameObserver {
         }
         revalidate();
         repaint();
+    }
+
+    public static void resetSecondsElapsed() {
+        secondsElapsed = 0;
     }
 
     @Override

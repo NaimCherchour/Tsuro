@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
+import main.java.vue.GameBoardUI;
+
 public class Game extends Observable implements ReadOnlyGame {
     private PlateauTuiles plateau; // Le plateau de jeu
     private static final int TAILLE_PLATEAU = 6 ;
@@ -117,6 +119,7 @@ public class Game extends Observable implements ReadOnlyGame {
                         } else {
                             System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
                             nextPlayer();
+                            GameBoardUI.resetSecondsElapsed();
                             jouerUnTour(null);
                         }
                     }
@@ -184,6 +187,9 @@ public class Game extends Observable implements ReadOnlyGame {
     }
     private void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+    }
+    public void passerAuJoueurSuivant() {
+        nextPlayer();
     }
     public void addObserver(GameObserver observer) {
         observers.add(observer);
