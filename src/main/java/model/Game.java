@@ -67,13 +67,13 @@ public class Game extends Observable implements ReadOnlyGame {
     private void initializePlayers(int numberOfPlayers, boolean vsBot) {
         joueurs = new ArrayList<>();
         if (vsBot) {
-            joueurs.add(new Joueur("Human Player", joueurs));
+            joueurs.add(new Joueur("Joueur Local", joueurs));
             joueurs.add(new BotTsuro("Bot", joueurs));
             NB_JOUEURS = 2 ;
             currentPlayerIndex = 0;
         } else {
             for (int i = 0; i < numberOfPlayers; i++) {
-                joueurs.add(new Joueur("Player " + (i + 1), joueurs));
+                joueurs.add(new Joueur("Joueur " + (i + 1), joueurs));
             }
             NB_JOUEURS = numberOfPlayers ;
             currentPlayerIndex = 0;

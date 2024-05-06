@@ -60,26 +60,14 @@ public class GameBoardUI extends JPanel implements GameObserver {
     public GameBoardUI(JFrame frame,Game game) throws IOException {
         // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
         // IOException {
-            this.games=game;
 
-        // Initialiser le timer avec une durée de 1 seconde entre chaque tick
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
                 System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le
                                                                                      // terminal
-
-            // Vérifier si le temps écoulé dépasse 10 secondes
-        if (secondsElapsed > 10) {
-            // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
-            games.passerAuJoueurSuivant();;
-            // Actualiser le GameBoard avec la couleur du joueur suivant
-            repaint();
-            // Réinitialiser le compteur de temps écoulé
-            secondsElapsed = 0;
-        }
             }
         });
         timer.start(); // Démarrer le timer
@@ -402,10 +390,21 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
         Font font = new Font("Arial", Font.PLAIN, 14);
         g.setFont(font);
-        g.setColor(Color.BLACK); // Couleur du texte
-        int x = getWidth() - 150; // Position en X pour afficher le chronomètre
+        
+        // Calculer le temps restant
+        int timeRemaining = 20 - secondsElapsed;
+        
+        // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+        if (timeRemaining <= 5) {
+            g.setColor(Color.RED);
+        } else {
+            g.setColor(Color.BLACK); // Revenir à la couleur de texte par défaut
+        }
+        
+        int x = getWidth() - 200; // Position en X pour afficher le chronomètre
         int y = 20; // Position en Y pour afficher le chronomètre
-        g.drawString("Temps écoulé: " + secondsElapsed + " secondes", x, y);
+        g.drawString("Temps restant: " + timeRemaining + " secondes", x, y); // Afficher le temps restant
+        
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
@@ -449,24 +448,70 @@ public class GameBoardUI extends JPanel implements GameObserver {
     }
 
     @Override
-    public void playerLost(String joueur) {
-        JOptionPane.showMessageDialog(this, joueur + " a perdu ! ");
+    public void playerLost(String playerName) {
+        // Créer une icône pour afficher avec le message
+        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
+    
+        // Définir le message de joueur perdant
+        String message = "<html><div style='text-align: center;'>"
+                + "<h1 style='color: #FF5733;'>Oh non !</h1>"
+                + "<p>Dommage, " + playerName + " a perdu la partie.</p>"
+                + "<p>Mais ne vous inquiétez pas, il y aura d'autres occasions de gagner !</p>"
+                + "</div></html>";
+    
+        // Afficher le message avec une boîte de dialogue personnalisée
+        JOptionPane.showMessageDialog(this, message, "Joueur Éliminé", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-
+    
     @Override
-    public void playerWon(String joueur) {
-        JOptionPane.showMessageDialog(this, "Félicitations " + joueur + " ! Vous avez remporté la partie !");
+    public void playerWon(String playerName) {
+        // Créer une icône pour afficher avec le message
+        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
+    
+        // Définir le message de joueur gagnant
+        String message = "<html><div style='text-align: center;'>"
+                + "<h1 style='color: #32CD32;'>Félicitations " + playerName + " !</h1>"
+                + "<p>Vous avez remporté la partie avec succès !</p>"
+                + "<p>Continuez ainsi et profitez de votre victoire !</p>"
+                + "</div></html>";
+    
+        // Afficher le message avec une boîte de dialogue personnalisée
+        JOptionPane.showMessageDialog(this, message, "Joueur Gagnant", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-
+    
     @Override
     public void gameWinnersTie() {
-        JOptionPane.showMessageDialog(this, "Égalité, Aucun Gagnant");
+        // Créer une icône pour afficher avec le message
+        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
+    
+        // Définir le message d'égalité
+        String message = "<html><div style='text-align: center;'>"
+                + "<h1 style='color: #FFD700;'>Égalité !</h1>"
+                + "<p>La partie s'est terminée sur une égalité.</p>"
+                + "<p>Vous êtes tous de formidables compétiteurs !</p>"
+                + "</div></html>";
+    
+        // Afficher le message avec une boîte de dialogue personnalisée
+        JOptionPane.showMessageDialog(this, message, "Égalité", JOptionPane.INFORMATION_MESSAGE, icon);
     }
+    
 
     @Override
     public void gameFinish() {
-        JOptionPane.showMessageDialog(this, "Game is Finished");
+        // Créer une icône pour afficher avec le message
+        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
+    
+        // Définir le message de fin de jeu
+        String message = "<html><div style='text-align: center;'>"
+                + "<h1 style='color: #FF5733;'>La partie est terminée !</h1>"
+                + "<p>Merci d'avoir joué.</p>"
+                + "<p>Aurevoir et à bientôt !</p>"
+                + "</div></html>";
+    
+        // Afficher le message avec une boîte de dialogue personnalisée
+        JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
     }
+    
 
     // pour ne pas avoir d'erreur d'exécution
     @Override
