@@ -60,14 +60,38 @@ public class GameBoardUI extends JPanel implements GameObserver {
     public GameBoardUI(JFrame frame,Game game) throws IOException {
         // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
         // IOException {
+            this.games=game;
 
+            // Dans la partie constructor de la classe GameBoardUI
+    
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick           
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                System.out.println("Temps écoulé: " + secondsElapsed + " secondes"); // Afficher le temps écoulé dans le
-                                                                                     // terminal
+                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+                                if (timeRemaining <= 5) {
+                                    setForeground(Color.RED);
+                                } else {
+                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                                }
+                
+                                // Afficher le temps restant dans le terminal
+                                System.out.println("Temps restant: " + timeRemaining + " secondes");
+                
+                                // Vérifier si le temps restant est écoulé
+                                if (timeRemaining <= 0) {
+                                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
+                                    games.passerAuJoueurSuivant();
+                                    // Actualiser le GameBoard avec la couleur du joueur suivant
+                                    repaint();
+                                    // Réinitialiser le compteur de temps écoulé
+                                    secondsElapsed = 0;
+                                } else {
+                                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                                }
+                
             }
         });
         timer.start(); // Démarrer le timer
