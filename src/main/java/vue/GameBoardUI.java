@@ -80,21 +80,31 @@ public class GameBoardUI extends JPanel implements GameObserver {
                                 // Afficher le temps restant dans le terminal
                                 System.out.println("Temps restant: " + timeRemaining + " secondes");
                 
-                                // Vérifier si le temps restant est écoulé
-                                if (timeRemaining <= 0) {
-                                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
-                                    games.passerAuJoueurSuivant();
-                                    // Actualiser le GameBoard avec la couleur du joueur suivant
-                                    repaint();
-                                    // Réinitialiser le compteur de temps écoulé
-                                    secondsElapsed = 0;
-                                } else {
-                                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-                                }
-                
+                               // Vérifier si le temps restant est écoulé
+            if (timeRemaining <= 0) {
+               
+                // Réinitialiser le compteur de temps écoulé
+                secondsElapsed = 0;
+
+                // Si le joueur actuel est humain, placez une tuile automatiquement
+                if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
+                    Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
+                    games.jouerUnTour(tuileAleatoire);
+                }
             }
-        });
-        timer.start(); // Démarrer le timer
+
+            // Redessiner l'interface pour mettre à jour l'affichage du temps
+            repaint(); 
+
+            // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+            if (timeRemaining <= 5) {
+                setForeground(Color.RED);
+            } else {
+                setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+            }
+        }
+    });
+    timer.start(); // Démarrer le timer
         this.games = game;
 
         this.dessinateurDeTuile = new DessinateurDeTuile();
