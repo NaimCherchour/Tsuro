@@ -57,41 +57,43 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(JFrame frame,Game game) throws IOException {
+    public GameBoardUI(JFrame frame, Game game) throws IOException {
         // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
         // IOException {
-            this.games=game;
+        this.games = game;
 
-            // Dans la partie constructor de la classe GameBoardUI
-    
+        // Dans la partie constructor de la classe GameBoardUI
+
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick           
+                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-                                if (timeRemaining <= 5) {
-                                    setForeground(Color.RED);
-                                } else {
-                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                                }
-                
-                                // Afficher le temps restant dans le terminal
-                                System.out.println("Temps restant: " + timeRemaining + " secondes");
-                
-                                // Vérifier si le temps restant est écoulé
-                                if (timeRemaining <= 0) {
-                                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
-                                    games.passerAuJoueurSuivant();
-                                    // Actualiser le GameBoard avec la couleur du joueur suivant
-                                    repaint();
-                                    // Réinitialiser le compteur de temps écoulé
-                                    secondsElapsed = 0;
-                                } else {
-                                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-                                }
-                
+                           // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+                           // égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                }
+
+                // Afficher le temps restant dans le terminal
+                System.out.println("Temps restant: " + timeRemaining + " secondes");
+
+                // Vérifier si le temps restant est écoulé
+                if (timeRemaining <= 0) {
+                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de
+                    // Game
+                    games.passerAuJoueurSuivant();
+                    // Actualiser le GameBoard avec la couleur du joueur suivant
+                    repaint();
+                    // Réinitialiser le compteur de temps écoulé
+                    secondsElapsed = 0;
+                } else {
+                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                }
+
             }
         });
         timer.start(); // Démarrer le timer
@@ -269,17 +271,14 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         Graphics2D g2d = (Graphics2D) g;
                         if (game.getGameState()) {
                             g2d.setColor(
-                                    convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                                    Color.BLACK);
                         }
-                        g2d.setStroke(new BasicStroke(3)); // Définir l'épaisseur de la bordure
+                        g2d.setStroke(new BasicStroke(8)); // Définir l'épaisseur de la bordure
                         g2d.drawRoundRect(0, 0, 120 - 1, 120 - 1, 10, 10); // Dessiner une bordure rouge autour de la
                                                                            // tuile
                     }
                 };
                 tuilePanel.setOpaque(false);
-                Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
-                int ligne = tmp.getLigne();
-                int col = tmp.getColonne();
                 tuilePanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseEntered(MouseEvent e) {
@@ -321,6 +320,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private JButton createButtonRotation(TuilePanel tuilePanel) {
         JButton bouton = new JButton("Rotate");
         bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
+
+        // Définir la taille personnalisée du bouton
+        bouton.setPreferredSize(new Dimension(200, 50)); // Largeur : 200 pixels, Hauteur : 50 pixels
+        bouton.setBackground(new Color(245, 245, 220)); // Beige
+
         bouton.putClientProperty("tuilePanel", tuilePanel);
         // the controller is the action listener to rotate
         bouton.addActionListener((ActionListener) this.getMouseListeners()[0]);
@@ -333,7 +337,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Example method to draw a tile at a specified position and size
 
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(new Color(0, 0, 0, 80));
+        g2d.setColor(new Color(155, 103, 60));
         int arcWidth = 10; // Adjust the roundness of the corners as needed
         int arcHeight = 10; // Adjust the roundness of the corners as needed
         g2d.fillRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight);
@@ -346,7 +350,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     private void drawTile(Graphics g, int x, int y) {
         // Example method to draw a tile at a specified position and size
-        g.setColor(new Color(255, 240, 230));
+        g.setColor(new Color(155, 103, 60));
         g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
         g.drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Draw outline of the tile
@@ -360,15 +364,17 @@ public class GameBoardUI extends JPanel implements GameObserver {
         super.paintComponent(g);
 
         // Draw background color in gradient
-        Color startColor = new Color(85, 171, 85); // Pine green
-        Color endColor = new Color(0, 158, 255); // Sky blue
+        Color startColor = new Color(107, 66, 35); // Medium brown 1
+        Color endColor = new Color(87, 56, 28); // Medium brown 2
+
         GradientPaint gradientPaint = new GradientPaint(0, 0, startColor, getWidth(), getHeight(), endColor);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(gradientPaint);
+
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
+        g2d.setStroke(new BasicStroke(2)); // rectangle
         g.fillRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10); // Fill the board area with a
-                                                                                  // rectangle
         g.setColor(Color.BLACK);
         g.drawRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
 
@@ -397,7 +403,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setColor(convertirCouleur(joueur.getCouleur())); // Couleur du texte
             espace = espace + 30;
             if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())) {
-                g.fillOval(17, espace - 4, 28, 28);
+                g.fillOval(30, espace - 4, 28, 28);
             } else {
                 g.fillOval(20, espace, 20, 20);
             }
@@ -409,26 +415,27 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setFont(font);
             g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur
                                                                                                             // du texte
-            g.drawString(tourDuJoueur, 10, 410); // Position du texte
+            g.drawString(tourDuJoueur, 480, 27); // Position du texte
         }
 
         Font font = new Font("Arial", Font.PLAIN, 14);
         g.setFont(font);
-        
+
         // Calculer le temps restant
         int timeRemaining = 20 - secondsElapsed;
-        
-        // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+
+        // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+        // égal à 5 secondes
         if (timeRemaining <= 5) {
             g.setColor(Color.RED);
         } else {
             g.setColor(Color.BLACK); // Revenir à la couleur de texte par défaut
         }
-        
+
         int x = getWidth() - 200; // Position en X pour afficher le chronomètre
         int y = 20; // Position en Y pour afficher le chronomètre
         g.drawString("Temps restant: " + timeRemaining + " secondes", x, y); // Afficher le temps restant
-        
+
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
@@ -475,67 +482,65 @@ public class GameBoardUI extends JPanel implements GameObserver {
     public void playerLost(String playerName) {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de joueur perdant
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>Oh non !</h1>"
                 + "<p>Dommage, " + playerName + " a perdu la partie.</p>"
                 + "<p>Mais ne vous inquiétez pas, il y aura d'autres occasions de gagner !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Joueur Éliminé", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
+
     @Override
     public void playerWon(String playerName) {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de joueur gagnant
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #32CD32;'>Félicitations " + playerName + " !</h1>"
                 + "<p>Vous avez remporté la partie avec succès !</p>"
                 + "<p>Continuez ainsi et profitez de votre victoire !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Joueur Gagnant", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
+
     @Override
     public void gameWinnersTie() {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message d'égalité
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FFD700;'>Égalité !</h1>"
                 + "<p>La partie s'est terminée sur une égalité.</p>"
                 + "<p>Vous êtes tous de formidables compétiteurs !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Égalité", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
 
     @Override
     public void gameFinish() {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de fin de jeu
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>La partie est terminée !</h1>"
                 + "<p>Merci d'avoir joué.</p>"
                 + "<p>Aurevoir et à bientôt !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
 
     // pour ne pas avoir d'erreur d'exécution
     @Override
