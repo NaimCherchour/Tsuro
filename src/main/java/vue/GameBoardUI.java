@@ -57,42 +57,41 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(JFrame frame, Game game) throws IOException {
-        // Réinitialisez le timer à chaque tour
+    public GameBoardUI(JFrame frame,Game game) throws IOException {
+        // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
+        // IOException {
+            this.games=game;
+
+            // Dans la partie constructor de la classe GameBoardUI
+    
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
-
-                // Afficher le temps restant dans le terminal
-                System.out.println("Temps restant: " + timeRemaining + " secondes");
-
-                // Vérifier si le temps restant est écoulé
-                if (timeRemaining <= 0) {
-                    // Passer au joueur suivant
-
-                    // Réinitialiser le compteur de temps écoulé
-                    secondsElapsed = 0;
-
-                    // Si le joueur actuel est humain et qu'il n'a pas placer une tuile au bout des 20seconde,on lui place une tuile automatiquement
-                    if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
-                        Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
-                        games.jouerUnTour(tuileAleatoire);
-                    }
-
-                }
-
-                // Redessiner l'interface pour mettre à jour l'affichage du temps
-                repaint();
-
-                // Changer la couleur du texte en rouge si le temps restant est inférieur ou
-                // égal à 5 secondes
-                if (timeRemaining <= 5) {
-                    setForeground(Color.RED);
-                } else {
-                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                }
+                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
+                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+                                if (timeRemaining <= 5) {
+                                    setForeground(Color.RED);
+                                } else {
+                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                                }
+                
+                                // Afficher le temps restant dans le terminal
+                                System.out.println("Temps restant: " + timeRemaining + " secondes");
+                
+                                // Vérifier si le temps restant est écoulé
+                                if (timeRemaining <= 0) {
+                                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
+                                    games.passerAuJoueurSuivant();
+                                    // Actualiser le GameBoard avec la couleur du joueur suivant
+                                    repaint();
+                                    // Réinitialiser le compteur de temps écoulé
+                                    secondsElapsed = 0;
+                                } else {
+                                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                                }
+                
             }
         });
         timer.start(); // Démarrer le timer
@@ -271,17 +270,14 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         Graphics2D g2d = (Graphics2D) g;
                         if (game.getGameState()) {
                             g2d.setColor(
-                                    convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                                    Color.BLACK);
                         }
-                        g2d.setStroke(new BasicStroke(3)); // Définir l'épaisseur de la bordure
+                        g2d.setStroke(new BasicStroke(8)); // Définir l'épaisseur de la bordure
                         g2d.drawRoundRect(0, 0, 120 - 1, 120 - 1, 10, 10); // Dessiner une bordure rouge autour de la
                                                                            // tuile
                     }
                 };
                 tuilePanel.setOpaque(false);
-                Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
-                int ligne = tmp.getLigne();
-                int col = tmp.getColonne();
                 tuilePanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseEntered(MouseEvent e) {
@@ -323,6 +319,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private JButton createButtonRotation(TuilePanel tuilePanel) {
         JButton bouton = new JButton("Rotate");
         bouton.setAlignmentX(Component.CENTER_ALIGNMENT); // Aligner le bouton au centre horizontalement
+
+        // Définir la taille personnalisée du bouton
+        bouton.setPreferredSize(new Dimension(200, 50)); // Largeur : 200 pixels, Hauteur : 50 pixels
+        bouton.setBackground(new Color(245, 245, 220)); // Beige
+
         bouton.putClientProperty("tuilePanel", tuilePanel);
         // the controller is the action listener to rotate
         bouton.addActionListener((ActionListener) this.getMouseListeners()[0]);
@@ -335,7 +336,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Example method to draw a tile at a specified position and size
 
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(new Color(0, 0, 0, 80));
+        g2d.setColor(new Color(155, 103, 60));
         int arcWidth = 10; // Adjust the roundness of the corners as needed
         int arcHeight = 10; // Adjust the roundness of the corners as needed
         g2d.fillRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight);
@@ -348,7 +349,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     private void drawTile(Graphics g, int x, int y) {
         // Example method to draw a tile at a specified position and size
-        g.setColor(new Color(255, 240, 230));
+        g.setColor(new Color(155, 103, 60));
         g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
         g.drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Draw outline of the tile
@@ -362,15 +363,17 @@ public class GameBoardUI extends JPanel implements GameObserver {
         super.paintComponent(g);
 
         // Draw background color in gradient
-        Color startColor = new Color(85, 171, 85); // Pine green
-        Color endColor = new Color(0, 158, 255); // Sky blue
+        Color startColor = new Color(107, 66, 35); // Medium brown 1
+        Color endColor = new Color(87, 56, 28); // Medium brown 2
+
         GradientPaint gradientPaint = new GradientPaint(0, 0, startColor, getWidth(), getHeight(), endColor);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(gradientPaint);
+
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
+        g2d.setStroke(new BasicStroke(2)); // rectangle
         g.fillRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10); // Fill the board area with a
-                                                                                  // rectangle
         g.setColor(Color.BLACK);
         g.drawRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
 
@@ -399,7 +402,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setColor(convertirCouleur(joueur.getCouleur())); // Couleur du texte
             espace = espace + 30;
             if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())) {
-                g.fillOval(17, espace - 4, 28, 28);
+                g.fillOval(30, espace - 4, 28, 28);
             } else {
                 g.fillOval(20, espace, 20, 20);
             }
@@ -411,7 +414,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setFont(font);
             g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur
                                                                                                             // du texte
-            g.drawString(tourDuJoueur, 10, 410); // Position du texte
+            g.drawString(tourDuJoueur, 480, 27); // Position du texte
         }
 
         Font font = new Font("Arial", Font.PLAIN, 14);

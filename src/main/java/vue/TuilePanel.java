@@ -32,7 +32,7 @@ public class TuilePanel extends JPanel {
      * @param g
      */
     private void drawTile(Graphics g) {
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(new Color(155, 103, 60));
         g.fillRoundRect(0, 0, TILE_SIZE, TILE_SIZE, 10, 10); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
         g.drawRoundRect(0, 0, TILE_SIZE, TILE_SIZE, 10, 10); // Draw outline of the tile
