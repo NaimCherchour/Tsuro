@@ -57,44 +57,46 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(JFrame frame,Game game) throws IOException {
-        // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
-        // IOException {
-            this.games=game;
-
-            // Dans la partie constructor de la classe GameBoardUI
-    
+    public GameBoardUI(JFrame frame, Game game) throws IOException {
+        // Réinitialisez le timer à chaque tour
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick           
+                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
-                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-                                if (timeRemaining <= 5) {
-                                    setForeground(Color.RED);
-                                } else {
-                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                                }
-                
-                                // Afficher le temps restant dans le terminal
-                                System.out.println("Temps restant: " + timeRemaining + " secondes");
-                
-                                // Vérifier si le temps restant est écoulé
-                                if (timeRemaining <= 0) {
-                                    // Passer au joueur suivant en appelant la méthode passerAuJoueurSuivant() de Game
-                                    games.passerAuJoueurSuivant();
-                                    // Actualiser le GameBoard avec la couleur du joueur suivant
-                                    repaint();
-                                    // Réinitialiser le compteur de temps écoulé
-                                    secondsElapsed = 0;
-                                } else {
-                                    secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-                                }
-                
+
+                // Afficher le temps restant dans le terminal
+                System.out.println("Temps restant: " + timeRemaining + " secondes");
+
+                // Vérifier si le temps restant est écoulé
+                if (timeRemaining <= 0) {
+                    // Passer au joueur suivant
+
+                    // Réinitialiser le compteur de temps écoulé
+                    secondsElapsed = 0;
+
+                    // Si le joueur actuel est humain et qu'il n'a pas placer une tuile au bout des 20seconde,on lui place une tuile automatiquement
+                    if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
+                        Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
+                        games.jouerUnTour(tuileAleatoire);
+                    }
+
+                }
+
+                // Redessiner l'interface pour mettre à jour l'affichage du temps
+                repaint();
+
+                // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+                // égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                }
             }
         });
         timer.start(); // Démarrer le timer
+        this.games = game;
 
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
@@ -414,21 +416,22 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
         Font font = new Font("Arial", Font.PLAIN, 14);
         g.setFont(font);
-        
+
         // Calculer le temps restant
         int timeRemaining = 20 - secondsElapsed;
-        
-        // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+
+        // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+        // égal à 5 secondes
         if (timeRemaining <= 5) {
             g.setColor(Color.RED);
         } else {
             g.setColor(Color.BLACK); // Revenir à la couleur de texte par défaut
         }
-        
+
         int x = getWidth() - 200; // Position en X pour afficher le chronomètre
         int y = 20; // Position en Y pour afficher le chronomètre
         g.drawString("Temps restant: " + timeRemaining + " secondes", x, y); // Afficher le temps restant
-        
+
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
@@ -475,67 +478,65 @@ public class GameBoardUI extends JPanel implements GameObserver {
     public void playerLost(String playerName) {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de joueur perdant
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>Oh non !</h1>"
                 + "<p>Dommage, " + playerName + " a perdu la partie.</p>"
                 + "<p>Mais ne vous inquiétez pas, il y aura d'autres occasions de gagner !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Joueur Éliminé", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
+
     @Override
     public void playerWon(String playerName) {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de joueur gagnant
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #32CD32;'>Félicitations " + playerName + " !</h1>"
                 + "<p>Vous avez remporté la partie avec succès !</p>"
                 + "<p>Continuez ainsi et profitez de votre victoire !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Joueur Gagnant", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
+
     @Override
     public void gameWinnersTie() {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message d'égalité
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FFD700;'>Égalité !</h1>"
                 + "<p>La partie s'est terminée sur une égalité.</p>"
                 + "<p>Vous êtes tous de formidables compétiteurs !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Égalité", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
 
     @Override
     public void gameFinish() {
         // Créer une icône pour afficher avec le message
         ImageIcon icon = new ImageIcon("path/to/your/icon.png");
-    
+
         // Définir le message de fin de jeu
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>La partie est terminée !</h1>"
                 + "<p>Merci d'avoir joué.</p>"
                 + "<p>Aurevoir et à bientôt !</p>"
                 + "</div></html>";
-    
+
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-    
 
     // pour ne pas avoir d'erreur d'exécution
     @Override

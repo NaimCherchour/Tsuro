@@ -186,7 +186,9 @@ public class Game extends Observable implements ReadOnlyGame {
         }
     }
     private void nextPlayer() {
+        if(joueurs.size()>0){
         currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+        }
     }
     public void passerAuJoueurSuivant() {
         nextPlayer();
