@@ -1,3 +1,5 @@
+image: openjdk:latest
+
 stages:
   - build
   - test
@@ -5,10 +7,10 @@ stages:
 build:
   stage: build
   script:
-    - echo "Building the application..."
-    - mkdir -p build
-    - javac -d build src/main/java/*.java src/main/java/*/*.java
-    - jar cfe Tsuro.jar main.java.TsuroGame -C build .
+    - echo "Building the application..." ;
+    - mkdir -p build ;
+    - javac -d build src/main/java/*.java src/main/java/*/*.java ;
+    - jar cfe Tsuro.jar main.java.TsuroGame -C build . ;
   artifacts:
     paths:
       - Tsuro.jar
@@ -16,5 +18,5 @@ build:
 test:
   stage: test
   script:
-    - chmod +x runTests.sh
-    - ./runTests.sh
+    - chmod +x runTests.sh;
+    - ./runTests.sh;
