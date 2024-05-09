@@ -1,7 +1,3 @@
-tags:
-    - cd
-    - ci
-
 stages:
   - build
   - test
