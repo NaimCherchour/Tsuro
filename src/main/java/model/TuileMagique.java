@@ -3,11 +3,7 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * La classe TuileMagique représente une tuile spéciale dans le jeu qui génère une action magique
- * après un certain nombre de coups joués.
- */
-public class TuileMagique {
+public class TuileMagique extends Tuile {
     private int compteurCoups; // Compteur pour suivre le nombre de coups joués
     private int seuil; // Seuil pour générer une tuile magique
     private List<Joueur> joueurs; // Liste des joueurs
@@ -16,7 +12,8 @@ public class TuileMagique {
      * Constructeur de la classe TuileMagique.
      * @param seuil Le seuil après lequel une tuile magique est générée.
      */
-    public TuileMagique(int seuil) {
+    public TuileMagique(int id, int seuil) {
+        super(id);
         this.seuil = seuil;
         this.compteurCoups = 0;
         this.joueurs = new ArrayList<>();
