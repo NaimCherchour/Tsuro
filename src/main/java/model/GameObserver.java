@@ -6,7 +6,7 @@ import java.util.Observer;
 /**
  * Interface pour les classes qui se font observer durant le jeu , en Readonly pour ne pas modifier les valeurs
  */
-public interface GameObserver extends Observer {
+public interface GameObserver {
 
     /**
      * Méthode pour mettre à jour le jeu ; le plateau et les joueurs en passant

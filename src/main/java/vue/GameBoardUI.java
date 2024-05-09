@@ -52,7 +52,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
      * 
      * @param frame       La fenêtre principale dans laquelle les éléments du jeu
      *                    sont chargés.
-     * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
+     *  cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
      *                    personnalisés.
      */
 
@@ -551,10 +551,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
         JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
     }
 
-    // pour ne pas avoir d'erreur d'exécution
-    @Override
-    public void update(Observable o, Object arg) {
-    }
 
     /*
      * public void afficherClassementFinal() {

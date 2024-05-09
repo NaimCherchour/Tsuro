@@ -100,7 +100,7 @@ public class BotTsuro extends Joueur {
     }
 
 
-    private int evaluerMouvement(Tuile tuile, PlateauTuiles plateau, List<Joueur> joueurs) {
+    public int evaluerMouvement(Tuile tuile, PlateauTuiles plateau, List<Joueur> joueurs) {
         int score = 0;
         Joueur copie = this.clone();
         copie.setLigne(this.getLigne());
@@ -120,7 +120,7 @@ public class BotTsuro extends Joueur {
 
 
     //TODO : Revoir les méthpdes estCoupGagnant et estCoupPerdant pour améliorer le BOT
-    private boolean estCoupGagnant(Mouvement mouvement, PlateauTuiles plateau, List<Joueur> joueurs) {
+    public boolean estCoupGagnant(Mouvement mouvement, PlateauTuiles plateau, List<Joueur> joueurs) {
         for (Joueur adversaire : joueurs) {
             if (adversaire != this && estCoupPerdantPourAdversaire(mouvement, plateau, adversaire, joueurs)) {
                 return true;
@@ -129,7 +129,7 @@ public class BotTsuro extends Joueur {
         return false;
     }
 
-    private boolean estCoupPerdantPourAdversaire(Mouvement mouvement, PlateauTuiles plateau, Joueur adversaire, List<Joueur> joueurs) {
+    public boolean estCoupPerdantPourAdversaire(Mouvement mouvement, PlateauTuiles plateau, Joueur adversaire, List<Joueur> joueurs) {
         // Calculer la nouvelle position hypothétique de l'adversaire après le mouvement
         Tuile tuile = mouvement.getTuile();
         int pointSortie = tuile.getPointSortieAvecRot(adversaire.getPointEntree());
@@ -155,7 +155,7 @@ public class BotTsuro extends Joueur {
     }
 
 
-    private boolean estCoupPerdant(Mouvement mouvement, PlateauTuiles plateau) {
+    public boolean estCoupPerdant(Mouvement mouvement, PlateauTuiles plateau) {
         int nouvelleX = mouvement.getX() + PlateauTuiles.Direction.getDirectionFromPoint(mouvement.getTuile().getPointSortieAvecRot(mouvement.getTuile().getRotation())).di();
         int nouvelleY = mouvement.getY() + PlateauTuiles.Direction.getDirectionFromPoint(mouvement.getTuile().getPointSortieAvecRot(mouvement.getTuile().getRotation())).dj();
         if (!plateau.coordonneesValides(nouvelleX, nouvelleY)) {
