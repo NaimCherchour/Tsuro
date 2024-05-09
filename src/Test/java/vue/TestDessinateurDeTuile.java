@@ -11,6 +11,12 @@ import java.util.HashMap;
 public class TestDessinateurDeTuile {
 
     public static void main(String[] args) {
+         
+          if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("Headless environment. JFrame cannot be created and displayed.");
+            // headless environment (non-GUI operations)
+            return;
+        }
 
         HashMap<Integer, Tuile> tuiles = new HashMap<>();
 
