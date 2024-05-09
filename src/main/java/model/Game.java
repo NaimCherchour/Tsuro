@@ -8,7 +8,7 @@ import java.util.Observable;
 
 import main.java.vue.GameBoardUI;
 
-public class Game extends Observable implements ReadOnlyGame {
+public class Game implements ReadOnlyGame {
     private PlateauTuiles plateau; // Le plateau de jeu
     private static final int TAILLE_PLATEAU = 6 ;
     private List<Joueur> joueurs; // La liste des joueurs
@@ -53,6 +53,7 @@ public class Game extends Observable implements ReadOnlyGame {
         this.plateau = new PlateauTuiles(TAILLE_PLATEAU);
         this.deckTuiles = new DeckTuiles();
         this.observers = new ArrayList<>();
+        Joueur.setIndexCouleur(0); //à chaque game partie , l'index de couleurs est réinitialisé
         initializeGame(type,numberOfPlayers);
         gameState = true ;
     }
@@ -204,7 +205,6 @@ public class Game extends Observable implements ReadOnlyGame {
      * Méthode pour notifier les observateurs de la partie pour mettre à jour la vue avec les nouvelles données
      * mais en ReadOnly
      */
-    @Override
     public void notifyObservers() {
         for (GameObserver observer : observers) {
             observer.update(this);

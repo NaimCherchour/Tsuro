@@ -62,7 +62,10 @@ public class Joueur implements Cloneable {
     public void setCompteur(int value) {
         this.compteur = value;
     }
-    
+
+    public static void setIndexCouleur(int v) {
+        indexCouleur = v ;
+    }
 
 
     /**
