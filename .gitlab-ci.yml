@@ -1,5 +1,4 @@
-default:
-  tags:
+tags:
     - cd
     - ci
 
