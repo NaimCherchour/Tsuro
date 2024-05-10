@@ -1,5 +1,7 @@
 package main.java.menu;
 
+import main.java.Main;
+
 import javax.swing.*;
 
 import javax.sound.sampled.*;
@@ -11,7 +13,7 @@ public class Option {
     private static Clip clip; // Déclarer la variable Clip pour le son
     private static boolean soundMuted = false; // Indicateur de son coupé
 
-    public static void gererClicSurBoutonOption(JFrame frame, Clip clips) {
+    public static void gererClicSurBoutonOption(JFrame frame, Clip clips,String username) {
         frame.getContentPane().removeAll();
 
         ImageIcon backgroundIcon = new ImageIcon("src/main/resources/fond.png");
@@ -36,14 +38,16 @@ public class Option {
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
+                MainMenu.playSound("src/main/resources/sound/buttonClickSound.wav");
+                MainMenu.createAndShowGUI(frame,username);  // Assurer que le menu principal gère également correctement le curseur.
             }
         });
-        // Ajouter le bouton en haut à gauche
-        background.add(returnButton, BorderLayout.WEST);
+        // Ajout du bouton de retour à un panneau en haut de la fenêtre.
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.setOpaque(false);
+        topPanel.add(returnButton);
+        frame.add(topPanel, BorderLayout.NORTH);
 
-
-        // Reste du code pour les boutons d'option...
 
         // Créer un bouton pour augmenter le volume
         JButton increaseVolumeButton = new JButton("Augmenter le volume");

@@ -12,7 +12,7 @@ public class GameTest {
 
     @Test
     public void testGameInitializationWithTwoPlayers() {
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
 
         assertNotNull(game.getPlateau());
 
@@ -25,7 +25,7 @@ public class GameTest {
 
     @Test
     public void testGameInitializationWithThreePlayers() {
-        Game game = new Game(1, 3);
+        Game game = new Game(1, 3,0);
 
         assertNotNull(game.getPlateau());
 
@@ -38,7 +38,7 @@ public class GameTest {
 
     @Test
     public void testNextPlayer() {
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         List<Joueur> joueurs = game.getJoueurs();
         int currentPlayerIndex = game.getCurrentPlayerIndex();
 
@@ -52,7 +52,7 @@ public class GameTest {
 
     @Test
     public void testGameInitializationWithBotAndHumanPlayer() {
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         List<Joueur> joueurs = game.getJoueurs();
 
         assertNotNull(joueurs.get(0));
@@ -62,7 +62,7 @@ public class GameTest {
 
     @Test
     public void testIsCurrentPlayerBot() {
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         List<Joueur> joueurs = game.getJoueurs();
 
         assertFalse(game.isCurrentPlayerBot());

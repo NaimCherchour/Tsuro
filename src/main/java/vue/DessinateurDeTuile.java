@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -212,7 +213,7 @@ public class DessinateurDeTuile extends JPanel {
         return 0;
     }
 
-    public class Pair<A, B> {
+    public class Pair<A, B>  {
         private final A first;
         private final B second;
 

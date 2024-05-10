@@ -1,5 +1,8 @@
 package main.java.menu;
 
+import main.java.model.Profile;
+import main.java.model.ProfileManager;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -21,18 +24,15 @@ import java.awt.event.ActionEvent;
  * Représente le menu principal du jeu TSURO.
  */
 public class MainMenu {
-
-    private static String playerName = "";
     private static JFrame frame; // La déclare comme variable de classe (static)
     private static AnimatedCursorFrame cursorFrame;
     private static Clip clip;
-
 
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
      */
 
-    public static void createAndShowGUI(JFrame existingFrame) {
+    public static void createAndShowGUI(JFrame existingFrame,String username) {
         // Reprend le frame d'accueil
         frame = existingFrame;
         frame.getContentPane().removeAll(); // Clean le contenu avant de faire d'autres réglages
@@ -51,8 +51,6 @@ public class MainMenu {
 
         // Définissez le curseur après toutes les modifications de la fenêtre pour garantir qu'il reste appliqué
         frame.setCursor(cursorFrame.getDefaultCursor());
-
-
 
         // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
         ImageIcon icone = new ImageIcon("src/main/resources/logo.png");
@@ -83,8 +81,6 @@ public class MainMenu {
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
 
-            // Affichage d'un message pour indiquer que tout s'est bien passé
-            System.out.println("Tout s'est bien passé !");
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.out.println("Une erreur est survenue lors de la lecture du fichier audio : " + e.getMessage());
             e.printStackTrace();
@@ -110,7 +106,7 @@ public class MainMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Appel de la méthode gererClicSurBoutonOption de la classe Option
-                Option.gererClicSurBoutonOption(frame, clip);
+                Option.gererClicSurBoutonOption(frame, clip,username);
             }
         });
         
@@ -142,7 +138,7 @@ public class MainMenu {
 
         rulesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Rules.displayRules(frame, cursorFrame); // Assurez-vous que cursorFrame est bien passé ici
+                Rules.displayRules(frame, cursorFrame,username); // Assurez-vous que cursorFrame est bien passé ici
             }
         });
 
@@ -186,14 +182,16 @@ public class MainMenu {
         rulesPanel.add(rulesButton, BorderLayout.EAST);
 
         configureButton(playButton, () -> {
-            Jouer.gererClicSurBoutonJouer(frame, cursorFrame);
+            Jouer.gererClicSurBoutonJouer(frame, cursorFrame,username);
         });
         configureButton(optionsButton, () -> {
             // Code à exécuter lors du clic sur optionsButton
         });
 
         configureButton(profilButton, () -> {
-            // Code à exécuter lors du clic sur profilButton
+            ProfileManager profileManager = new ProfileManager();
+            Profile userProfile = profileManager.getProfile(username);
+            ProfilePage pdp = new ProfilePage(existingFrame, userProfile);
         });
 
         configureButton(quitButton, () -> {
@@ -215,11 +213,11 @@ public class MainMenu {
         frame.setLocationRelativeTo(null);
 
         playButton.addActionListener(e -> {
-            Jouer.gererClicSurBoutonJouer(frame,cursorFrame);
+            Jouer.gererClicSurBoutonJouer(frame,cursorFrame,username);
         });
 
         optionsButton.addActionListener(e -> {
-            Option.gererClicSurBoutonOption(existingFrame, clip);
+            Option.gererClicSurBoutonOption(existingFrame, clip,username);
         });
 
 
@@ -234,7 +232,7 @@ public class MainMenu {
      *
      * @param soundFileName Le chemin vers le fichier son.
      */
-    private static void playSound(String soundFileName) {
+    public static void playSound(String soundFileName) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
             Clip clip = AudioSystem.getClip();

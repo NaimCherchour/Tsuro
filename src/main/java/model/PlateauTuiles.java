@@ -1,4 +1,5 @@
 package main.java.model;
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -6,7 +7,7 @@ import java.util.List;
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
 
-public class PlateauTuiles implements Cloneable {
+public class PlateauTuiles implements Cloneable, Serializable {
 
     // Enumération des directions
     public enum Direction {

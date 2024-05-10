@@ -4,6 +4,7 @@ import main.java.model.Tuile.Chemin;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
@@ -12,7 +13,7 @@ import java.util.Random;
  * La classe Joueur représente un joueur dans le jeu.
  */
 
-public class Joueur implements Cloneable {
+public class Joueur implements Cloneable, Serializable {
     private int ligne; // La ligne actuelle ( de la tuile ) du joueur sur le plateau
     private int colonne; // La colonne actuelle ( de la tuile ) du joueur sur le plateau
     private int PointEntree; // Le point d'entrée du joueur sur le plateau et SA POSITION ACTUELLE dans le plateau par rapport à la tuile

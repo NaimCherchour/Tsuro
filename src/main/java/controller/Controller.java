@@ -34,7 +34,7 @@ public class Controller implements MouseListener, ActionListener {
     }
     // Méthode pour gérer le placement d'une tuile sur le plateau
     public void handleTilePlacement(Tuile tuile) {
-            game.jouerUnTour(tuile); // Placer la tuile sur le plateau et mettre à jour la position des joueurs
+            game.play(tuile); // Placer la tuile sur le plateau et mettre à jour la position des joueurs
             game.notifyObservers(); // Alerter les observateurs que le model Game a changé
     }
 

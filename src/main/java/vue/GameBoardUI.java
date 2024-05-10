@@ -29,8 +29,8 @@ import main.java.*;
  */
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
-    private Game games;
 
+    private String username ;
     private static int secondsElapsed = 0;
     private Timer timer;
 
@@ -50,20 +50,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
     /**
      * Gère les clics sur les boutons dans le menu du jeu.
      * 
-     * @param frame       La fenêtre principale dans laquelle les éléments du jeu
-     *                    sont chargés.
      *  cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
      *                    personnalisés.
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(JFrame frame,Game game) throws IOException {
-        // public GameBoardUI(JFrame frame, AnimatedCursorFrame cursorFrame) throws
-        // IOException {
-            this.games=game;
-
-            // Dans la partie constructor de la classe GameBoardUI
-    
+    public GameBoardUI(String username) throws IOException {
+        this.username = username ;
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -85,12 +78,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
                
                 // Réinitialiser le compteur de temps écoulé
                 secondsElapsed = 0;
-
-                // Si le joueur actuel est humain, placez une tuile automatiquement
-                if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
-                    Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
-                    games.jouerUnTour(tuileAleatoire);
-                }
             }
 
             // Redessiner l'interface pour mettre à jour l'affichage du temps
@@ -105,7 +92,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         }
     });
     timer.start(); // Démarrer le timer
-        this.games = game;
+        this.game = game;
 
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
@@ -123,9 +110,22 @@ public class GameBoardUI extends JPanel implements GameObserver {
         sidePanel.setOpaque(true);
         sidePanel.add(filtre);
         sidePanel.setBackground(new Color(0, 0, 0, 0));
+
+        JPanel northPanel = new JPanel();
+        northPanel.setPreferredSize(new Dimension(100,50));
+
+        // Ajouter le bouton de sauvegarde
+        JButton saveButton = createSaveButton(username);
+        saveButton.setSize(new Dimension(100,30));
+        saveButton.setPreferredSize(new Dimension(100,30));
+
+        northPanel.setBackground(new Color(0, 0, 0, 0));
+        northPanel.add(saveButton);
+
         // Ajout du sidePanel à la disposition de GameBoardUI
         setLayout(new BorderLayout());
         add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
+        add(northPanel,BorderLayout.WEST);
 
         /*
          * Cursor hoverCursor = cursorFrame.getHoverCursor(); // Curseur lors du survol
@@ -216,6 +216,21 @@ public class GameBoardUI extends JPanel implements GameObserver {
          * return button;
          */
     }
+
+    private JButton createSaveButton(String username) {
+        JButton saveButton = new JButton("Sauvegarder");
+        saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    game.sauvegarderEtatJeu(username);
+                    JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
+
+            }
+        });
+        return saveButton;
+    }
+
 
     // PART2 : AESTHETIC
     private JPanel initFiltre() {

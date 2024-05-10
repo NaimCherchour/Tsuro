@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<users>
+        
+    <user>
+                
+        <username>Naim</username>
+                
+        <password>9c6d405bba2db24bfbd22fc7ff74b39bd9c5e9c6ce66299c6519be517e6ed7c6</password>
+                
+        <profile>
+                        
+        
+            <savedGames>
+                <game>src/main/resources/sauvegarde/Naim_0.ser</game>
+                <game>src/main/resources/sauvegarde/Naim_1.ser</game>
+            </savedGames>
+        </profile>
+            
+    </user>
+        
+    <user>
+                
+        <username>Tsuro</username>
+                
+        <password>ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f</password>
+                
+        <profile>
+                        
+            <savedGames/>
+                    
+        </profile>
+            
+    </user>
+    
+</users>

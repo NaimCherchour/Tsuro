@@ -32,7 +32,7 @@ public class Rules {
      * @param frame Le cadre dans lequel les règles sont affichées.
      * @param cursorFrame Non utilisé actuellement, prévu pour la gestion du curseur.
      */
-    public static void displayRules(JFrame frame, AnimatedCursorFrame cursorFrame) {
+    public static void displayRules(JFrame frame, AnimatedCursorFrame cursorFrame, String username) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
@@ -61,7 +61,7 @@ public class Rules {
             homeButton.setFocusPainted(false);
             homeButton.addActionListener(e -> {
                 playSound("src/main/resources/sound/buttonClickSound.wav");  // Jouer le son de clic avant de changer de vue
-                MainMenu.createAndShowGUI(frame);
+                MainMenu.createAndShowGUI(frame,username);
                 // Retour au menu principal
             });
             homeButtonPanel.add(homeButton);

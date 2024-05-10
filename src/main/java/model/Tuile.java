@@ -3,7 +3,9 @@ package main.java.model;
 import main.java.model.Joueur.Couleur;
 import main.java.model.PlateauTuiles.Direction;
 
-public class Tuile implements Cloneable {
+import java.io.Serializable;
+
+public class Tuile implements Cloneable, Serializable {
     private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
     private Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
@@ -111,7 +113,7 @@ public class Tuile implements Cloneable {
     }
 
 
-    public class Chemin {
+    public class Chemin implements Serializable{
 
         private int pointSortie; // Point de sortie du chemin tel que le point d'entrée est l'indice du tableau
         private Joueur.Couleur couleur; // Couleur du chemin ; les couleurs sont définies dans l'enum Couleur

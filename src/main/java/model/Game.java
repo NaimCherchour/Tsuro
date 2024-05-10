@@ -1,22 +1,30 @@
 package main.java.model;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
 
 import main.java.vue.GameBoardUI;
 
-public class Game implements ReadOnlyGame {
+public class Game implements ReadOnlyGame,Serializable {
+
+    private static final long serialVersionUID = 1L;
     private PlateauTuiles plateau; // Le plateau de jeu
     private static final int TAILLE_PLATEAU = 6 ;
     private List<Joueur> joueurs; // La liste des joueurs
     private static int NB_JOUEURS; // Le nombre de joueurs dans la partie
     private int currentPlayerIndex; // L'indice du joueur courant
     private final DeckTuiles deckTuiles; // Le deck de tuiles
-    private List<GameObserver> observers; // Les observateurs de la partie
+    private transient List<GameObserver> observers; // Les observateurs de la partie
     private boolean gameState ; // true for Playing and false for the end of the Game
+    private int type; // bot or normal
+
+    public enum GameMode {
+        CLASSIC,
+        LONGEST_PATH
+    }
+    private GameMode gameMode; // La variante du jeu
 
 
     public DeckTuiles getDeckTuiles() {
@@ -44,19 +52,49 @@ public class Game implements ReadOnlyGame {
         this.joueurs = joueurs;
     }
 
+    public void setObservers( List<GameObserver> obv){
+        this.observers = obv ;
+    }
+
+
+
     public int getCurrentPlayerIndex(){
         return currentPlayerIndex;
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
 
-    public Game(int type, int numberOfPlayers) {
+
+    public Game(int type, int numberOfPlayers,int variante) {
         this.plateau = new PlateauTuiles(TAILLE_PLATEAU);
         this.deckTuiles = new DeckTuiles();
         this.observers = new ArrayList<>();
-        Joueur.setIndexCouleur(0); //à chaque game partie , l'index de couleurs est réinitialisé
+        Joueur.setIndexCouleur(1); //à chaque game partie , l'index de couleurs est réinitialisé
+        this.type = type ;
         initializeGame(type,numberOfPlayers);
         gameState = true ;
+        if ( variante == 0 ){
+            gameMode = GameMode.CLASSIC;
+        } else if ( variante == 1) {
+            gameMode = GameMode.LONGEST_PATH;
+        }
     }
+
+    public void play(Tuile tuile) {
+        switch (gameMode) {
+            case CLASSIC:
+                jouerUnTour(tuile);
+                break;
+            case LONGEST_PATH:
+                //jouerUnTourLongestPath(tuile);
+                break;
+            default:
+                throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
+        }
+    }
+
     private void initializeGame(int type,int numberOfPlayers) {
         if (type == 0) {
             initializePlayers(2, true);
@@ -120,7 +158,7 @@ public class Game implements ReadOnlyGame {
                         } else {
                             System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
                             nextPlayer();
-                            GameBoardUI.resetSecondsElapsed();
+                            //GameBoardUI.resetSecondsElapsed();
                             jouerUnTour(null);
                         }
                     }
@@ -246,6 +284,58 @@ public class Game implements ReadOnlyGame {
         }
     }
 
+    // Méthode pour sauvegarder l'état du jeu
+    public void sauvegarderEtatJeu(String profileName) {
+        String savedGamePath = "src/main/resources/sauvegarde/" + profileName + "_" + getNumberOfSavedGames(profileName) + ".ser";
+        try (FileOutputStream fileOut = new FileOutputStream(savedGamePath);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            // Serialize and save the game state
+            objectOut.writeObject(this);
+
+            // Update profile with the new saved game path
+            ProfileManager profileManager = new ProfileManager();
+            Profile userProfile = profileManager.getProfile(profileName);
+            if (userProfile != null) {
+                userProfile.addSavedGame(savedGamePath);
+                profileManager.saveProfile(userProfile);
+            }
+
+            System.out.println("Game state saved successfully in: " + savedGamePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getNumberOfSavedGames(String profileName) {
+        ProfileManager profileManager = new ProfileManager();
+        Profile userProfile = profileManager.getProfile(profileName);
+        return userProfile != null ? userProfile.getSavedGames().size() : 0;
+    }
+
+
+
+    public static Game chargerEtatJeu(String fileName) {
+        File file = new File(fileName);
+        System.out.println("enter1");
+        if (!file.exists()) {
+            System.out.println("enter2");
+            System.out.println("Le fichier de sauvegarde pour le profil \"" + fileName + "\" n'existe pas.");
+            return null;
+        }
+
+        try (FileInputStream fileIn = new FileInputStream(fileName);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+            System.out.println("enter3");
+            // Désérialisez et chargez l'objet Game
+            Game game = (Game) objectIn.readObject();
+            System.out.println("L'état du jeu a été chargé avec succès à partir de " + fileName);
+            return game;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 }

@@ -23,7 +23,7 @@ public class Jouer {
      * @param frame La fenêtre principale dans laquelle les éléments du jeu sont chargés.
      * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs personnalisés.
      */
-    public static void gererClicSurBoutonJouer(JFrame frame, AnimatedCursorFrame cursorFrame) {
+    public static void gererClicSurBoutonJouer(JFrame frame, AnimatedCursorFrame cursorFrame,String username) {
         Cursor hoverCursor = cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
         Cursor defaultCursor = cursorFrame.getDefaultCursor();  // Curseur par défaut.
 
@@ -65,13 +65,29 @@ public class Jouer {
         JButton backButton = createButton("src/main/resources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/resources/returnButtonHovered.png", "src/main/resources/returnButtonPressed.png");
         backButton.addActionListener(e -> {
             playSound("src/main/resources/sound/buttonClickSound.wav");
-            MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
+            MainMenu.createAndShowGUI(frame,username);  // Assurer que le menu principal gère également correctement le curseur.
         });
 
         soloButton.addActionListener(e-> {
             playSound("src/main/resources/sound/buttonClickSound.wav");
             //TODO: Scène de Chargement Rapide 2 secondes
-            Main.solo();
+            int selectedMode = 0;
+            boolean flag = false;
+            while (!flag) {
+                Object[] options = {"Classic", "Longest Path"};
+                int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                if (choice == JOptionPane.CLOSED_OPTION) {
+                    // Close the dialog without exiting the application
+                    return; // Exit the action listener
+                } else {
+                    // User has made a selection
+                    selectedMode = choice ;
+                    flag = true; // Exit the loop
+                }
+            }
+            Main.solo(selectedMode,username);
         });
 
         localButton.addActionListener(e -> {
@@ -94,8 +110,25 @@ public class Jouer {
                     JOptionPane.showMessageDialog(null, "Enter a valid number.");
                 }
             }
+
+            int selectedMode = 0;
+            boolean flag = false;
+            while (!flag) {
+                Object[] options = {"Classic", "Longest Path"};
+                int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                if (choice == JOptionPane.CLOSED_OPTION) {
+                    // Close the dialog without exiting the application
+                    return; // Exit the action listener
+                } else {
+                    // User has made a selection
+                    selectedMode = choice ;
+                    flag = true; // Exit the loop
+                }
+            }
             //TODO: Scène de Chargement Rapide 2 secondes
-            Main.multiPlayer(numberOfPlayers);
+            Main.multiPlayer(numberOfPlayers,selectedMode,username);
 
         });
 

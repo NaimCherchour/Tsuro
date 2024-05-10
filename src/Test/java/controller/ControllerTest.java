@@ -12,7 +12,7 @@ public class ControllerTest {
 
     @Test
     public void testPlacerTuileFromDeck() throws IOException {
-        Game game = new Game(1,5);
+        Game game = new Game(1,5,0);
         Controller controller = new Controller(game);
         // Tuile factice pour le test
         Tuile tuile = new Tuile(1, new int[]{5, 6, 4, 7, 2, 0, 1, 3});
@@ -26,7 +26,7 @@ public class ControllerTest {
 
     @Test
     public void testRotateTile() throws IOException {
-        Game game = new Game(0,5);
+        Game game = new Game(0,5,0);
         Controller controller = new Controller(game);
         Tuile tuile = new Tuile(1, new int[]{5, 6, 4, 7, 2, 0, 1, 3});
 

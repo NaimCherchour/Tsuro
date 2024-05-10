@@ -11,7 +11,7 @@ public class BotTsuroTest {
 
     @Test
     public void testChoisirEtAppliquerMouvement() {
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
 
         int X = bot.getLigne();
@@ -24,7 +24,7 @@ public class BotTsuroTest {
     @Test
     public void testEvaluerMouvement() {
         // Créer un jeu avec un bot
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
 
         bot.setPointEntree(4);
@@ -40,7 +40,7 @@ public class BotTsuroTest {
     @Test
     public void testEstCoupGagnant() {
         // Créer un jeu avec un bot
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
 
         bot.setPointEntree(5); // 5 vers 6 ; correct
@@ -72,7 +72,7 @@ public class BotTsuroTest {
     @Test
     public void testEstCoupPerdant() {
         // Créer un jeu avec un bot
-        Game game = new Game(0, 2);
+        Game game = new Game(0, 2,0);
         BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
 
         bot.setPointEntree(0); // 0 vers 1 , on perd
