@@ -8,29 +8,35 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
+/**
+ * Représente la page de profil utilisateur.
+ */
 public class ProfilePage {
 
+    /**
+     * Constructeur de la classe ProfilePage.
+     *
+     * @param existingFrame Le frame existant sur lequel afficher la page de profil.
+     * @param userProfile   Le profil utilisateur à afficher.
+     */
     public ProfilePage(JFrame existingFrame, Profile userProfile) {
         existingFrame.getContentPane().removeAll();
 
+        // Chargement de l'arrière-plan depuis une image
         ImageIcon backgroundIcon = new ImageIcon("src/main/resources/fond.png");
         JLabel background = new JLabel(backgroundIcon);
         background.setLayout(new BorderLayout());
         existingFrame.setContentPane(background);
 
-
+        // Bouton de retour
         JButton returnButton = new JButton();
-        // Charger l'image depuis le fichier returnButton.png
         ImageIcon returnIcon = new ImageIcon("src/main/resources/returnButton.png");
-        // Redimensionner l'icône pour qu'elle soit plus petite
         Image img = returnIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         returnIcon = new ImageIcon(img);
         returnButton.setIcon(returnIcon);
-        returnButton.setBorderPainted(false); // Pour enlever la bordure
-        returnButton.setFocusPainted(false); // Pour enlever la couleur de focus lors du clic
-        returnButton.setContentAreaFilled(false); // Pour enlever le remplissage
-        // Ajouter un ActionListener pour détecter les clics sur le bouton
+        returnButton.setBorderPainted(false);
+        returnButton.setFocusPainted(false);
+        returnButton.setContentAreaFilled(false);
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -38,33 +44,29 @@ public class ProfilePage {
                 MainMenu.createAndShowGUI(existingFrame,userProfile.getUsername());
             }
         });
-        // Ajout du bouton de retour à un panneau en haut de la fenêtre.
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setOpaque(false);
         topPanel.add(returnButton);
         existingFrame.add(topPanel, BorderLayout.NORTH);
 
-
+        // Affichage du nom d'utilisateur
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         mainPanel.setOpaque(false);
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        JLabel usernameLabel = new JLabel("Username: " + userProfile.getUsername());
+        JLabel usernameLabel = new JLabel("Nom d'utilisateur: " + userProfile.getUsername());
         gbc.gridx = 0;
         gbc.gridy = 1;
         mainPanel.add(usernameLabel, gbc);
 
+        // Affichage des boutons pour les jeux sauvegardés
         JPanel buttonPanel = new JPanel(new GridLayout(userProfile.getSavedGames().size(), 1));
         for (String savedGame : userProfile.getSavedGames()) {
             JButton button = new JButton(savedGame);
-            // Load the image
             ImageIcon apercuIcon = new ImageIcon("src/main/resources/apercu_jeu.png");
-
-            // Scale the image to fit within the button
             Image scaledImage = apercuIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
-
             button.setIcon(scaledIcon);
             button.setVerticalTextPosition(SwingConstants.BOTTOM);
             button.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -73,7 +75,7 @@ public class ProfilePage {
                 public void actionPerformed(ActionEvent e) {
                     MainMenu.playSound("src/main/resources/sound/buttonClickSound.wav");
                     Main.initializeAndRunGame(savedGame, userProfile.getUsername());
-                    System.out.println("Selected saved game: " + savedGame);
+                    System.out.println("Jeu sauvegardé sélectionné : " + savedGame);
                 }
             });
             buttonPanel.add(button);
@@ -91,6 +93,4 @@ public class ProfilePage {
         existingFrame.revalidate();
         existingFrame.repaint();
     }
-
-
 }
