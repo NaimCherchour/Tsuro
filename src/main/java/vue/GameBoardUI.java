@@ -33,6 +33,8 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private String username ;
     private static int secondsElapsed = 0;
     private Timer timer;
+    private Image backgroundImage;
+    private Image fondGameboard;
 
     // TODO : Vérifier la relation entre le controller et la vue ; Normalement la
     // vue n'a pas de référence vers le controller
@@ -57,6 +59,9 @@ public class GameBoardUI extends JPanel implements GameObserver {
     // PART1 : CONSTRUCTOR
     public GameBoardUI(String username) throws IOException {
         this.username = username ;
+        // Charger l'image de fond
+        backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
+        fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -361,7 +366,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Example method to draw a tile at a specified position and size
 
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(new Color(155, 103, 60));
+        g2d.setColor(new Color(22, 52, 80));
         int arcWidth = 10; // Adjust the roundness of the corners as needed
         int arcHeight = 10; // Adjust the roundness of the corners as needed
         g2d.fillRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight);
@@ -374,7 +379,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     private void drawTile(Graphics g, int x, int y) {
         // Example method to draw a tile at a specified position and size
-        g.setColor(new Color(155, 103, 60));
+        g.setColor(new Color(22, 52, 80));
         g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
         g.drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Draw outline of the tile
@@ -388,79 +393,85 @@ public class GameBoardUI extends JPanel implements GameObserver {
         super.paintComponent(g);
 
         // Draw background color in gradient
-        Color startColor = new Color(107, 66, 35); // Medium brown 1
-        Color endColor = new Color(87, 56, 28); // Medium brown 2
-
-        GradientPaint gradientPaint = new GradientPaint(0, 0, startColor, getWidth(), getHeight(), endColor);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setPaint(gradientPaint);
-
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        g2d.setStroke(new BasicStroke(2)); // rectangle
-        g.fillRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10); // Fill the board area with a
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
+        // Dessiner l'image de fond du plateau de jeu
+        if (fondGameboard != null) {
+            g.drawImage(fondGameboard, 0, 0, getWidth(), getHeight(), this);
+        }
 
+
+
+        // Dessiner le rectangle du plateau
+        g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(2));
+        g.fillRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
+        g.drawRoundRect(LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, 10, 10);
+        // Dessiner l'image de fond
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, LEFT_MARGIN, TOP_MARGIN, BOARD_SIZE, BOARD_SIZE, this);
+        }
+
+        // Dessiner la tuile de visualisation si active
         if (VisuActif) {
+            if (game.getGameState()){
             Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
             int ligne = tmp.getLigne();
             int col = tmp.getColonne();
-            drawTileVisu(g, LEFT_MARGIN + col * CELL_SIZE, TOP_MARGIN + ligne * CELL_SIZE, VisuSelect);
+            drawTileVisu(g, LEFT_MARGIN + col * CELL_SIZE, TOP_MARGIN + ligne * CELL_SIZE, VisuSelect); }
         }
 
-        // Draw tiles on the board
+        // Dessiner les tuiles sur le plateau
         for (int i = 0; i < BOARD_SIZE / CELL_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE / CELL_SIZE; j++) {
                 if (game.getTuile(i, j) != null) {
                     drawTile(g, LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE);
                 } else {
                     g.setColor(Color.BLACK);
-                    g.drawRoundRect(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE, 10,
-                            10);
+                    g.drawRoundRect(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE, 10, 10);
                 }
             }
         }
+
+        // Dessiner les joueurs
         int espace = 75;
         for (Joueur joueur : game.getJoueurs()) {
             drawPlayer(g, joueur);
-            g.setColor(convertirCouleur(joueur.getCouleur())); // Couleur du texte
-            espace = espace + 30;
+            g.setColor(convertirCouleur(joueur.getCouleur()));
+            espace += 30;
             if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())) {
                 g.fillOval(30, espace - 4, 28, 28);
             } else {
                 g.fillOval(20, espace, 20, 20);
             }
         }
+
+        // Dessiner l'information du tour du joueur
         if (game.getGameState()) {
             Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
             String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
             Font font = new Font("Arial", Font.BOLD, 16);
             g.setFont(font);
-            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur
-                                                                                                            // du texte
-            g.drawString(tourDuJoueur, 480, 27); // Position du texte
+            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+            g.drawString(tourDuJoueur, 480, 27);
         }
 
+        // Dessiner le chronomètre
         Font font = new Font("Arial", Font.PLAIN, 14);
         g.setFont(font);
-
-        // Calculer le temps restant
         int timeRemaining = 20 - secondsElapsed;
-
-        // Changer la couleur du texte en rouge si le temps restant est inférieur ou
-        // égal à 5 secondes
         if (timeRemaining <= 5) {
             g.setColor(Color.RED);
         } else {
-            g.setColor(Color.BLACK); // Revenir à la couleur de texte par défaut
+            g.setColor(Color.BLACK);
         }
-
-        int x = getWidth() - 200; // Position en X pour afficher le chronomètre
-        int y = 20; // Position en Y pour afficher le chronomètre
-        g.drawString("Temps restant: " + timeRemaining + " secondes", x, y); // Afficher le temps restant
-
+        int x = getWidth() - 200;
+        int y = 20;
+        g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
     }
+
+
 
     public void drawPlayer(Graphics g, Joueur j) {
         JoueurPanel joueurUI = new JoueurPanel(j);
