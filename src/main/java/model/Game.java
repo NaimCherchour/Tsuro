@@ -158,7 +158,7 @@ public class Game implements ReadOnlyGame,Serializable {
                         } else {
                             System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
                             nextPlayer();
-                            //GameBoardUI.resetSecondsElapsed();
+                            GameBoardUI.resetSecondsElapsed();
                             jouerUnTour(null);
                         }
                     }

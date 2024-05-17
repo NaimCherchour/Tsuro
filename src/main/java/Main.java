@@ -51,7 +51,7 @@ public class Main {
         }
         GameBoardUI gameBoardUI = null;
         try {
-            gameBoardUI = new GameBoardUI(username);
+            gameBoardUI = new GameBoardUI(username,game);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +88,7 @@ public class Main {
         }
         GameBoardUI gameBoardUI = null;
         try {
-            gameBoardUI = new GameBoardUI(username);
+            gameBoardUI = new GameBoardUI(username,game);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

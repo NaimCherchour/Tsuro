@@ -29,6 +29,7 @@ import main.java.*;
  */
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
+    private Game games;
 
     private String username ;
     private static int secondsElapsed = 0;
@@ -57,7 +58,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(String username) throws IOException {
+    public GameBoardUI(String username,Game games) throws IOException {
         this.username = username ;
         // Charger l'image de fond
         backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
@@ -83,6 +84,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
                
                 // Réinitialiser le compteur de temps écoulé
                 secondsElapsed = 0;
+
+                // Si le joueur actuel est humain, placez une tuile automatiquement
+                if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
+                    Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
+                    games.jouerUnTour(tuileAleatoire);
+                }
+
             }
 
             // Redessiner l'interface pour mettre à jour l'affichage du temps
@@ -97,7 +105,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         }
     });
     timer.start(); // Démarrer le timer
-        this.game = game;
+        this.games = games;
 
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
