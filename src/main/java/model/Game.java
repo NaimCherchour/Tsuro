@@ -5,16 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
-// import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.Color;
-
-
-import main.java.vue.GameBoardUI;
 
 public class Game implements ReadOnlyGame,Serializable {
 
@@ -29,9 +19,6 @@ public class Game implements ReadOnlyGame,Serializable {
     private boolean gameState ; // true for Playing and false for the end of the Game
     private int type; // bot or normal
     
-    
-   
-
     public enum GameMode {
         CLASSIC,
         LONGEST_PATH,
@@ -69,8 +56,6 @@ public class Game implements ReadOnlyGame,Serializable {
         this.observers = obv ;
     }
 
-
-
     public int getCurrentPlayerIndex(){
         return currentPlayerIndex;
     }
@@ -78,6 +63,29 @@ public class Game implements ReadOnlyGame,Serializable {
     public GameMode getGameMode() {
         return gameMode;
     }
+
+    public Joueur getCurrentPlayer() {
+        return joueurs.get(currentPlayerIndex);
+    }
+
+    @Override
+    public int getGameMode(){
+        switch (gameMode) {
+            case CLASSIC:
+                return 0;
+                break;
+            case LONGEST_PATH:
+                return 1;
+                break;
+            case TIMER:
+                return 2;
+                break;
+            default:
+                throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
+        }
+    }
+
+
 
 
     public Game(int type, int numberOfPlayers,int variante) {
@@ -150,30 +158,9 @@ public class Game implements ReadOnlyGame,Serializable {
             }
         }else {
             jouerUnTour(tuile);
+            notifyObserverTimerReset();
         }
     }
-
-
-    public Joueur getCurrentPlayer() {
-        return joueurs.get(currentPlayerIndex);
-    }
-
-    public int getGameMode(){
-        switch (gameMode) {
-            case CLASSIC:
-                return 0;
-                break;
-            case LONGEST_PATH:
-                return 1;
-                break;
-            case TIMER:
-                return 2;
-                break;
-            default:
-                throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
-        }
-    }
-
 
     public void jouerUnTour(Tuile tuile) {
         if (!joueurs.isEmpty()){
@@ -345,6 +332,12 @@ public class Game implements ReadOnlyGame,Serializable {
     public void notifyObserverTimerStart(){
         for (GameObserver observer : observers){
             observer.startTurnTimer();
+        }
+    }
+
+    private void notifyObserverTimerReset(){
+        for (GameObserver observer : observers){
+            observer.resetTimer();
         }
     }
 

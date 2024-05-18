@@ -46,5 +46,5 @@ public interface ReadOnlyGame {
      * récupérer la variante du jeu 
      */
     
-     int getGameMode ();
+     int getGameMode();
 }

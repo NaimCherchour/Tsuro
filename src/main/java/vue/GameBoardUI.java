@@ -58,66 +58,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-<<<<<<< HEAD
     public GameBoardUI(String username) throws IOException {
         this.username = username ;
         // Charger l'image de fond
         backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
         fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
-        this.game = game;
-=======
-    public GameBoardUI(String username, Game games) throws IOException {
-        this.username = username;
-        // Charger l'image de fond
-        backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
-        fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-                int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
-                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                           // Changer la couleur du texte en rouge si le temps restant est inférieur ou
-                           // égal à 5 secondes
-                if (timeRemaining <= 5) {
-                    setForeground(Color.RED);
-                } else {
-                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                }
-
-                // Afficher le temps restant dans le terminal
-                System.out.println("Temps restant: " + timeRemaining + " secondes");
-
-                // Vérifier si le temps restant est écoulé
-                if (timeRemaining <= 0) {
-
-                    // Réinitialiser le compteur de temps écoulé
-                    secondsElapsed = 0;
-
-                    // Si le joueur actuel est humain, placez une tuile automatiquement
-                    if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
-                        Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
-                        games.jouerUnTour(tuileAleatoire);
-                    }
-
-                }
-
-                // Redessiner l'interface pour mettre à jour l'affichage du temps
-                repaint();
-
-                // Changer la couleur du texte en rouge si le temps restant est inférieur ou
-                // égal à 5 secondes
-                if (timeRemaining <= 5) {
-                    setForeground(Color.RED);
-                } else {
-                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                }
-            }
-        });
-        timer.start(); // Démarrer le timer
-        this.games = games;
-
->>>>>>> 9c615c186a7c3752c1376688c4dac8cf03fb2412
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
         addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
@@ -478,7 +423,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         }
 
         // Dessiner le chronomètre
-        Font font = new Font("Arial", Font.PLAIN, 14);
+        Font font = new Font("Arial", Font.BOLD, 16);
         g.setFont(font);
         int timeRemaining = 20 - secondsElapsed;
         if (timeRemaining <= 5) {
@@ -486,9 +431,10 @@ public class GameBoardUI extends JPanel implements GameObserver {
         } else {
             g.setColor(Color.BLACK);
         }
-        int x = getWidth() - 200;
+        int x = getWidth() - 260;
         int y = 20;
         g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
+        
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
@@ -612,6 +558,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         // on passe par le controller pour placer une tuile automatique
                     play();
 
+
                 }
     
                 // Redessiner l'interface pour mettre à jour l'affichage du temps
@@ -630,6 +577,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     private void play(){
         ((Controller) this.getMouseListeners()[0]).handleTilePlacement(null) ;
+    }
+
+    @Override
+    public void resetTimer(){
+        secondsElapsed=0;
     }
 
 

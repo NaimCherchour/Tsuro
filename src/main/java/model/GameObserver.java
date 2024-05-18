@@ -41,4 +41,9 @@ public interface GameObserver {
      * Méthode pour lancer le timer dès que le Game est crée
      */
     void startTurnTimer();
+
+    /**
+     * Méthode qui permet de rénitialiser le timer apres que le joueur ait placé une tuile 
+     */
+    void resetTimer();
 }
