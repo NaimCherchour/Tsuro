@@ -69,17 +69,14 @@ public class Game implements ReadOnlyGame,Serializable {
     }
 
     @Override
-    public int getGameMode(){
+    public int getGameModeInt(){
         switch (gameMode) {
             case CLASSIC:
                 return 0;
-                break;
             case LONGEST_PATH:
                 return 1;
-                break;
             case TIMER:
                 return 2;
-                break;
             default:
                 throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
         }

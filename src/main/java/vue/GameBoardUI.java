@@ -422,6 +422,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.drawString(tourDuJoueur, 480, 27);
         }
 
+        if(game.getGameModeInt()==2){
         // Dessiner le chronomètre
         Font font = new Font("Arial", Font.BOLD, 16);
         g.setFont(font);
@@ -434,7 +435,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         int x = getWidth() - 260;
         int y = 20;
         g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
-        
+        }
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
