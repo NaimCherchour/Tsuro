@@ -77,9 +77,6 @@ public class BotTsuro extends Joueur {
                     if (copieBOT.isAlive()) {
                         score += 1000;
                         System.out.println("Mouvement gagnant détecté.");
-                    } else {
-                        score -= 1000;
-                        System.out.println("Mouvement perdant détecté.");
                     }
                     int newX = copieBOT.getLigne();
                     int newY = copieBOT.getColonne();
@@ -89,6 +86,15 @@ public class BotTsuro extends Joueur {
                     } else {
                         score -= 750;
                         System.out.println("S'éloigne du centre");
+                    }
+                    Joueur joueurHumainCopie = copieJoueurs.get(0);
+                    if (!joueurHumainCopie.isAlive()) {
+                        score += 900;
+                        System.out.println("Elimine un joueur");
+                    }
+                    if (!copieBOT.isAlive()) {
+                        score -= 1000;
+                        System.out.println("Mouvement perdant détecté.");
                     }
 
                 }
