@@ -31,7 +31,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
     private Game games;
 
-    private String username ;
+    private String username;
     private static int secondsElapsed = 0;
     private Timer timer;
     private Image backgroundImage;
@@ -53,13 +53,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
     /**
      * Gère les clics sur les boutons dans le menu du jeu.
      * 
-     *  cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
-     *                    personnalisés.
+     * cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
+     * personnalisés.
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(String username,Game games) throws IOException {
-        this.username = username ;
+    public GameBoardUI(String username, Game games) throws IOException {
+        this.username = username;
         // Charger l'image de fond
         backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
         fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
@@ -69,42 +69,44 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-                                if (timeRemaining <= 5) {
-                                    setForeground(Color.RED);
-                                } else {
-                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                                }
-                
-                                // Afficher le temps restant dans le terminal
-                                System.out.println("Temps restant: " + timeRemaining + " secondes");
-                
-                               // Vérifier si le temps restant est écoulé
-            if (timeRemaining <= 0) {
-               
-                // Réinitialiser le compteur de temps écoulé
-                secondsElapsed = 0;
-
-                // Si le joueur actuel est humain, placez une tuile automatiquement
-                if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
-                    Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
-                    games.jouerUnTour(tuileAleatoire);
+                           // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+                           // égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
                 }
 
-            }
+                // Afficher le temps restant dans le terminal
+                System.out.println("Temps restant: " + timeRemaining + " secondes");
 
-            // Redessiner l'interface pour mettre à jour l'affichage du temps
-            repaint(); 
+                // Vérifier si le temps restant est écoulé
+                if (timeRemaining <= 0) {
 
-            // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-            if (timeRemaining <= 5) {
-                setForeground(Color.RED);
-            } else {
-                setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                    // Réinitialiser le compteur de temps écoulé
+                    secondsElapsed = 0;
+
+                    // Si le joueur actuel est humain, placez une tuile automatiquement
+                    if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
+                        Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
+                        games.jouerUnTour(tuileAleatoire);
+                    }
+
+                }
+
+                // Redessiner l'interface pour mettre à jour l'affichage du temps
+                repaint();
+
+                // Changer la couleur du texte en rouge si le temps restant est inférieur ou
+                // égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                }
             }
-        }
-    });
-    timer.start(); // Démarrer le timer
+        });
+        timer.start(); // Démarrer le timer
         this.games = games;
 
         this.dessinateurDeTuile = new DessinateurDeTuile();
@@ -125,12 +127,12 @@ public class GameBoardUI extends JPanel implements GameObserver {
         sidePanel.setBackground(new Color(0, 0, 0, 0));
 
         JPanel northPanel = new JPanel();
-        northPanel.setPreferredSize(new Dimension(100,50));
+        northPanel.setPreferredSize(new Dimension(100, 50));
 
         // Ajouter le bouton de sauvegarde
         JButton saveButton = createSaveButton(username);
-        saveButton.setSize(new Dimension(100,30));
-        saveButton.setPreferredSize(new Dimension(100,30));
+        saveButton.setSize(new Dimension(100, 30));
+        saveButton.setPreferredSize(new Dimension(100, 30));
 
         northPanel.setBackground(new Color(0, 0, 0, 0));
         northPanel.add(saveButton);
@@ -138,7 +140,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Ajout du sidePanel à la disposition de GameBoardUI
         setLayout(new BorderLayout());
         add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
-        add(northPanel,BorderLayout.WEST);
+        add(northPanel, BorderLayout.WEST);
 
         /*
          * Cursor hoverCursor = cursorFrame.getHoverCursor(); // Curseur lors du survol
@@ -236,14 +238,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    game.sauvegarderEtatJeu(username);
-                    JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
+                game.sauvegarderEtatJeu(username);
+                JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
 
             }
         });
         return saveButton;
     }
-
 
     // PART2 : AESTHETIC
     private JPanel initFiltre() {
@@ -387,7 +388,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     private void drawTile(Graphics g, int x, int y) {
         // Example method to draw a tile at a specified position and size
-        g.setColor(new Color(22, 52, 80));
+        g.setColor(new Color(52, 82, 110));
         g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Fill rectangle representing the tile
         g.setColor(Color.BLACK);
         g.drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 13, 13); // Draw outline of the tile
@@ -409,8 +410,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.drawImage(fondGameboard, 0, 0, getWidth(), getHeight(), this);
         }
 
-
-
         // Dessiner le rectangle du plateau
         g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2));
@@ -423,11 +422,12 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
         // Dessiner la tuile de visualisation si active
         if (VisuActif) {
-            if (game.getGameState()){
-            Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
-            int ligne = tmp.getLigne();
-            int col = tmp.getColonne();
-            drawTileVisu(g, LEFT_MARGIN + col * CELL_SIZE, TOP_MARGIN + ligne * CELL_SIZE, VisuSelect); }
+            if (game.getGameState()) {
+                Joueur tmp = game.getJoueurs().get(game.getCurrentPlayerIndex());
+                int ligne = tmp.getLigne();
+                int col = tmp.getColonne();
+                drawTileVisu(g, LEFT_MARGIN + col * CELL_SIZE, TOP_MARGIN + ligne * CELL_SIZE, VisuSelect);
+            }
         }
 
         // Dessiner les tuiles sur le plateau
@@ -437,7 +437,8 @@ public class GameBoardUI extends JPanel implements GameObserver {
                     drawTile(g, LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE);
                 } else {
                     g.setColor(Color.BLACK);
-                    g.drawRoundRect(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE, 10, 10);
+                    g.drawRoundRect(LEFT_MARGIN + j * CELL_SIZE, TOP_MARGIN + i * CELL_SIZE, CELL_SIZE, CELL_SIZE, 10,
+                            10);
                 }
             }
         }
@@ -478,8 +479,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
         int y = 20;
         g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
     }
-
-
 
     public void drawPlayer(Graphics g, Joueur j) {
         JoueurPanel joueurUI = new JoueurPanel(j);
@@ -584,7 +583,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
     }
-
 
     /*
      * public void afficherClassementFinal() {
