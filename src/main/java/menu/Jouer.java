@@ -74,7 +74,7 @@ public class Jouer {
             int selectedMode = 0;
             boolean flag = false;
             while (!flag) {
-                Object[] options = {"Classic", "Longest Path"};
+                Object[] options = {"Classic", "Longest Path", "Timer"};
                 int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
@@ -114,7 +114,7 @@ public class Jouer {
             int selectedMode = 0;
             boolean flag = false;
             while (!flag) {
-                Object[] options = {"Classic", "Longest Path"};
+                Object[] options = {"Classic", "Longest Path", "Timer"};
                 int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 

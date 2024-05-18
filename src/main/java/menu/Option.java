@@ -70,17 +70,16 @@ public class Option {
         muteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (clip != null) {
-                    if (soundMuted) {
-                        clip.start(); // Réactiver le son
-                        muteButton.setText("Couper le son");
-                        muteButton.setForeground(Color.black); // Enlever le style rouge
-                        soundMuted = false;
-                    } else {
+                    if (!soundMuted) { // Si le son n'est pas déjà coupé
                         clip.stop(); // Couper le son
                         muteButton.setText("Réactiver le son");
-                        muteButton.setForeground(Color.red); // Appliquer le style rouge
-                        soundMuted = true;
+                        muteButton.setForeground(Color.red);
+                    } else {
+                        clip.start(); // Réactiver le son
+                        muteButton.setText("Couper le son");
+                        muteButton.setForeground(Color.black);
                     }
+                    soundMuted = !soundMuted; // Inverser l'état de la sourdine
                 }
             }
         });

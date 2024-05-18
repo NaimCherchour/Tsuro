@@ -51,7 +51,7 @@ public class Main {
         }
         GameBoardUI gameBoardUI = null;
         try {
-            gameBoardUI = new GameBoardUI(username,game);
+            gameBoardUI = new GameBoardUI(username);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,13 +88,16 @@ public class Main {
         }
         GameBoardUI gameBoardUI = null;
         try {
-            gameBoardUI = new GameBoardUI(username,game);
+            gameBoardUI = new GameBoardUI(username);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         gameBoardUI.addMouseListener(controller);
         game.addObserver(gameBoardUI);
         gameBoardUI.update((ReadOnlyGame) game);
+        if ( variante == 2 ) {
+            game.notifyObserverTimerStart();
+        }
 
         JFrame frame = new JFrame("Tsuro Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -4,6 +4,15 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+// import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.Color;
+
 
 import main.java.vue.GameBoardUI;
 
@@ -19,10 +28,14 @@ public class Game implements ReadOnlyGame,Serializable {
     private transient List<GameObserver> observers; // Les observateurs de la partie
     private boolean gameState ; // true for Playing and false for the end of the Game
     private int type; // bot or normal
+    
+    
+   
 
     public enum GameMode {
         CLASSIC,
-        LONGEST_PATH
+        LONGEST_PATH,
+        TIMER 
     }
     private GameMode gameMode; // La variante du jeu
 
@@ -79,7 +92,10 @@ public class Game implements ReadOnlyGame,Serializable {
             gameMode = GameMode.CLASSIC;
         } else if ( variante == 1) {
             gameMode = GameMode.LONGEST_PATH;
-        }
+        } else if (variante == 2) {
+            gameMode = GameMode.TIMER; // Nouveau mode de jeu
+            notifyObserverTimerStart();       
+         }
     }
 
     public void play(Tuile tuile) {
@@ -89,6 +105,9 @@ public class Game implements ReadOnlyGame,Serializable {
                 break;
             case LONGEST_PATH:
                 //jouerUnTourLongestPath(tuile);
+                break;
+            case TIMER:
+                jouerUnTourTimer(tuile); // Nouvelle méthode pour gérer le mode TIMER
                 break;
             default:
                 throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
@@ -119,6 +138,41 @@ public class Game implements ReadOnlyGame,Serializable {
         }
     }
 
+
+    // on l'appelle uniquement si le timer est <= à 0
+
+    public void jouerUnTourTimer(Tuile tuile) {
+        if ( tuile == null ) {
+            if (!(this.getJoueurs().get(getCurrentPlayerIndex()) instanceof BotTsuro)) {
+                Random rand = new Random();
+                Tuile tuileAleatoire = this.getDeckTuiles().getTuile(rand.nextInt(3));
+                jouerUnTour(tuileAleatoire);
+            }
+        }else {
+            jouerUnTour(tuile);
+        }
+    }
+
+
+    public Joueur getCurrentPlayer() {
+        return joueurs.get(currentPlayerIndex);
+    }
+
+    public int getGameMode(){
+        switch (gameMode) {
+            case CLASSIC:
+                return 0;
+                break;
+            case LONGEST_PATH:
+                return 1;
+                break;
+            case TIMER:
+                return 2;
+                break;
+            default:
+                throw new IllegalStateException("Mode de jeu non géré: " + gameMode);
+        }
+    }
 
 
     public void jouerUnTour(Tuile tuile) {
@@ -158,7 +212,6 @@ public class Game implements ReadOnlyGame,Serializable {
                         } else {
                             System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
                             nextPlayer();
-                            GameBoardUI.resetSecondsElapsed();
                             jouerUnTour(null);
                         }
                     }
@@ -281,6 +334,12 @@ public class Game implements ReadOnlyGame,Serializable {
     private void notifyObserversWinnersTie() {
         for (GameObserver observer : observers) {
             observer.gameWinnersTie();
+        }
+    }
+
+    public void notifyObserverTimerStart(){
+        for (GameObserver observer : observers){
+            observer.startTurnTimer();
         }
     }
 

@@ -36,4 +36,9 @@ public interface GameObserver {
      * Méthode pour notifier que la partie se termine sur une égalité de deux Joueurs
      */
     void gameWinnersTie();
+
+    /**
+     * Méthode pour lancer le timer dès que le Game est crée
+     */
+    void startTurnTimer();
 }

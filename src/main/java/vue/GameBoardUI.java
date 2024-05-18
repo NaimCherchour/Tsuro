@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.util.Observable;
+import java.util.Random;
 
 import main.java.menu.*;
 
@@ -29,7 +30,6 @@ import main.java.*;
  */
 public class GameBoardUI extends JPanel implements GameObserver {
     private ReadOnlyGame game; // Quelques éléments visibles du model
-    private Game games;
 
     private String username ;
     private static int secondsElapsed = 0;
@@ -58,55 +58,12 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(String username,Game games) throws IOException {
+    public GameBoardUI(String username) throws IOException {
         this.username = username ;
         // Charger l'image de fond
         backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
         fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
-                int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
-                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-                                if (timeRemaining <= 5) {
-                                    setForeground(Color.RED);
-                                } else {
-                                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-                                }
-                
-                                // Afficher le temps restant dans le terminal
-                                System.out.println("Temps restant: " + timeRemaining + " secondes");
-                
-                               // Vérifier si le temps restant est écoulé
-            if (timeRemaining <= 0) {
-               
-                // Réinitialiser le compteur de temps écoulé
-                secondsElapsed = 0;
-
-                // Si le joueur actuel est humain, placez une tuile automatiquement
-                if (!(games.getJoueurs().get(games.getCurrentPlayerIndex()) instanceof BotTsuro)) {
-                    Tuile tuileAleatoire = games.getDeckTuiles().shuffleTuile();
-                    games.jouerUnTour(tuileAleatoire);
-                }
-
-            }
-
-            // Redessiner l'interface pour mettre à jour l'affichage du temps
-            repaint(); 
-
-            // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
-            if (timeRemaining <= 5) {
-                setForeground(Color.RED);
-            } else {
-                setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
-            }
-        }
-    });
-    timer.start(); // Démarrer le timer
-        this.games = games;
-
+        this.game = game;
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
         addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
@@ -140,6 +97,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
         add(northPanel,BorderLayout.WEST);
 
+    
         /*
          * Cursor hoverCursor = cursorFrame.getHoverCursor(); // Curseur lors du survol
          * d'un bouton.
@@ -229,6 +187,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
          * return button;
          */
     }
+
 
     private JButton createSaveButton(String username) {
         JButton saveButton = new JButton("Sauvegarder");
@@ -517,14 +476,9 @@ public class GameBoardUI extends JPanel implements GameObserver {
         repaint();
     }
 
-    public static void resetSecondsElapsed() {
-        secondsElapsed = 0;
-    }
 
     @Override
     public void playerLost(String playerName) {
-        // Créer une icône pour afficher avec le message
-        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
 
         // Définir le message de joueur perdant
         String message = "<html><div style='text-align: center;'>"
@@ -534,13 +488,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 + "</div></html>";
 
         // Afficher le message avec une boîte de dialogue personnalisée
-        JOptionPane.showMessageDialog(this, message, "Joueur Éliminé", JOptionPane.INFORMATION_MESSAGE, icon);
+        JOptionPane.showMessageDialog(this, message, "Joueur Éliminé", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void playerWon(String playerName) {
-        // Créer une icône pour afficher avec le message
-        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
 
         // Définir le message de joueur gagnant
         String message = "<html><div style='text-align: center;'>"
@@ -550,13 +502,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 + "</div></html>";
 
         // Afficher le message avec une boîte de dialogue personnalisée
-        JOptionPane.showMessageDialog(this, message, "Joueur Gagnant", JOptionPane.INFORMATION_MESSAGE, icon);
+        JOptionPane.showMessageDialog(this, message, "Joueur Gagnant", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void gameWinnersTie() {
-        // Créer une icône pour afficher avec le message
-        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
 
         // Définir le message d'égalité
         String message = "<html><div style='text-align: center;'>"
@@ -566,14 +516,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 + "</div></html>";
 
         // Afficher le message avec une boîte de dialogue personnalisée
-        JOptionPane.showMessageDialog(this, message, "Égalité", JOptionPane.INFORMATION_MESSAGE, icon);
+        JOptionPane.showMessageDialog(this, message, "Égalité", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void gameFinish() {
-        // Créer une icône pour afficher avec le message
-        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
 
+        timer.stop();
         // Définir le message de fin de jeu
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>La partie est terminée !</h1>"
@@ -582,8 +531,58 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 + "</div></html>";
 
         // Afficher le message avec une boîte de dialogue personnalisée
-        JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE, icon);
+        JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE);
     }
+
+
+    @Override
+    public void startTurnTimer() {
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
+                int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
+                repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
+                
+                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                }
+                
+                // Afficher le temps restant dans le terminal
+                System.out.println("Temps restant: " + timeRemaining + " secondes");
+    
+                // Vérifier si le temps restant est écoulé
+                if (timeRemaining <= 0) {
+                    // Réinitialiser le compteur de temps écoulé
+                    secondsElapsed = 0;
+                        // on passe par le controller pour placer une tuile automatique
+                    play();
+
+                }
+    
+                // Redessiner l'interface pour mettre à jour l'affichage du temps
+                repaint(); 
+    
+                // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
+                if (timeRemaining <= 5) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
+                }
+            }
+        });
+        timer.start(); // Démarrer le timer
+    }
+
+    private void play(){
+        ((Controller) this.getMouseListeners()[0]).handleTilePlacement(null) ;
+    }
+
+
+
 
 
     /*

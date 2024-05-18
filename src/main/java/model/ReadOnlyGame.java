@@ -41,4 +41,10 @@ public interface ReadOnlyGame {
      * Sauvegarder le jeu
      */
     void sauvegarderEtatJeu(String filename);
+
+    /**
+     * récupérer la variante du jeu 
+     */
+    
+     int getGameMode ();
 }
