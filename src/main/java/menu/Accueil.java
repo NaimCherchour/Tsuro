@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.awt.FontFormatException;
+
 
 public class Accueil {
 
@@ -45,7 +47,7 @@ public class Accueil {
                 startButtonClicked = true;
                 try {
                     LoginPage log = new LoginPage(frame);
-                } catch (IOException ex) {
+                } catch (IOException | FontFormatException ex) {
                     throw new RuntimeException(ex);
                 }
             }

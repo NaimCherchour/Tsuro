@@ -200,7 +200,12 @@ public class Game implements ReadOnlyGame,Serializable {
                     }
                 } else {
                     if (tuile != null) { // Ensure the tile is not null (for human player's turn)
-                        if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
+                        if (tuile.getId() == 19 || tuile.getId() == 27){
+                            nextPlayer();
+                            jouerUnTour(null);
+
+                        }
+                        else if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
                             Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
                             joueurs.remove(joueurPerdant);
                             NB_JOUEURS--;
