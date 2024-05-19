@@ -272,9 +272,6 @@ public class Game implements ReadOnlyGame,Serializable {
             if (gameMode == GameMode.LONGEST_PATH ) {
                 Joueur jW = checkWinner();
                 if ( jW != null ){
-                    notifyObserversPlayerWon(jW.getPrenom()); }
-                else {
-                    jW = deadPlayers.getLast();
                     notifyObserversPlayerWon(jW.getPrenom());
                 }
                 gameState = false ;
