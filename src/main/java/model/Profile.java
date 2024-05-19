@@ -33,4 +33,8 @@ public class Profile {
     public void addSavedGame(String savedGamePath) {
         savedGames.add(savedGamePath);
     }
+    public void removeSavedGame(String savedGamePath) {
+        savedGames.remove(savedGamePath);
+    }
+
 }

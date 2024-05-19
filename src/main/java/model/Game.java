@@ -338,9 +338,24 @@ public class Game implements ReadOnlyGame,Serializable {
         }
     }
 
+    private void notifyObserversGameSaved(){
+        for (GameObserver observer : observers){
+            observer.alertSavedGame();
+        }
+    }
+
+    private void notifyObserversGameUpdated(){
+        for (GameObserver observer : observers){
+            observer.alertUpdateSavedGame();
+        }
+    }
+
+
     // Méthode pour sauvegarder l'état du jeu
     public void sauvegarderEtatJeu(String profileName) {
-        String savedGamePath = "src/main/resources/sauvegarde/" + profileName + "_" + getNumberOfSavedGames(profileName) + ".ser";
+        int numberOfSavedGames = getNumberOfSavedGames(profileName);
+        String savedGamePath = "src/main/resources/sauvegarde/" + profileName + "_" + numberOfSavedGames + ".ser";
+
         try (FileOutputStream fileOut = new FileOutputStream(savedGamePath);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
@@ -348,24 +363,62 @@ public class Game implements ReadOnlyGame,Serializable {
             objectOut.writeObject(this);
 
             // Update profile with the new saved game path
-            ProfileManager profileManager = new ProfileManager();
-            Profile userProfile = profileManager.getProfile(profileName);
+            Profile userProfile = ProfileManager.getProfile(profileName);
             if (userProfile != null) {
                 userProfile.addSavedGame(savedGamePath);
-                profileManager.saveProfile(userProfile);
+                ProfileManager.saveProfile(userProfile);
             }
-
+            notifyObserversGameSaved();
             System.out.println("Game state saved successfully in: " + savedGamePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private int getNumberOfSavedGames(String profileName) {
-        ProfileManager profileManager = new ProfileManager();
-        Profile userProfile = profileManager.getProfile(profileName);
+    @Override
+    public int getNumberOfSavedGames(String profileName) {
+        Profile userProfile = ProfileManager.getProfile(profileName);
         return userProfile != null ? userProfile.getSavedGames().size() : 0;
     }
+
+    public void sauvegarderEtatJeuCharge(String profileName, int savedGameIndex) {
+        System.out.println("GAMEEEE" + savedGameIndex);
+        String savedGamePath = "src/main/resources/sauvegarde/" + profileName + "_" + savedGameIndex + ".ser";
+        System.out.println("Jesuis dans sauvegardeEtatJeuCharge et voila le path a supp" + savedGamePath);
+        File existingFile = new File(savedGamePath);
+        if (existingFile.exists()) {
+            existingFile.delete(); // Supprimer le fichier existant
+            // Supprimer l'ancien chemin de sauvegarde de la liste des jeux sauvegardés dans le profil de l'utilisateur
+            Profile userProfile = ProfileManager.getProfile(profileName);
+            if (userProfile != null) {
+                userProfile.removeSavedGame(savedGamePath);
+                ProfileManager.saveProfile(userProfile);
+            }
+        }
+        try (FileOutputStream fileOut = new FileOutputStream(savedGamePath);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            // Serialize and save the updated game state
+            objectOut.writeObject(this);
+
+            // Mettre à jour le profil avec le nouveau chemin de sauvegarde
+            Profile userProfile = ProfileManager.getProfile(profileName);
+            if (userProfile != null) {
+                userProfile.addSavedGame(savedGamePath);
+                ProfileManager.saveProfile(userProfile);
+            }
+
+            // Notify observers and print success message
+            notifyObserversGameUpdated();
+            System.out.println("Updated Game state saved successfully in: " + savedGamePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
 
 

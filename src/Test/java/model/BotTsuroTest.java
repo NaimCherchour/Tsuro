@@ -22,6 +22,29 @@ public class BotTsuroTest {
     }
 
     @Test
+    public void testDistance() {
+        // Vérifier la distance entre (2,3) et (4,5)
+        assertEquals(2.828, BotTsuro.distance(2, 3, 4, 5), 0.001);
+    }
+
+    @Test
+    public void testSeCentreTrue() {
+        // Position initiale (5, 5) , Nouvelle position (3, 3) plus proche du centre   (2.5, 2.5)
+        assertTrue(BotTsuro.SeCentre(5, 5, 3, 3));
+    }
+
+    @Test
+    public void testSeCentreFalse() {
+        // Position initiale (1, 1),Nouvelle position (5, 5) plus éloignée du centre(2.5, 2.5)
+        assertFalse(BotTsuro.SeCentre(1, 1, 5, 5));
+    }
+
+    @Test
+    public void testSeCentreBoundary() {
+        assertFalse(BotTsuro.SeCentre(2, 2, 2, 2));
+    }
+
+    @Test
     public void testEvaluerMouvement() {
         // Créer un jeu avec un bot
         Game game = new Game(0, 2,0);
@@ -53,29 +76,13 @@ public class BotTsuroTest {
         assertTrue(isWinningMove);
     }
 
-    /*
-    @Test
-    public void testEstCoupPerdantPourAdversaire() {
-        Game game = new Game(0, 2);
-        BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
-
-        Tuile tuileTest = new Tuile(1, new int[]{1, 0, 3, 2, 7, 6, 5, 4});
-        PlateauTuiles plateauTest = new PlateauTuiles(6);
-        Joueur adversaireTest = new Joueur("Adversaire", game.getJoueurs());
-        List<Joueur> joueursTest = new ArrayList<>(game.getJoueurs());
-        joueursTest.add(adversaireTest);
-
-        boolean isLosingMove = bot.estCoupPerdantPourAdversaire(new BotTsuro.Mouvement(tuileTest, 0, 0, 0, 0, 0), plateauTest, adversaireTest, joueursTest);
-        assertFalse(isLosingMove); // Le coup ne devrait pas être perdant pour l'adversaire
-    } */
-
     @Test
     public void testEstCoupPerdant() {
         // Créer un jeu avec un bot
         Game game = new Game(0, 2,0);
         BotTsuro bot = new BotTsuro("Bot", game.getJoueurs());
 
-        bot.setPointEntree(0); // 0 vers 1 , on perd
+        bot.setPointEntree(0); // 0 vers 1, on perd
         Tuile tuileTest = new Tuile(1, new int[]{1, 0, 3, 2, 7, 6, 5, 4});
         PlateauTuiles plateauTest = new PlateauTuiles(6);
 

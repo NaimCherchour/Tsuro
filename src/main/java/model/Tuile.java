@@ -6,6 +6,7 @@ import main.java.model.PlateauTuiles.Direction;
 import java.io.Serializable;
 
 public class Tuile implements Cloneable, Serializable {
+    private static final long serialVersionUID = 1L; // Définir un serialVersionUID cohérents
     private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
     private Chemin[] tableauChemins; // représente les 4 chemins de la tuile ( en Doublons ) ; c'est l'identité de la tuile donc final
@@ -106,6 +107,14 @@ public class Tuile implements Cloneable, Serializable {
      */
     public int getPointSortieAvecRot(int ind) {
         int tmp = (ind - (this.rotation * 2)) % 8;
+        if (tmp < 0) {
+            tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
+        }
+        return (tableauChemins[tmp].getPointSortie() + rotation*2)%8;
+    }
+
+    public int getPointSortieAvecRot(int ind, int rotation) {
+        int tmp = (ind - (rotation * 2)) % 8;
         if (tmp < 0) {
             tmp += 8; // S'assurer que tmp est positive car Mod en java peut retourner un nombre négatif
         }

@@ -13,7 +13,7 @@ public class Rules {
 
     private static int currentIndex = 0;
     // Indice de l'image actuelle
-    private static String[] imagePaths = {
+    private static final String[] imagePaths = {
             // Chemins des images de règles
             "src/main/resources/rulesImage1.png",
             "src/main/resources/rulesImage2.png",
@@ -60,7 +60,7 @@ public class Rules {
             homeButton.setContentAreaFilled(false);
             homeButton.setFocusPainted(false);
             homeButton.addActionListener(e -> {
-                playSound("src/main/resources/sound/buttonClickSound.wav");  // Jouer le son de clic avant de changer de vue
+                Option.playSound();  // Jouer le son de clic avant de changer de vue
                 MainMenu.createAndShowGUI(frame,username);
                 // Retour au menu principal
             });
@@ -118,7 +118,7 @@ public class Rules {
         button.setFocusPainted(false);
         button.addActionListener(e -> {
             // Ajout d'un action listener pour gérer les clics sur le bouton
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             // Mise à jour de l'indice de l'image et rafraîchissement de l'arrière-plan
             if (isBackButton) {
                 currentIndex = (currentIndex - 1 + imagePaths.length) % imagePaths.length;
@@ -130,23 +130,4 @@ public class Rules {
         return button;
     }
 
-    /**
-     * Joue un fichier sonore à partir du chemin spécifié. Cette méthode gère la lecture de fichiers audio,
-     * en ouvrant et démarrant le son contenu dans le fichier spécifié.
-     *
-     * @param soundFileName Le chemin complet vers le fichier sonore à jouer.
-     */
-    private static void playSound(String soundFileName) {
-        try {
-            // Chargement du fichier son et préparation à la lecture
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-            //Démarre la lecture du son
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-            // Gestion des erreurs potentielles lors de la lecture du son
-        }
-    }
 }

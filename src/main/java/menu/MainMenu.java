@@ -27,6 +27,22 @@ public class MainMenu {
     private static JFrame frame; // La déclare comme variable de classe (static)
     private static AnimatedCursorFrame cursorFrame;
     private static Clip clip;
+    protected static final String MUSIC_PATH = "src/main/resources/sound/SoundMenu.wav";
+
+    private static AudioInputStream audioInputStream ;
+
+    static {
+        try {
+            File soundFile = new File(MUSIC_PATH);
+            audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+            // Lecture du son en boucle
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
@@ -71,19 +87,11 @@ public class MainMenu {
         );
          */
 
-        try {
-            // Création de l'audioInputStream à partir du fichier audio
-            File soundFile = new File("src/main/resources/sound/SoundMenu.wav");
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-
-            // Lecture du son en boucle
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
+        // Contrôle du son
+        if (Option.soundMuted) {
+            clip.stop();
+        } else {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
-
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.out.println("Une erreur est survenue lors de la lecture du fichier audio : " + e.getMessage());
-            e.printStackTrace();
         }
         // Création d'un panneau pour les boutons avec un layout GridBag
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
@@ -189,8 +197,8 @@ public class MainMenu {
         });
 
         configureButton(profilButton, () -> {
-            ProfileManager profileManager = new ProfileManager();
-            Profile userProfile = profileManager.getProfile(username);
+            Profile userProfile = ProfileManager.getProfile(username);
+            assert userProfile != null;
             ProfilePage pdp = new ProfilePage(existingFrame, userProfile);
         });
 
@@ -227,21 +235,6 @@ public class MainMenu {
         frame.setVisible(true);
 
     }
-    /**
-     * Joue un son à partir du fichier spécifié.
-     *
-     * @param soundFileName Le chemin vers le fichier son.
-     */
-    public static void playSound(String soundFileName) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Configure le bouton avec un adaptateur de souris pour changer le curseur
@@ -264,7 +257,7 @@ public class MainMenu {
         });
 
         button.addActionListener(e -> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             action.run();
         });
     }

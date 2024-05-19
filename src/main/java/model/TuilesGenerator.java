@@ -91,7 +91,7 @@ public class TuilesGenerator {
      * @return une liste de 4 chaînes de caractères pour les 4 rotations possibles
      */
 
-    static ArrayList<String> convertirTuileEnChaine(Tuile tuile) {
+    public static ArrayList<String> convertirTuileEnChaine(Tuile tuile) {
         String str = "";
         String str1 = "";
         String str2 = "";
@@ -106,23 +106,19 @@ public class TuilesGenerator {
         }
         ret.add(str);
         // Tuile avec rotation 1
-        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str1 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
-
+            str1 += i + ":" + tuile.getPointSortieAvecRot(i,1) + "|";
         }
         ret.add(str1);
         // Tuile avec rotation 2
-        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str2 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
+            str2 += i + ":" + tuile.getPointSortieAvecRot(i,2) + "|";
 
         }
         ret.add(str2);
         // Tuile avec rotation 3
-        tuile.tournerTuile();
         for (int i = 0; i < Tuile.TAILLE_DU_TABLEAU; i++) {
-            str3 += i + ":" + tuile.getPointSortieAvecRot(i) + "|";
+            str3 += i + ":" + tuile.getPointSortieAvecRot(i,3) + "|";
 
         }
         ret.add(str3);
@@ -147,40 +143,5 @@ public class TuilesGenerator {
     }
 
 
-    // Test de la Génération
-    public static void main(String[] args) {
-        // Générer toutes les tuiles uniques
-        List<Tuile> tuilesUniques = genererToutesLesTuiles();
 
-        // Afficher les tuiles uniques
-        ArrayList<String> models = new ArrayList<>(); // Pour stocker toutes les tuiles avec leurs rotations et vérifier la duplication
-        int cpt = 0 ; // le Nombre
-
-        System.out.println("AFFICHAGE DES TUILES AVEC ROTATIONS");
-        for (Tuile tuile : tuilesUniques) {
-            afficherTuileAvecRotation(tuile);
-            models.add(convertirTuileEnChaine(tuile).get(0));
-            models.add(convertirTuileEnChaine(tuile).get(1));
-            models.add(convertirTuileEnChaine(tuile).get(2));
-            models.add(convertirTuileEnChaine(tuile).get(3));
-            cpt ++;
-        }
-        System.out.println("models = "+ models.size() + ", 35 * 4 = 140");
-        System.out.println(models); // Afficher les tuiles avec leurs rotations
-        System.out.println("Le nombre de tuiles générées = "+cpt); // doit être égal à 35
-
-        HashSet<String> set = new HashSet<>(); // Pour vérifier les duplications
-        int nbDuplic = 0 ;
-        for (String element : models) {
-            if (!set.add(element)) {
-                nbDuplic ++ ;
-                System.out.println("Duplicate element found: " + element);
-            }
-            System.out.println("success");
-        }
-        System.out.println("Le size du Set est  = "+set.size()); // doit être égal à 105
-        System.out.println("Nombre de Duplications = "+nbDuplic); // doit être égal à 35
-        System.out.println("Le nombre de Duplication est 35 ; car y'a des tuiles symétriques une fois retournée produit la même configuration");
-
-    }
 }

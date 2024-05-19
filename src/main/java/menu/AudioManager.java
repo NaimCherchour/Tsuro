@@ -15,18 +15,5 @@ public class AudioManager {
         }
         return instance;
     }
-
-    public void playSound(String filePath) {
-        try {
-            File soundFile = new File(filePath);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.out.println("Un problème est survenue.");
-            e.printStackTrace();
-        }
-    }
 }
 

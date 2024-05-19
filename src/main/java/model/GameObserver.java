@@ -46,4 +46,9 @@ public interface GameObserver {
      * Méthode qui permet de rénitialiser le timer apres que le joueur ait placé une tuile 
      */
     void resetTimer();
+
+    void alertSavedGame();
+
+    void alertUpdateSavedGame();
+
 }

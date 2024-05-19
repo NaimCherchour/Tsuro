@@ -6,7 +6,7 @@ import java.util.List;
 public class BotTsuro extends Joueur {
 
     /**
-     * Constructeur du Bot est le meme que le joueur , rien de plus
+     * Constructeur du Bot est le meme que le joueur, rien de plus
      * 
      * @param prenom
      * @param joueurs
@@ -19,21 +19,19 @@ public class BotTsuro extends Joueur {
      * MÉTHODE PRINCIPALE du choix du mouvement ( la tuile ) parmi 12 choix en
      * utilisant une approche de score MinMax
      * 
-     * @param game ; pour pouvoir tester les tuiles disponibles , cela se fait sur
-     *             des copies de Joueurs , Plateau et Tuiles
+     * @param game ; pour pouvoir tester les tuiles disponibles, cela se fait sur
+     *             des copies de Joueurs, Plateau et Tuiles
      *             pour ne pas modifier le jeu actuel jusqu'à poser la bonne Tuile
      */
     public void choisirEtAppliquerMouvement(Game game) {
 
-        // TODO : Revoir les Copies -> améliorer l'efficacité
         // COPIE DES TUILES DU DECK : OBLIGATOIRE
-        // COPIE DU PLATEAU ACTUEL ; pour tracker le mouvement du BoT également avec des
-        // tuiles voisines
-        // COPIE DES JOUEURS ; pour ne pas modiifer leurs coordonnées X et Y et points
-        // d'entrée ( qui est le point actuel )
+        // COPIE DU PLATEAU ACTUEL ; pour tracker le mouvement du BoT également avec des tuiles voisines
+        // COPIE DES JOUEURS ; pour ne pas modifier leurs coordonnées X et Y et points d'entrée ( qui est le point actuel )
         Tuile[] tuilesDisponibles = game.getDeckTuiles().copy(); // copie des Tuiles du Deck ; une copie pas un clone
                                                                  // car on a besoin de copier que un seul attribut (
                                                                  // sideTuiles )
+
         PlateauTuiles plateauCopie = game.getPlateau().clone(); // copie du Plateau
 
         Mouvement mouvementOptimal = null; // le mouvement à choisir à la fin
@@ -49,7 +47,7 @@ public class BotTsuro extends Joueur {
                 int score = 0;
 
                 // copie des joueurs pour ne pas modifier leurs coordonnées lors des tests
-                // On refait la copie à chaque itération ; pour reinitialiser les posX posY et
+                // On refait la copie à chaque itération ; pour reinitialize les posX posY et
                 // PointEntrée des Joueurs
                 // On les réinitialise comme dans le jeu avant de poser cette tuile test
                 List<Joueur> copieJoueurs = new ArrayList<>();
@@ -65,51 +63,35 @@ public class BotTsuro extends Joueur {
                 assert copieBOT != null;
                 int initX = copieBOT.getLigne();
                 int initY = copieBOT.getColonne();
-                int point = copieBOT.getPointEntree();
-                System.out.println(
-                        "Position actuelle du bot (X= " + copieBOT.getLigne() + ", Y=" + copieBOT.getColonne() + ")");
 
-                // TODO : à améliorer car il y'a des cas ou le Bot Perd ;
-                // Tests pour le BOT ; si on arrive à placer une Tuile et on ne meurs pas donc
-                // c'est un bon coup
+
                 if (plateauCopie.placerTuile(tuileTest, copieBOT, copieJoueurs)) {
-                    System.out.println("Bot etat : " + copieBOT.isAlive());
                     if (copieBOT.isAlive()) {
-                        score += 1000;
-                        System.out.println("Mouvement gagnant détecté.");
+                        score += 1000; // Mouvement Gagnant
                     }
                     int newX = copieBOT.getLigne();
                     int newY = copieBOT.getColonne();
                     if (SeCentre(initX, initY, newX, newY)) {
-                        score += 750;
-                        System.out.println("S'approche du centre");
+                        score += 750; //S'approche du centre
                     } else {
-                        score -= 750;
-                        System.out.println("S'éloigne du centre");
+                        score -= 750; //S'éloigne du centre
                     }
                     Joueur joueurHumainCopie = copieJoueurs.get(0);
                     if (!joueurHumainCopie.isAlive()) {
-                        score += 900;
-                        System.out.println("Elimine un joueur");
+                        score += 900; // Élimine le joueur humain
                     }
                     if (!copieBOT.isAlive()) {
-                        score -= 1000;
-                        System.out.println("Mouvement perdant détecté.");
+                        score -= 1000; // Mouvement perdant pour le bot détecté
                     }
-
                 }
-                System.out.println("Résultat du mouvement : Tuile=" + tuileTest.getId() + ", Rotation=" + rotation
-                        + ", Score =" + score);
 
                 // reset the board pour chaque essai en enlevant la dernière tuile
-                System.out.println(plateauCopie.getTuile(initX, initY));
-                plateauCopie.enleverTuile(initX, initY); // on enleve la tuile à posX et posY
+                plateauCopie.enleverTuile(initX, initY); // on enlève la tuile à posX et posY
                 copieBOT.setAlive(true);
                 // MinMax
                 if (score > scoreMax) {
                     scoreMax = score;
                     mouvementOptimal = new Mouvement(tuileTest, rotation, this.getLigne(), this.getColonne(), score, i);
-                    System.out.println("Nouveau mouvement optimal trouvé avec score " + score);
                 }
             }
         }
@@ -118,9 +100,7 @@ public class BotTsuro extends Joueur {
             // récupérer la Tuile du Deck à placer
             Tuile placedTile = game.getDeckTuiles().getTuile(mouvementOptimal.getIndexTuile());
             placedTile.setRotation(mouvementOptimal.getRotation());
-            System.out.println("La tuile à poser est " + placedTile.getId() + " rot " + placedTile.getRotation());
             game.getPlateau().placerTuile(placedTile, this, game.getJoueurs());
-            System.out.println(this.isAlive());
         } else {
             System.out.println("Aucun mouvement valide trouvé pour le bot.");
         }
@@ -133,12 +113,11 @@ public class BotTsuro extends Joueur {
         copie.setColonne(this.getColonne());
         if (plateau.placerTuile(tuile, copie, joueurs) || !copie.isAlive()) {
             score += 1000;
-            System.out.println("Mouvement gagnant détecté.");
+            //System.out.println("Mouvement gagnant détecté.");
         } else {
             score -= 1000;
-            System.out.println("Mouvement perdant détecté.");
+            //System.out.println("Mouvement perdant détecté.");
         }
-        // Ajoute des bonus pour les positions stratégiques, etc.
         return score;
     }
 
@@ -156,8 +135,6 @@ public class BotTsuro extends Joueur {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
-    // TODO : Revoir les méthpdes estCoupGagnant et estCoupPerdant pour améliorer le
-    // BOT
     public boolean estCoupGagnant(Mouvement mouvement, PlateauTuiles plateau, List<Joueur> joueurs) {
         for (Joueur adversaire : joueurs) {
             if (adversaire != this && estCoupPerdantPourAdversaire(mouvement, plateau, adversaire, joueurs)) {
@@ -202,11 +179,7 @@ public class BotTsuro extends Joueur {
         int nouvelleY = mouvement.getY() + PlateauTuiles.Direction
                 .getDirectionFromPoint(mouvement.getTuile().getPointSortieAvecRot(mouvement.getTuile().getRotation()))
                 .dj();
-        if (!plateau.coordonneesValides(nouvelleX, nouvelleY)) {
-            System.out.println("Sortie du plateau détectée.");
-            return true;
-        }
-        return false;
+        return !plateau.coordonneesValides(nouvelleX, nouvelleY);
     }
 
     public static class Mouvement {

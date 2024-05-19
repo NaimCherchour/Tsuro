@@ -1,6 +1,7 @@
 package main.java.vue;
 
 import main.java.menu.MainMenu;
+import main.java.menu.Option;
 import main.java.model.UserLogin;
 
 import javax.imageio.ImageIO;
@@ -36,7 +37,11 @@ public class LoginPage implements LoginListener {
     private JLabel usernameError;
     private JLabel passwordError;
     private UserLogin userLog; // Le modèle : gestion de la connexion et de l'Ajout de l'utilisateur
+
+    private Boolean isConnected = false ;
     private Font pixelFont;
+
+
 
 
     /**
@@ -51,7 +56,7 @@ public class LoginPage implements LoginListener {
 
         // Charger la police pixel art
         try (InputStream is = new FileInputStream("src/main/resources/pixel_font.ttf")) {
-            pixelFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(Font.PLAIN, 16);
+            pixelFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(Font.BOLD, 16);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(pixelFont);
         } catch (IOException | FontFormatException e) {
@@ -124,7 +129,8 @@ public class LoginPage implements LoginListener {
                 if (!trimmedUsername.isEmpty() && !trimmedUsername.equals("Entrez votre nom d'utilisateur")
                         && validatePassword(trimmedPassword)) {
                     if (userLog.login(trimmedUsername, trimmedPassword)) {
-                        MainMenu.playSound("src/main/resources/sound/buttonClickSound.wav");
+                        isConnected = true;
+                        Option.playSound();
                         MainMenu.createAndShowGUI(frame, trimmedUsername);
                     }
                 }
@@ -194,7 +200,7 @@ public class LoginPage implements LoginListener {
             private void updatePasswordError() {
                 String pass = String.valueOf(password.getPassword());
                 if (!pass.isEmpty() && !pass.equals("Entrez votre mot de passe")) {
-                    if (validatePassword(pass)) {
+                    if (validatePassword(pass) ) {
                         passwordError.setForeground(new Color(18, 73, 21));
                         passwordError.setText("Mot de passe valide");
                     }
@@ -319,9 +325,11 @@ public class LoginPage implements LoginListener {
 
 
     private boolean validatePassword(String text) {
-        passwordError.setForeground(Color.RED);
+        if( !isConnected) {
+            passwordError.setForeground(Color.RED);
+        }
         passwordError.setFont(pixelFont); // Appliquer la police pixel art
-        if (text.length() < 8 || text.equals("Entrez votre mot de passe")) {
+        if (text.length() < 8 || text.equals("Entrez votre mot de passe" )) {
             passwordError.setText("Mot de passe invalide");
             return false;
         } else
@@ -329,13 +337,15 @@ public class LoginPage implements LoginListener {
     }
 
 
+
     /**
      * Méthode appelée lorsque la connexion est réussie.
      */
     @Override
     public void notifySuccessLog() {
+        passwordError.setForeground(new Color(18, 73, 21));
         String message = "<html><div style='text-align: center;'>"
-                + "<h1 style='color: #32CD32;'> Bienvenue </h1>"
+                + "<h1 style='color: #32CD32;'> Heureux De Vous Revoir </h1>"
                 + "</div></html>";
 
         JOptionPane.showMessageDialog(null, message, "Connexion réussie", JOptionPane.INFORMATION_MESSAGE);
@@ -348,7 +358,7 @@ public class LoginPage implements LoginListener {
     public void notifyWrongPass() {
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>Mot de passe incorrect !</h1>"
-                + "<p>Réessayez en cliquant sur Oui.</p>"
+                + "<p>Réessayez en cliquant sur Yes.</p>"
                 + "</div></html>";
 
         int option = JOptionPane.showConfirmDialog(null, message, "Mauvais mot de passe", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);

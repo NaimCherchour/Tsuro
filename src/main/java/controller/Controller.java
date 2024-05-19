@@ -75,13 +75,33 @@ public class Controller implements MouseListener, ActionListener {
     public void mouseExited(MouseEvent e) {
     }
 
-    //Bouton Rotate
+
+    //Button Rotate and Sauvegarder
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Determine which button was clicked
         JButton clickedButton = (JButton) e.getSource();
-        TuilePanel tuilePanel = (TuilePanel) clickedButton.getClientProperty("tuilePanel");
-        rotateTile(tuilePanel.getTuile());
+        String actionCommand = clickedButton.getActionCommand();
+
+        switch (actionCommand) {
+            case "Rotate":
+                TuilePanel tuilePanel = (TuilePanel) clickedButton.getClientProperty("tuilePanel");
+                rotateTile(tuilePanel.getTuile());
+                break;
+            case "Save":
+                String username = (String) clickedButton.getClientProperty("Save");
+                game.sauvegarderEtatJeu(username);
+                break;
+            case "Save_Loaded_Game":
+                 String username2 = (String) clickedButton.getClientProperty("Save");
+                 int IndexSavedGame = (int) clickedButton.getClientProperty("IndexSavedGame");
+                System.out.println("Controller INDEXX " + IndexSavedGame);
+                game.sauvegarderEtatJeuCharge(username2,IndexSavedGame);
+                 break;
+            default:
+                break;
+        }
     }
+
+
 
 }

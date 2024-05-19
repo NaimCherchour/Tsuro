@@ -2,16 +2,20 @@ package main.java.menu;
 
 import main.java.Main;
 import main.java.model.Profile;
+import main.java.model.ProfileManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 /**
  * Représente la page de profil utilisateur.
  */
 public class ProfilePage {
+
+
 
     /**
      * Constructeur de la classe ProfilePage.
@@ -20,7 +24,10 @@ public class ProfilePage {
      * @param userProfile   Le profil utilisateur à afficher.
      */
     public ProfilePage(JFrame existingFrame, Profile userProfile) {
-        existingFrame.getContentPane().removeAll();
+        // Reprend le frame d'accueil
+        existingFrame.getContentPane().removeAll(); // Clean le contenu avant de faire d'autres réglages
+        existingFrame.setSize(1065, 600);
+        existingFrame.setLocationRelativeTo(null);
 
         // Chargement de l'arrière-plan depuis une image
         ImageIcon backgroundIcon = new ImageIcon("src/main/resources/fond.png");
@@ -28,19 +35,11 @@ public class ProfilePage {
         background.setLayout(new BorderLayout());
         existingFrame.setContentPane(background);
 
-        // Bouton de retour
-        JButton returnButton = new JButton();
-        ImageIcon returnIcon = new ImageIcon("src/main/resources/returnButton.png");
-        Image img = returnIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-        returnIcon = new ImageIcon(img);
-        returnButton.setIcon(returnIcon);
-        returnButton.setBorderPainted(false);
-        returnButton.setFocusPainted(false);
-        returnButton.setContentAreaFilled(false);
+        JButton returnButton = Option.createReturnButton();
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainMenu.playSound("src/main/resources/sound/buttonClickSound.wav");
+                Option.playSound();
                 MainMenu.createAndShowGUI(existingFrame,userProfile.getUsername());
             }
         });
@@ -56,12 +55,20 @@ public class ProfilePage {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         JLabel usernameLabel = new JLabel("Nom d'utilisateur: " + userProfile.getUsername());
+        // Customize the appearance of the JLabel
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Set the font to Arial, bold, size 16
+        usernameLabel.setForeground(new Color(56, 166, 239)); // Set the foreground color to blue
+        usernameLabel.setBackground(new Color(22, 80, 6)); // Set the background color to yellow
+        usernameLabel.setOpaque(true); // Make the background color visible by setting opaque to true
+        usernameLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center align the text
+
         gbc.gridx = 0;
         gbc.gridy = 1;
         mainPanel.add(usernameLabel, gbc);
 
-        // Affichage des boutons pour les jeux sauvegardés
-        JPanel buttonPanel = new JPanel(new GridLayout(userProfile.getSavedGames().size(), 1));
+// Affichage des boutons pour les jeux sauvegardés
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         for (String savedGame : userProfile.getSavedGames()) {
             JButton button = new JButton(savedGame);
             ImageIcon apercuIcon = new ImageIcon("src/main/resources/apercu_jeu.png");
@@ -73,18 +80,24 @@ public class ProfilePage {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    MainMenu.playSound("src/main/resources/sound/buttonClickSound.wav");
-                    Main.initializeAndRunGame(savedGame, userProfile.getUsername());
+                    Option.playSound();
+                    Main.initializeAndRunGame(existingFrame, savedGame, userProfile.getUsername());
                     System.out.println("Jeu sauvegardé sélectionné : " + savedGame);
                 }
             });
             buttonPanel.add(button);
         }
 
+        JScrollPane scrollPane = new JScrollPane(buttonPanel);
+        scrollPane.setPreferredSize(new Dimension(300, 150)); // You can adjust this size as needed
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+
         gbc.gridx = 0;
         gbc.gridy = 2;
-        mainPanel.add(buttonPanel, gbc);
-        background.add(mainPanel,BorderLayout.CENTER);
+        mainPanel.add(scrollPane, gbc);
+        background.add(mainPanel, BorderLayout.CENTER);
 
         existingFrame.pack();
         existingFrame.setLocationRelativeTo(null);
@@ -93,4 +106,9 @@ public class ProfilePage {
         existingFrame.revalidate();
         existingFrame.repaint();
     }
-}
+
+    public ProfilePage(JFrame existingFrame, String username) {
+        this(existingFrame, Objects.requireNonNull(ProfileManager.getProfile(username)));
+    }
+
+    }

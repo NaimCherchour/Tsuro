@@ -3,7 +3,6 @@ package main.java.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
-import java.util.Collections;
 
 // cette classe permet de générer les tuiles du deck du side Panel latéral
 public class DeckTuiles implements Serializable {

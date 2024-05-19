@@ -1,9 +1,5 @@
 package main.java.vue;
 
-import main.java.Main;
-
-import javax.sound.sampled.*;
-import java.io.File;
 
 import main.java.controller.Controller;
 import main.java.model.*;
@@ -16,12 +12,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-import java.util.Observable;
-import java.util.Random;
-
+import main.java.controller.Action;
 import main.java.menu.*;
 
-import main.java.*;
 
 /**
  * Classe représentant l'interface graphique du plateau de jeu.
@@ -45,7 +38,11 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private static final int TOP_MARGIN = 50;
     private static final int BOARD_SIZE = 720;
     private static final int NUMBER_DECK_TILES = 3;
+    private JButton saveButton ;
+    private Boolean loadedGame ;
+    private int indexGame; // for loaded game
     private JPanel sidePanel;
+    private JPanel northPanel;
     private JPanel filtre; // esthétique
     private boolean VisuActif = false; // esthétique
     private Tuile VisuSelect; // esthétique
@@ -58,8 +55,9 @@ public class GameBoardUI extends JPanel implements GameObserver {
      */
 
     // PART1 : CONSTRUCTOR
-    public GameBoardUI(String username) throws IOException {
+    public GameBoardUI(String username, JFrame frame , boolean loadedGame) throws IOException {
         this.username = username ;
+        this.loadedGame = loadedGame;
         // Charger l'image de fond
         backgroundImage = new ImageIcon("src/main/resources/fondPlateau.png").getImage();
         fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
@@ -80,126 +78,68 @@ public class GameBoardUI extends JPanel implements GameObserver {
         sidePanel.add(filtre);
         sidePanel.setBackground(new Color(0, 0, 0, 0));
 
-        JPanel northPanel = new JPanel();
+        northPanel = new JPanel();
         northPanel.setPreferredSize(new Dimension(100, 50));
 
-        // Ajouter le bouton de sauvegarde
-        JButton saveButton = createSaveButton(username);
-        saveButton.setSize(new Dimension(100, 30));
-        saveButton.setPreferredSize(new Dimension(100, 30));
+        JButton returnButton = Option.createReturnButton(); // static method in Option in Menu
+        returnButton.setSize(new Dimension(100,50));
+        returnButton.setPreferredSize(new Dimension(100,50));
+        returnButton.setBackground(new Color(0, 0, 0, 0));
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Option.playSound();
+                if ( !loadedGame ){
+                    Jouer.gererClicSurBoutonJouer(frame, null, username);  // Assurer que le menu principal gère également correctement le curseur.
+                } else {
+                    ProfilePage retAuProfile = new ProfilePage(frame,username);
+                }
+            }
+        });
+        createSaveButton(username);
 
         northPanel.setBackground(new Color(0, 0, 0, 0));
+        northPanel.add(returnButton);
         northPanel.add(saveButton);
 
         // Ajout du sidePanel à la disposition de GameBoardUI
         setLayout(new BorderLayout());
         add(sidePanel, BorderLayout.EAST); // Ajouter le sidePanel à l'est de GameBoardUI
         add(northPanel, BorderLayout.WEST);
-
-    
-        /*
-         * Cursor hoverCursor = cursorFrame.getHoverCursor(); // Curseur lors du survol
-         * d'un bouton.
-         * Cursor defaultCursor = cursorFrame.getDefaultCursor(); // Curseur par défaut.
-         * // Création du bouton de retour avec changement d'image au survol et lors du
-         * clic.
-         * JButton backButton = createButton("src/main/resources/returnButton.png", 75,
-         * hoverCursor, defaultCursor, frame,
-         * "src/main/resources/returnButtonHovered.png",
-         * "src/main/resources/returnButtonPressed.png");
-         * backButton.addActionListener(e -> {
-         * //playSound("src/main/resources/sound/buttonClickSound.wav");
-         * MainMenu.createAndShowGUI(frame); // Assurer que le menu principal gère
-         * également correctement le curseur.
-         * });
-         * // Ajout du bouton de retour à un panneau en haut de la fenêtre.
-         * JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-         * topPanel.setOpaque(false);
-         * topPanel.add(backButton);
-         * add(topPanel, BorderLayout.NORTH); // Ajouter le panneau en haut de
-         * GameBoardUI
-         * }
-         * 
-         */
-
-        /*
-         * /**
-         * Crée un bouton avec des images personnalisées pour les états normal, survolé
-         * et pressé.
-         * 
-         * @param imagePath Chemin de l'image normale.
-         * 
-         * @param width Largeur du bouton.
-         * 
-         * @param hoverCursor Curseur lors du survol.
-         * 
-         * @param defaultCursor Curseur par défaut.
-         * 
-         * @param frame Fenêtre contenant le bouton.
-         * 
-         * @param hoverImagePath Chemin de l'image lors du survol.
-         * 
-         * @param pressedImagePath Chemin de l'image lors du clic.
-         * 
-         * @return Un JButton configuré avec les images et les curseurs spécifiés.
-         * 
-         * public static JButton createButton(String imagePath, int width, Cursor
-         * hoverCursor, Cursor defaultCursor, JFrame frame, String hoverImagePath,
-         * String pressedImagePath) {
-         * ImageIcon normalIcon = new ImageIcon(imagePath);
-         * ImageIcon hoverIcon = new ImageIcon(hoverImagePath);
-         * ImageIcon pressedIcon = new ImageIcon(pressedImagePath);
-         * double aspectRatio = (double) normalIcon.getIconWidth() / (double)
-         * normalIcon.getIconHeight();
-         * int height = (int) (width / aspectRatio);
-         * Image image = normalIcon.getImage().getScaledInstance(width, height,
-         * Image.SCALE_SMOOTH);
-         * JButton button = new JButton(new ImageIcon(image));
-         * button.setRolloverIcon(new
-         * ImageIcon(hoverIcon.getImage().getScaledInstance(width, height,
-         * Image.SCALE_SMOOTH)));
-         * button.setPressedIcon(new
-         * ImageIcon(pressedIcon.getImage().getScaledInstance(width, height,
-         * Image.SCALE_SMOOTH)));
-         * 
-         * button.addMouseListener(new java.awt.event.MouseAdapter() {
-         * 
-         * @Override
-         * public void mouseEntered(java.awt.event.MouseEvent evt) {
-         * frame.getContentPane().setCursor(hoverCursor); // Change le curseur pour tout
-         * le contenu de la fenêtre lors du survol.
-         * }
-         * 
-         * @Override
-         * public void mouseExited(java.awt.event.MouseEvent evt) {
-         * frame.getContentPane().setCursor(defaultCursor); // Réinitialise le curseur
-         * pour tout le contenu de la fenêtre après le survol.
-         * }
-         * });
-         * 
-         * 
-         * 
-         * button.setOpaque(false);
-         * button.setContentAreaFilled(false);
-         * button.setBorderPainted(false);
-         * button.setFocusPainted(false);
-         * return button;
-         */
     }
 
+    public GameBoardUI (String username, JFrame frame , boolean loadedGame, int indexGame) throws IOException {
+        this(username,frame,loadedGame);
+        this.indexGame = indexGame;
+        northPanel.remove(saveButton);
+        createSaveButton(username);
+        northPanel.add(saveButton,BorderLayout.WEST);
+    }
 
-    private JButton createSaveButton(String username) {
-        JButton saveButton = new JButton("Sauvegarder");
+    private void createSaveButton(String username) {
+        saveButton = createCustomButton("Sauvegarder",new Color(70, 130, 180),Color.BLACK,new Font("Arial", Font.BOLD, 16));
+        saveButton.setSize(new Dimension(150,30));
+        saveButton.setPreferredSize(new Dimension(150,30));
         saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                game.sauvegarderEtatJeu(username);
-                JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
+        saveButton.putClientProperty("Save", username);
+        if (loadedGame){
+            saveButton.putClientProperty("IndexSavedGame",indexGame);
+            System.out.println("Game Board "+indexGame);
+            saveButton.setActionCommand(Action.SAVE_LOADED_GAME.getAction()); //pour ne pas repeter la sauvegarde
+        } else {
+            saveButton.setActionCommand(Action.SAVE.getAction()); // Set action command
+        }
+    }
 
-            }
-        });
-        return saveButton;
+    static JButton createCustomButton(String text, Color background, Color foreground, Font font) {
+        JButton button = new JButton(text);
+        button.setBackground(background);
+        button.setForeground(foreground);
+        button.setFont(font);
+        button.setFocusPainted(false);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        return button;
     }
 
     // PART2 : AESTHETIC
@@ -264,8 +204,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         super.paintComponent(g);
                         Graphics2D g2d = (Graphics2D) g;
                         if (game.getGameState()) {
-                            g2d.setColor(
-                                    Color.BLACK);
+                            g2d.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
                         }
                         g2d.setStroke(new BasicStroke(8)); // Définir l'épaisseur de la bordure
                         g2d.drawRoundRect(0, 0, 120 - 1, 120 - 1, 10, 10); // Dessiner une bordure rouge autour de la
@@ -320,6 +259,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         bouton.setBackground(new Color(245, 245, 220)); // Beige
 
         bouton.putClientProperty("tuilePanel", tuilePanel);
+        bouton.setActionCommand(Action.ROTATE.getAction()); // Set action command
         // the controller is the action listener to rotate
         bouton.addActionListener((ActionListener) this.getMouseListeners()[0]);
         return bouton;
@@ -422,19 +362,23 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.drawString(tourDuJoueur, 480, 27);
         }
 
-        if(game.getGameModeInt()==2){
-        // Dessiner le chronomètre
-        Font font = new Font("Arial", Font.BOLD, 16);
-        g.setFont(font);
-        int timeRemaining = 20 - secondsElapsed;
-        if (timeRemaining <= 5) {
-            g.setColor(Color.RED);
-        } else {
-            g.setColor(Color.BLACK);
+        if(game.getGameModeInt() == 2){
+            // Dessiner le chronomètre
+            Font font = new Font("Arial", Font.BOLD, 16);
+            g.setFont(font);
+            int timeRemaining = 20 - secondsElapsed;
+            if (timeRemaining <= 5) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.BLACK);
+            }
+            int x = getWidth() - 260;
+            int y = 20;
+            g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
         }
-        int x = getWidth() - 260;
-        int y = 20;
-        g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
+
+        if ( !game.getGameState()){
+            saveButton.setVisible(false);
         }
     }
 
@@ -461,6 +405,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
     @Override
     public void update(ReadOnlyGame game) {
         this.game = game;
+        saveButton.addActionListener((ActionListener) this.getMouseListeners()[0]);
         try {
             refreshDeck(); // Refresh the deck of tiles car les tuiles ont changé
             // TODO : Revoir la logique de rafraichissement du deck , je ne pense pas que ca
@@ -520,7 +465,9 @@ public class GameBoardUI extends JPanel implements GameObserver {
     @Override
     public void gameFinish() {
 
-        timer.stop();
+        if ( game.getGameModeInt() == 2) {
+            timer.stop();
+        }
         // Définir le message de fin de jeu
         String message = "<html><div style='text-align: center;'>"
                 + "<h1 style='color: #FF5733;'>La partie est terminée !</h1>"
@@ -530,6 +477,28 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
         // Afficher le message avec une boîte de dialogue personnalisée
         JOptionPane.showMessageDialog(this, message, "Fin de la partie", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void alertSavedGame () {
+        saveButton.setActionCommand("Nothing");
+        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
+        northPanel.remove(saveButton);
+        indexGame = game.getNumberOfSavedGames(username)-1;
+        saveButton.setVisible(false);
+        loadedGame = true ;
+        createSaveButton(username);
+        northPanel.add(saveButton);
+    }
+
+    @Override
+    public void alertUpdateSavedGame(){
+        saveButton.setActionCommand("Nothing");
+        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été mise à jour avec succès !");
+        northPanel.remove(saveButton);
+        loadedGame = true ;
+        createSaveButton(username);
+        northPanel.add(saveButton);
     }
 
 

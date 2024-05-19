@@ -21,7 +21,7 @@ import java.util.List;
 public class ProfileManager {
     private static final String XML_FILE_PATH = "src/main/resources/sauvegarde/users.xml";
 
-    public Profile getProfile(String username) {
+    public static Profile getProfile(String username) {
         try {
             File file = new File(XML_FILE_PATH);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -59,7 +59,7 @@ public class ProfileManager {
         return null; // profil non trouvé
     }
 
-    public void saveProfile(Profile profile) {
+    public static void saveProfile(Profile profile) {
         try {
             File file = new File(XML_FILE_PATH);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -88,7 +88,7 @@ public class ProfileManager {
         }
     }
 
-    private void updateSavedGamesInXML(Element profileElement, List<String> savedGames) {
+    private static void updateSavedGamesInXML(Element profileElement, List<String> savedGames) {
         NodeList savedGamesNodeList = profileElement.getElementsByTagName("savedGames");
         if (savedGamesNodeList.getLength() > 0) {
             Element savedGamesElement = (Element) savedGamesNodeList.item(0);
@@ -106,11 +106,10 @@ public class ProfileManager {
         profileElement.appendChild(newSavedGamesElement);
     }
 
-    private void saveXMLToFile(Document doc, File file) {
+    private static void saveXMLToFile(Document doc, File file) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(file);
             transformer.transform(source, result);
