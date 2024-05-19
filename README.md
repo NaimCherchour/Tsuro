@@ -1,4 +1,4 @@
-# Projet De Programmation PI4 
+# Projet De Programmation Tsuro ( VP2B )
 
 # Tsuro ( VP2B )
 
@@ -114,7 +114,7 @@ comme la génération et la rotation des tuiles.
 ## Menu
 Vous pouvez consulter les règles du jeu dans le menu principal en cliquant sur le bouton ?.
 Vous pouvez également désactiver le son des clics et du jeu dans la page Options.
-        
+
     
         
     
