@@ -21,7 +21,8 @@ public class Rules {
             "src/main/resources/rulesImage4.png",
             "src/main/resources/rulesImage5.png",
             "src/main/resources/rulesImage6.png",
-            "src/main/resources/rulesImage7.png"
+            "src/main/resources/rulesImage7.png",
+            "src/main/resources/rulesImage8.png"
     };
     private static JPanel buttonPanel;
     // Panneau global pour les boutons de navigation
