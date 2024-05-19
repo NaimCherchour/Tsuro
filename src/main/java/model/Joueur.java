@@ -123,6 +123,9 @@ public class Joueur implements Cloneable, Serializable {
     public int getCompteur() {
         return compteur;
     }
+    public void setCompteur(int compteur){
+        this.compteur=compteur;
+    }
     public void incrementerCompteur() {
         compteur++;
     }

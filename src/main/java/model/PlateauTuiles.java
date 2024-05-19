@@ -178,6 +178,10 @@ public class PlateauTuiles implements Cloneable, Serializable {
                             j.incrementerCompteur();
                             System.out.println("Longueur du chemin du joueur" + j.getCouleur() + " :" + j.getCompteur());
                             actualiserPosJ(joueurs);
+                            if (j.getCompteur() > Game.getMaxCompteur()) {
+                                Game.setMaxCompteur(j.getCompteur());
+                            }
+                          actualiserPosJ(joueurs);
                         } else {
                             j.setLigne(nouvelleLigne);
                             j.setColonne(nouvelleColonne);

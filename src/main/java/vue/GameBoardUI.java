@@ -346,40 +346,62 @@ public class GameBoardUI extends JPanel implements GameObserver {
             g.setColor(convertirCouleur(joueur.getCouleur()));
             espace += 30;
             if (joueur == game.getJoueurs().get(game.getCurrentPlayerIndex())) {
-                g.fillOval(30, espace - 4, 28, 28);
+                g.fillOval(50, espace - 4, 28, 28);
             } else {
-                g.fillOval(20, espace, 20, 20);
+                g.fillOval(40, espace, 20, 20);
             }
         }
 
         // Dessiner l'information du tour du joueur
         if (game.getGameState()) {
-            Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
-            String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
-            Font font = new Font("Arial", Font.BOLD, 16);
-            g.setFont(font);
-            g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
-            g.drawString(tourDuJoueur, 480, 27);
-        }
-
-        if(game.getGameModeInt() == 2){
-            // Dessiner le chronomètre
-            Font font = new Font("Arial", Font.BOLD, 16);
-            g.setFont(font);
-            int timeRemaining = 20 - secondsElapsed;
-            if (timeRemaining <= 5) {
-                g.setColor(Color.RED);
+            if (game.getGameModeInt() == 1) {
+                int decalage = 20;
+                for (Joueur joueur : game.getJoueurs()) {
+                    drawPlayer(g, joueur);
+                    String texteCompteur=""+joueur.getCompteur();
+                    int x = 5; //coordonée x pour l'emplacement du compteur
+                    int y = 100 + decalage; // coordonnée y pour l'emplacement du compteur
+                    g.drawString(texteCompteur, x, y);
+                    decalage += 30; //espace entre les compteur de chaque joueur de 30
+                    Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
+                    String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
+                    Font font = new Font("Arial", Font.BOLD, 16);
+                    g.setFont(font);
+                    g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur())); // Couleur du texte
+                    g.drawString(tourDuJoueur, 10, 410); // Position du texte
+                }
             } else {
-                g.setColor(Color.BLACK);
+                for (Joueur joueur : game.getJoueurs()) {
+                    drawPlayer(g, joueur);
+                }
+                Joueur joueurActuel = game.getJoueurs().get(game.getCurrentPlayerIndex());
+                String tourDuJoueur = "Tour du joueur " + joueurActuel.getCouleur().toString();
+                Font font = new Font("Arial", Font.BOLD, 16);
+                g.setFont(font);
+                g.setColor(convertirCouleur(game.getJoueurs().get(game.getCurrentPlayerIndex()).getCouleur()));
+                g.drawString(tourDuJoueur, 480, 27);
             }
-            int x = getWidth() - 260;
-            int y = 20;
-            g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
+
+            if(game.getGameModeInt() == 2){
+                // Dessiner le chronomètre
+                Font font = new Font("Arial", Font.BOLD, 16);
+                g.setFont(font);
+                int timeRemaining = 20 - secondsElapsed;
+                if (timeRemaining <= 5) {
+                    g.setColor(Color.RED);
+                } else {
+                    g.setColor(Color.BLACK);
+                }
+                int x = getWidth() - 260;
+                int y = 20;
+                g.drawString("Temps restant: " + timeRemaining + " secondes", x, y);
+            }
+
+            if ( !game.getGameState()){
+                saveButton.setVisible(false);
+            }
         }
 
-        if ( !game.getGameState()){
-            saveButton.setVisible(false);
-        }
     }
 
     public void drawPlayer(Graphics g, Joueur j) {
@@ -482,23 +504,27 @@ public class GameBoardUI extends JPanel implements GameObserver {
     @Override
     public void alertSavedGame () {
         saveButton.setActionCommand("Nothing");
-        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
         northPanel.remove(saveButton);
         indexGame = game.getNumberOfSavedGames(username)-1;
-        saveButton.setVisible(false);
         loadedGame = true ;
         createSaveButton(username);
         northPanel.add(saveButton);
+        revalidate();
+        repaint();
+        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été sauvegardée avec succès !");
+
     }
 
     @Override
     public void alertUpdateSavedGame(){
         saveButton.setActionCommand("Nothing");
-        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été mise à jour avec succès !");
         northPanel.remove(saveButton);
         loadedGame = true ;
         createSaveButton(username);
         northPanel.add(saveButton);
+        revalidate();
+        repaint();
+        JOptionPane.showMessageDialog(GameBoardUI.this, "La partie a été mise à jour avec succès !");
     }
 
 

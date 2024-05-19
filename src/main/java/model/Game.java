@@ -18,14 +18,18 @@ public class Game implements ReadOnlyGame,Serializable {
     private transient List<GameObserver> observers; // Les observateurs de la partie
     private boolean gameState ; // true for Playing and false for the end of the Game
     private int type; // bot or normal
-    
+
+    private List<Joueur> deadPlayers = new ArrayList<>();
+
+
     public enum GameMode {
         CLASSIC,
         LONGEST_PATH,
-        TIMER 
+        TIMER
     }
     private GameMode gameMode; // La variante du jeu
 
+    private static int maxCompteur=0;
 
     public DeckTuiles getDeckTuiles() {
         return deckTuiles;
@@ -60,13 +64,6 @@ public class Game implements ReadOnlyGame,Serializable {
         return currentPlayerIndex;
     }
 
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    public Joueur getCurrentPlayer() {
-        return joueurs.get(currentPlayerIndex);
-    }
 
     @Override
     public int getGameModeInt(){
@@ -83,13 +80,11 @@ public class Game implements ReadOnlyGame,Serializable {
     }
 
 
-
-
     public Game(int type, int numberOfPlayers,int variante) {
         this.plateau = new PlateauTuiles(TAILLE_PLATEAU);
         this.deckTuiles = new DeckTuiles();
         this.observers = new ArrayList<>();
-        Joueur.setIndexCouleur(1); //à chaque game partie , l'index de couleurs est réinitialisé
+        Joueur.setIndexCouleur(1); //à chaque game partie, l'index de couleurs est réinitialisé
         this.type = type ;
         initializeGame(type,numberOfPlayers);
         gameState = true ;
@@ -99,7 +94,7 @@ public class Game implements ReadOnlyGame,Serializable {
             gameMode = GameMode.LONGEST_PATH;
         } else if (variante == 2) {
             gameMode = GameMode.TIMER; // Nouveau mode de jeu
-            notifyObserverTimerStart();       
+            notifyObserverTimerStart();
          }
     }
 
@@ -109,7 +104,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 jouerUnTour(tuile);
                 break;
             case LONGEST_PATH:
-                //jouerUnTourLongestPath(tuile);
+                jouerUnTour(tuile);
                 break;
             case TIMER:
                 jouerUnTourTimer(tuile); // Nouvelle méthode pour gérer le mode TIMER
@@ -127,6 +122,7 @@ public class Game implements ReadOnlyGame,Serializable {
         }
     }
 
+
     private void initializePlayers(int numberOfPlayers, boolean vsBot) {
         joueurs = new ArrayList<>();
         if (vsBot) {
@@ -143,9 +139,7 @@ public class Game implements ReadOnlyGame,Serializable {
         }
     }
 
-
     // on l'appelle uniquement si le timer est <= à 0
-
     public void jouerUnTourTimer(Tuile tuile) {
         if ( tuile == null ) {
             if (!(this.getJoueurs().get(getCurrentPlayerIndex()) instanceof BotTsuro)) {
@@ -168,15 +162,25 @@ public class Game implements ReadOnlyGame,Serializable {
                 if (isCurrentPlayerBot()) { // Check if the current player is a bot
                     try {
                         playBotTurn((BotTsuro) joueurCourant); // Call the method to play the bot's turn
+                        if ( gameMode == GameMode.LONGEST_PATH ){
+                            if( joueurCourant.getCompteur() > maxCompteur){
+                                maxCompteur = joueurCourant.getCompteur();
+                            }
+
+                        }
                         if (!joueurCourant.isAlive()) { // Check if the bot is still alive after its turn
                             joueurs.remove(joueurCourant); // Remove the bot from the player list
+                            deadPlayers.add(joueurCourant);
                             NB_JOUEURS--;
                             currentPlayerIndexAct();
                             notifyObservers();
-                            notifyObserversPlayerLost(joueurCourant.getPrenom()); // Notify observers of bot's loss
+                            if (!joueurs.isEmpty()){
+                                notifyObserversPlayerLost(joueurCourant.getPrenom()); // Notify observers of bot's loss
+                                }
                             verifierJoueursElimines();
                         } else {
                             nextPlayer(); // Move to the next player's turn
+                            System.out.println("Current player " + currentPlayerIndex);
                             jouerUnTour(null); // pour le bot
                         }
                     } catch (IOException e) {
@@ -184,30 +188,52 @@ public class Game implements ReadOnlyGame,Serializable {
                     }
                 } else {
                     if (tuile != null) { // Ensure the tile is not null (for human player's turn)
-                        if (tuile.getId() == 19 || tuile.getId() == 27){
-                            nextPlayer();
-                            jouerUnTour(null);
-
-                        }
-                        else if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
-                            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
-                            joueurs.remove(joueurPerdant);
-                            NB_JOUEURS--;
-                            currentPlayerIndexAct();
-                            notifyObservers();
-                            notifyObserversPlayerLost(joueurPerdant.getPrenom());
-                            verifierJoueursElimines();
+                        boolean repeat = false ;
+                        // tuile magique
+                            if (tuile.getId() == 19 || tuile.getId() == 27){
+                                if ( gameMode == GameMode.LONGEST_PATH) {
+                                    repeat = true ;
+                                }
+                                else {
+                                    nextPlayer();
+                                    jouerUnTour(null);
+                                    return;
+                                }
+                            } if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
+                                     if ( gameMode == GameMode.LONGEST_PATH ) {
+                                         if( joueurCourant.getCompteur() > maxCompteur){
+                                             maxCompteur = joueurCourant.getCompteur();
+                                         }
+                                     }
+                                    Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
+                                    joueurs.remove(joueurPerdant);
+                                    deadPlayers.add(joueurPerdant);
+                                    NB_JOUEURS--;
+                                    currentPlayerIndexAct();
+                                    notifyObservers();
+                                    if ( !joueurs.isEmpty()) {
+                                        notifyObserversPlayerLost(joueurPerdant.getPrenom());
+                                    }
+                                    verifierJoueursElimines();
                             System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
-                        } else {
-                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
-                            nextPlayer();
-                            jouerUnTour(null);
-                        }
+                            } else {
+                                     if ( gameMode == GameMode.LONGEST_PATH) {
+                                         if (joueurCourant.getCompteur() > maxCompteur) {
+                                             maxCompteur = joueurCourant.getCompteur();
+                                         }
+                                     }
+                                    System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
+                                     if ( !repeat ) {
+                                        nextPlayer();
+                                     }
+                                    jouerUnTour(null);
+                            }
                     }
                 }
             }
         }
     }
+
 
 
     /**
@@ -233,18 +259,39 @@ public class Game implements ReadOnlyGame,Serializable {
         if(joueurs.isEmpty()){
             gameState = false ;
             if (plateau.isTie()) { //égalité
+                if (gameMode == GameMode.LONGEST_PATH ) {
+                    Joueur j = checkWinner();
+                    notifyObserversPlayerWon(j.getPrenom());
+                }
                 notifyObserversWinnersTie();
                 notifyGameEnd();
              }
+            if (gameMode == GameMode.LONGEST_PATH ) {
+                Joueur jW = checkWinner();
+                notifyObserversPlayerWon(jW.getPrenom());
+                gameState = false ;
+                notifyGameEnd();
+            }
         }
-        if(joueurs.size() == 1 ){
+        if (!(gameMode == GameMode.LONGEST_PATH)) {
+            if(joueurs.size() == 1 ){
                 Joueur j = joueurs.get(0);
                 System.out.println("REMOVING THE LAST PLAYER");
                 notifyObserversPlayerWon(j.getPrenom());
                 joueurs.remove(j);
                 gameState = false ;
                 notifyGameEnd();
+            }
         }
+    }
+
+    private Joueur checkWinner() {
+        for(Joueur j : deadPlayers){
+            if ( j.getCompteur() >= maxCompteur) {
+                return j;
+            }
+        }
+        return null;
     }
 
 
@@ -261,13 +308,23 @@ public class Game implements ReadOnlyGame,Serializable {
         }
     }
 
+
+    public static int getMaxCompteur(){
+        return maxCompteur;
+    }
+
+    public static void setMaxCompteur(int maxCompteur){
+        Game.maxCompteur = maxCompteur;
+    }
+
+
     private void currentPlayerIndexAct(){
         if (currentPlayerIndex >= NB_JOUEURS ){
             currentPlayerIndex = 0;
         }
     }
     private void nextPlayer() {
-        if(joueurs.size()>0){
+        if(!joueurs.isEmpty()){
         currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
         }
     }
