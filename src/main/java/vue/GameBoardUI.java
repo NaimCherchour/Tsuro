@@ -30,7 +30,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
     private Image backgroundImage;
     private Image fondGameboard;
 
-    // TODO : Vérifier la relation entre le controller et la vue ; Normalement la
     // vue n'a pas de référence vers le controller
     DessinateurDeTuile dessinateurDeTuile;
     private static final int CELL_SIZE = 120;
@@ -63,7 +62,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         fondGameboard = new ImageIcon("src/main/resources/fondGameBoard.png").getImage();
         this.dessinateurDeTuile = new DessinateurDeTuile();
         this.filtre = initFiltre();
-        addCellPanels(); // TODO : Revoir la modularité de l'esthétique du filtre et des cellules
+        addCellPanels();
 
         // Créer un nouveau JPanel latéral pour le deck
         sidePanel = new JPanel();
@@ -124,7 +123,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
         saveButton.putClientProperty("Save", username);
         if (loadedGame){
             saveButton.putClientProperty("IndexSavedGame",indexGame);
-            System.out.println("Game Board "+indexGame);
             saveButton.setActionCommand(Action.SAVE_LOADED_GAME.getAction()); //pour ne pas repeter la sauvegarde
         } else {
             saveButton.setActionCommand(Action.SAVE.getAction()); // Set action command
@@ -195,9 +193,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
             Tuile tuile = game.getDeckTuiles().getSideTuiles()[i];
             if (tuile != null) {
                 sidePanel.add(Box.createVerticalGlue());
-                // TODO : Revoir cette logique , je pense ca ne devrait pas être ici plutot dans
-                // le controller mais comment faire
-                // TODO : pour que le controller sache quel tuile a été cliqué
                 TuilePanel tuilePanel = new TuilePanel(tuile) {
                     @Override
                     protected void paintComponent(Graphics g) {
@@ -222,7 +217,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         VisuActif = true;
                         VisuSelect = tuile;
                         repaint();
-                        System.out.println("tuile visu bien visible ");
                     }
 
                     public void mouseClicked(MouseEvent e) {
@@ -235,7 +229,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         VisuActif = false;
 
                         repaint();
-                        System.out.println("tuile visu bien invisible ");
                     }
                 });
                 tuilePanel.addMouseListener(this.getMouseListeners()[0]);
@@ -430,10 +423,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
         saveButton.addActionListener((ActionListener) this.getMouseListeners()[0]);
         try {
             refreshDeck(); // Refresh the deck of tiles car les tuiles ont changé
-            // TODO : Revoir la logique de rafraichissement du deck , je ne pense pas que ca
-            // doit être la
-            // TODO : Plutôt dans la vue et puis on notifie le sidePanel que le deck a
-            // changé
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -543,10 +532,6 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 } else {
                     setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
                 }
-
-                // Afficher le temps restant dans le terminal
-                System.out.println("Temps restant: " + timeRemaining + " secondes");
-
                 // Vérifier si le temps restant est écoulé
                 if (timeRemaining <= 0) {
                     // Réinitialiser le compteur de temps écoulé

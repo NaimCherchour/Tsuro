@@ -44,7 +44,6 @@ public class Joueur implements Cloneable, Serializable {
             this.colonne = calculColonneDepart(PointEntree);
         }
         this.prenom = prenom;
-        System.out.println(prenom+ " " + indexCouleur);
         this.couleur = Couleur.values()[indexCouleur];
         Joueur.indexCouleur+=1;
         this.compteur = 0;

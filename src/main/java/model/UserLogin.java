@@ -53,11 +53,11 @@ public class UserLogin {
 
                     if (username.equalsIgnoreCase(storedUsername)) {
                         if (validatePassword(password, storedPassword)) {
-                            System.out.println("Login successful!");
+                            //System.out.println("Login successful!");
                             loginListener.notifySuccessLog();
                             return true ;
                         } else {
-                            System.out.println("Incorrect password. Please try again.");
+                            //System.out.println("Incorrect password. Please try again.");
                             loginListener.notifyWrongPass();
                             return false;
                         }
@@ -65,7 +65,7 @@ public class UserLogin {
                 }
             }
 
-            System.out.println("New user created successfully!");
+            //System.out.println("New user created successfully!");
             createUser(username, password);
             loginListener.notifyNewUser();
             return true;

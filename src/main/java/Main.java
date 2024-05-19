@@ -34,7 +34,6 @@ public class Main {
                 // Charger la partie sauvegardée et démarrer à partir de là
                 savedGame.setObservers(new ArrayList<>());
                 int index = extractFileNumber(filePath);
-                System.out.println("INDEXXXX" + index);
                 runLoadedGame(frame, savedGame, username, index);
                 return;
             }

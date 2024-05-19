@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public class TuilePanel extends JPanel {
 
-    // TODO : à voir si on doit appliquer le Observer Pattern ici
     private final DessinateurDeTuile dessinateur; // le dessinateur de Tuile
     private final Tuile tuile; // La tuile à dessiner
     private static final int TILE_SIZE = 120;

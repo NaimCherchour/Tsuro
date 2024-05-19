@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<users>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><users>
         
     <user>
                 
@@ -10,26 +9,10 @@
         <profile>
                         
         
-            <savedGames>
-                <game>src/main/resources/sauvegarde/Naim_0.ser</game>
-                <game>src/main/resources/sauvegarde/Naim_1.ser</game>
-            </savedGames>
-        </profile>
+            
+        <savedGames><game>src/main/resources/sauvegarde/Naim_0.ser</game><game>src/main/resources/sauvegarde/Naim_1.ser</game></savedGames></profile>
             
     </user>
-        
-    <user>
-                
-        <username>Tsuro</username>
-                
-        <password>ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f</password>
-                
-        <profile>
-                        
-            <savedGames/>
-                    
-        </profile>
-            
-    </user>
+
     
 </users>

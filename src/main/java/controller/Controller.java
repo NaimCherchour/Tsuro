@@ -94,7 +94,6 @@ public class Controller implements MouseListener, ActionListener {
             case "Save_Loaded_Game":
                  String username2 = (String) clickedButton.getClientProperty("Save");
                  int IndexSavedGame = (int) clickedButton.getClientProperty("IndexSavedGame");
-                System.out.println("Controller INDEXX " + IndexSavedGame);
                 game.sauvegarderEtatJeuCharge(username2,IndexSavedGame);
                  break;
             default:

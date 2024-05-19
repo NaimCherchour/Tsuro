@@ -23,8 +23,6 @@ import static main.java.vue.DessinateurDeTuile.ImageFlip.drawFlippedImage;
 
 public class DessinateurDeTuile extends JPanel {
 
-    //TODO : à voir si on doit appliquer le Observer Pattern ici
-
     private BufferedImage spritesSet;
     private final int SPRITE_WIDTH= 120;
     private final int SPRITE_HEIGHT = 120;

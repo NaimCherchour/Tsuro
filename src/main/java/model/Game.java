@@ -157,7 +157,6 @@ public class Game implements ReadOnlyGame,Serializable {
         if (!joueurs.isEmpty()){
             verifierJoueursElimines();
             if (!joueurs.isEmpty()) {
-                System.out.println("Nombre de Joueurs" + NB_JOUEURS);
                 Joueur joueurCourant = joueurs.get(currentPlayerIndex);
                 if (isCurrentPlayerBot()) { // Check if the current player is a bot
                     try {
@@ -180,7 +179,6 @@ public class Game implements ReadOnlyGame,Serializable {
                             verifierJoueursElimines();
                         } else {
                             nextPlayer(); // Move to the next player's turn
-                            System.out.println("Current player " + currentPlayerIndex);
                             jouerUnTour(null); // pour le bot
                         }
                     } catch (IOException e) {
@@ -222,7 +220,6 @@ public class Game implements ReadOnlyGame,Serializable {
                                     maxCompteur = joueurCourant.getCompteur();
                                 }
                             }
-                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
                             if ( !repeat ) {
                                 nextPlayer();
                             }
@@ -281,7 +278,7 @@ public class Game implements ReadOnlyGame,Serializable {
         if (!(gameMode == GameMode.LONGEST_PATH)) {
             if(joueurs.size() == 1 ){
                 Joueur j = joueurs.get(0);
-                System.out.println("REMOVING THE LAST PLAYER");
+                //System.out.println("REMOVING THE LAST PLAYER");
                 notifyObserversPlayerWon(j.getPrenom());
                 joueurs.remove(j);
                 gameState = false ;
@@ -431,7 +428,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 ProfileManager.saveProfile(userProfile);
             }
             notifyObserversGameSaved();
-            System.out.println("Game state saved successfully in: " + savedGamePath);
+            //System.out.println("Game state saved successfully in: " + savedGamePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -444,9 +441,7 @@ public class Game implements ReadOnlyGame,Serializable {
     }
 
     public void sauvegarderEtatJeuCharge(String profileName, int savedGameIndex) {
-        System.out.println("GAMEEEE" + savedGameIndex);
         String savedGamePath = "src/main/resources/sauvegarde/" + profileName + "_" + savedGameIndex + ".ser";
-        System.out.println("Jesuis dans sauvegardeEtatJeuCharge et voila le path a supp" + savedGamePath);
         File existingFile = new File(savedGamePath);
         if (existingFile.exists()) {
             existingFile.delete(); // Supprimer le fichier existant
@@ -472,7 +467,7 @@ public class Game implements ReadOnlyGame,Serializable {
 
             // Notify observers and print success message
             notifyObserversGameUpdated();
-            System.out.println("Updated Game state saved successfully in: " + savedGamePath);
+            //System.out.println("Updated Game state saved successfully in: " + savedGamePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -486,19 +481,16 @@ public class Game implements ReadOnlyGame,Serializable {
 
     public static Game chargerEtatJeu(String fileName) {
         File file = new File(fileName);
-        System.out.println("enter1");
         if (!file.exists()) {
-            System.out.println("enter2");
-            System.out.println("Le fichier de sauvegarde pour le profil \"" + fileName + "\" n'existe pas.");
+            //System.out.println("Le fichier de sauvegarde pour le profil \"" + fileName + "\" n'existe pas.");
             return null;
         }
 
         try (FileInputStream fileIn = new FileInputStream(fileName);
              ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
-            System.out.println("enter3");
             // Désérialisez et chargez l'objet Game
             Game game = (Game) objectIn.readObject();
-            System.out.println("L'état du jeu a été chargé avec succès à partir de " + fileName);
+            //System.out.println("L'état du jeu a été chargé avec succès à partir de " + fileName);
             return game;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

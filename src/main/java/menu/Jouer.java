@@ -136,14 +136,12 @@ public class Jouer {
                     flag = true; // Exit the loop
                 }
             }
-            //TODO: Scène de Chargement Rapide 2 secondes
             Main.multiPlayer(frame,numberOfPlayers,selectedMode,username);
 
         });
 
         onlineButton.addActionListener(e-> {
             Option.playSound();
-            //TODO: Scène de Chargement Rapide 4 secondes
             System.out.println("Online game...");
         });
 

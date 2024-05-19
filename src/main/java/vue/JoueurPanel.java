@@ -72,7 +72,6 @@ public class JoueurPanel extends JPanel {
         }else if (posActuelle == 0 || posActuelle == 1){
             posJoueurSurBoard = 0;
         }
-        //System.out.println("LIGNEEEEE"+j.getLigne());
         return MARGE_TOP + j.getLigne() * TUILE_SIZE + posJoueurSurBoard;
     }
 

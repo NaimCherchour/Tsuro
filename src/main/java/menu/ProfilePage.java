@@ -82,7 +82,7 @@ public class ProfilePage {
                 public void actionPerformed(ActionEvent e) {
                     Option.playSound();
                     Main.initializeAndRunGame(existingFrame, savedGame, userProfile.getUsername());
-                    System.out.println("Jeu sauvegardé sélectionné : " + savedGame);
+                    //System.out.println("Jeu sauvegardé sélectionné : " + savedGame);
                 }
             });
             buttonPanel.add(button);

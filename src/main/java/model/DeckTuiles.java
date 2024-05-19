@@ -7,7 +7,6 @@ import java.util.Random;
 // cette classe permet de générer les tuiles du deck du side Panel latéral
 public class DeckTuiles implements Serializable {
 
-    //TODO : Voir si il faut appliquer la Relation Observer/Observable pour le DeckTuiles et le SidePanel
     private Tuile[] sideTuiles; // Sauvegarde des 3 tuiles du deck
     private static final int NB_TUILES = 3; // Nombre de tuiles dans le deck
     private List<Tuile> tuiles; // Tous les 35 Modèles du deck

@@ -122,7 +122,7 @@ public class PlateauTuiles implements Cloneable, Serializable {
      */
     public boolean placerTuile(Tuile tuile, Joueur j, List<Joueur> joueurs) {
         if (j.getLigne() < 0 || j.getLigne() >= plateau.length || j.getColonne() < 0 || j.getColonne() >= plateau.length ||  plateau[j.getLigne()][j.getColonne()] != null ){
-            System.out.println("Impossible de placer une tuile ici.");
+            //System.out.println("Impossible de placer une tuile ici.");
             return false ;
         }
         plateau[j.getLigne()][j.getColonne()] = tuile;
@@ -153,7 +153,7 @@ public class PlateauTuiles implements Cloneable, Serializable {
                     if (tuileAjouté.getTableauChemins()[j.getPointEntree()].estEmprunte()) {
                         Joueur.Couleur color = tuileAjouté.getTableauChemins()[j.getPointEntree()].getCouleur();
                         //Tie
-                        System.out.println("Lost CHEMIN DEJA VISITE");
+                        //System.out.println("Lost CHEMIN DEJA VISITE");
                         j.setAlive(false);
                         // Trouver l'autre joueur sur la même tuile
                         for (Joueur autreJoueur : joueurs) {
@@ -176,7 +176,6 @@ public class PlateauTuiles implements Cloneable, Serializable {
                             j.setLigne(nouvelleLigne);
                             j.setColonne(nouvelleColonne);
                             j.incrementerCompteur();
-                            System.out.println("Longueur du chemin du joueur" + j.getCouleur() + " :" + j.getCompteur());
                             actualiserPosJ(joueurs);
                             if (j.getCompteur() > Game.getMaxCompteur()) {
                                 Game.setMaxCompteur(j.getCompteur());
@@ -185,15 +184,15 @@ public class PlateauTuiles implements Cloneable, Serializable {
                         } else {
                             j.setLigne(nouvelleLigne);
                             j.setColonne(nouvelleColonne);
-                            System.out.println("Lost OUT OF BORDER");
+                            //System.out.println("Lost OUT OF BORDER");
                             j.setAlive(false);
                         }
                     }
                 } else {
-                    System.out.println("Aucune Tuile");
+                    //System.out.println("Aucune Tuile");
                 }
             } else {
-                System.out.println("Joueur sortie du plateau");
+                //System.out.println("Joueur sortie du plateau");
                 j.setAlive(false);
             }
         }
