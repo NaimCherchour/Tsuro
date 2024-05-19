@@ -15,6 +15,9 @@ chmod +x run.sh
 
 ./run2.sh
 
+## Exécuter le jar : 
+sinon cliquez deux fois sur le jar pour jouer directement 
+
 
 ## Si vous voulez exécuter le jeu sur un IDE :
 
