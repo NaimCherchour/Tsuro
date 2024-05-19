@@ -49,7 +49,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
 
     /**
      * Gère les clics sur les boutons dans le menu du jeu.
-     * 
+     *
      * cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs
      * personnalisés.
      */
@@ -68,9 +68,9 @@ public class GameBoardUI extends JPanel implements GameObserver {
         // Créer un nouveau JPanel latéral pour le deck
         sidePanel = new JPanel();
         sidePanel.setPreferredSize(new Dimension(200, 600)); // Définir une largeur fixe et ajuster la hauteur
-                                                             // automatiquement
+        // automatiquement
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS)); // Utiliser BoxLayout pour aligner les
-                                                                         // composants verticalement
+        // composants verticalement
         sidePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Ajouter une marge autour du panneau
 
         filtre.setOpaque(true);
@@ -208,7 +208,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
                         }
                         g2d.setStroke(new BasicStroke(8)); // Définir l'épaisseur de la bordure
                         g2d.drawRoundRect(0, 0, 120 - 1, 120 - 1, 10, 10); // Dessiner une bordure rouge autour de la
-                                                                           // tuile
+                        // tuile
                     }
                 };
                 tuilePanel.setOpaque(false);
@@ -277,7 +277,7 @@ public class GameBoardUI extends JPanel implements GameObserver {
         g2d.fillRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight);
         g.setColor(Color.BLACK);
         g.drawRoundRect(x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10, arcWidth, arcHeight); // Draw outline of the tile
-                                                                                            // with rounded corners
+        // with rounded corners
         // Draw the tile's image
         dessinateurDeTuile.dessinerTuile(g, X, dessinateurDeTuile.getSpritesSet(), x, y);
     }
@@ -536,30 +536,30 @@ public class GameBoardUI extends JPanel implements GameObserver {
                 secondsElapsed++; // Incrémenter le compteur de temps écoulé à chaque tick
                 int timeRemaining = 20 - secondsElapsed; // Calculer le temps restant
                 repaint(); // Redessiner l'interface pour mettre à jour l'affichage du temps
-                
+
                 // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
                 if (timeRemaining <= 5) {
                     setForeground(Color.RED);
                 } else {
                     setForeground(Color.BLACK); // Revenir à la couleur de texte par défaut
                 }
-                
+
                 // Afficher le temps restant dans le terminal
                 System.out.println("Temps restant: " + timeRemaining + " secondes");
-    
+
                 // Vérifier si le temps restant est écoulé
                 if (timeRemaining <= 0) {
                     // Réinitialiser le compteur de temps écoulé
                     secondsElapsed = 0;
-                        // on passe par le controller pour placer une tuile automatique
+                    // on passe par le controller pour placer une tuile automatique
                     play();
 
 
                 }
-    
+
                 // Redessiner l'interface pour mettre à jour l'affichage du temps
-                repaint(); 
-    
+                repaint();
+
                 // Changer la couleur du texte en rouge si le temps restant est inférieur ou égal à 5 secondes
                 if (timeRemaining <= 5) {
                     setForeground(Color.RED);
@@ -587,13 +587,13 @@ public class GameBoardUI extends JPanel implements GameObserver {
     /*
      * public void afficherClassementFinal() {
      * Collections.sort(joueurs, new Comparator<Joueur>() {
-     * 
+     *
      * @Override
      * public int compare(Joueur joueur1, Joueur joueur2) {
      * return joueur1.getNombreTuilesPlacees() - joueur2.getNombreTuilesPlacees();
      * }
      * });
-     * 
+     *
      * // Construction du message de classement
      * StringBuilder message = new StringBuilder("Classement final :\n");
      * for (int i = 0; i < joueurs.size(); i++) {
@@ -602,12 +602,12 @@ public class GameBoardUI extends JPanel implements GameObserver {
      * 1).append(". ").append(joueur.getPrenom()).append(" - ").append(joueur.
      * getNombreTuilesPlacees()).append(" tuiles placées\n");
      * }
-     * 
+     *
      * // Affichage du classement final dans une boîte de dialogue
      * JOptionPane.showMessageDialog(this, message.toString(), "Classement Final",
      * JOptionPane.INFORMATION_MESSAGE);
      * }
-     * 
+     *
      */
 
 }

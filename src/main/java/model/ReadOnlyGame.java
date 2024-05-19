@@ -42,7 +42,7 @@ public interface ReadOnlyGame {
      * récupérer la variante du jeu
      */
 
-     int getGameModeInt();
+    int getGameModeInt();
 
     int getNumberOfSavedGames(String username);
 

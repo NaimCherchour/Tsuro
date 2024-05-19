@@ -181,7 +181,7 @@ public class PlateauTuiles implements Cloneable, Serializable {
                             if (j.getCompteur() > Game.getMaxCompteur()) {
                                 Game.setMaxCompteur(j.getCompteur());
                             }
-                          actualiserPosJ(joueurs);
+                            actualiserPosJ(joueurs);
                         } else {
                             j.setLigne(nouvelleLigne);
                             j.setColonne(nouvelleColonne);

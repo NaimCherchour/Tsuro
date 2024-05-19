@@ -95,7 +95,7 @@ public class Game implements ReadOnlyGame,Serializable {
         } else if (variante == 2) {
             gameMode = GameMode.TIMER; // Nouveau mode de jeu
             notifyObserverTimerStart();
-         }
+        }
     }
 
     public void play(Tuile tuile) {
@@ -176,7 +176,7 @@ public class Game implements ReadOnlyGame,Serializable {
                             notifyObservers();
                             if (!joueurs.isEmpty()){
                                 notifyObserversPlayerLost(joueurCourant.getPrenom()); // Notify observers of bot's loss
-                                }
+                            }
                             verifierJoueursElimines();
                         } else {
                             nextPlayer(); // Move to the next player's turn
@@ -190,44 +190,44 @@ public class Game implements ReadOnlyGame,Serializable {
                     if (tuile != null) { // Ensure the tile is not null (for human player's turn)
                         boolean repeat = false ;
                         // tuile magique
-                            if (tuile.getId() == 19 || tuile.getId() == 27){
-                                if ( gameMode == GameMode.LONGEST_PATH) {
-                                    repeat = true ;
-                                }
-                                else {
-                                    nextPlayer();
-                                    jouerUnTour(null);
-                                    return;
-                                }
-                            } if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
-                                     if ( gameMode == GameMode.LONGEST_PATH ) {
-                                         if( joueurCourant.getCompteur() > maxCompteur){
-                                             maxCompteur = joueurCourant.getCompteur();
-                                         }
-                                     }
-                                    Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
-                                    joueurs.remove(joueurPerdant);
-                                    deadPlayers.add(joueurPerdant);
-                                    NB_JOUEURS--;
-                                    currentPlayerIndexAct();
-                                    notifyObservers();
-                                    if ( !joueurs.isEmpty()) {
-                                        notifyObserversPlayerLost(joueurPerdant.getPrenom());
-                                    }
-                                    verifierJoueursElimines();
-                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
-                            } else {
-                                     if ( gameMode == GameMode.LONGEST_PATH) {
-                                         if (joueurCourant.getCompteur() > maxCompteur) {
-                                             maxCompteur = joueurCourant.getCompteur();
-                                         }
-                                     }
-                                    System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
-                                     if ( !repeat ) {
-                                        nextPlayer();
-                                     }
-                                    jouerUnTour(null);
+                        if (tuile.getId() == 19 || tuile.getId() == 27){
+                            if ( gameMode == GameMode.LONGEST_PATH) {
+                                repeat = true ;
                             }
+                            else {
+                                nextPlayer();
+                                jouerUnTour(null);
+                                return;
+                            }
+                        } if (!plateau.placerTuile(tuile, joueurCourant, joueurs) || !joueurCourant.isAlive()) {
+                            if ( gameMode == GameMode.LONGEST_PATH ) {
+                                if( joueurCourant.getCompteur() > maxCompteur){
+                                    maxCompteur = joueurCourant.getCompteur();
+                                }
+                            }
+                            Joueur joueurPerdant = joueurs.get(currentPlayerIndex);
+                            joueurs.remove(joueurPerdant);
+                            deadPlayers.add(joueurPerdant);
+                            NB_JOUEURS--;
+                            currentPlayerIndexAct();
+                            notifyObservers();
+                            if ( !joueurs.isEmpty()) {
+                                notifyObserversPlayerLost(joueurPerdant.getPrenom());
+                            }
+                            verifierJoueursElimines();
+                            jouerUnTour(null);
+                        } else {
+                            if ( gameMode == GameMode.LONGEST_PATH) {
+                                if (joueurCourant.getCompteur() > maxCompteur) {
+                                    maxCompteur = joueurCourant.getCompteur();
+                                }
+                            }
+                            System.out.println("COL" + joueurCourant.getColonne() + "LIGN" + joueurCourant.getLigne() + "ENTR" + joueurCourant.getPointEntree());
+                            if ( !repeat ) {
+                                nextPlayer();
+                            }
+                            jouerUnTour(null);
+                        }
                     }
                 }
             }
@@ -250,7 +250,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 NB_JOUEURS--;
                 currentPlayerIndexAct();
                 if(joueurs.isEmpty()){ // pour éviter une erreur de length = 0 quand on appelle notifyObservers
-                                       // ceci reste correct , juste inconvénient c'est la chronologie des actions
+                    // ceci reste correct , juste inconvénient c'est la chronologie des actions
                     gameState = false ; }
                 notifyObservers();
                 notifyObserversPlayerLost(joueur.getPrenom());
@@ -261,14 +261,22 @@ public class Game implements ReadOnlyGame,Serializable {
             if (plateau.isTie()) { //égalité
                 if (gameMode == GameMode.LONGEST_PATH ) {
                     Joueur j = checkWinner();
+                    if ( j != null) {
                     notifyObserversPlayerWon(j.getPrenom());
-                }
+                    }
+                } else {
                 notifyObserversWinnersTie();
                 notifyGameEnd();
-             }
+                }
+            }
             if (gameMode == GameMode.LONGEST_PATH ) {
                 Joueur jW = checkWinner();
-                notifyObserversPlayerWon(jW.getPrenom());
+                if ( jW != null ){
+                    notifyObserversPlayerWon(jW.getPrenom()); }
+                else {
+                    jW = deadPlayers.getLast();
+                    notifyObserversPlayerWon(jW.getPrenom());
+                }
                 gameState = false ;
                 notifyGameEnd();
             }
@@ -325,7 +333,7 @@ public class Game implements ReadOnlyGame,Serializable {
     }
     private void nextPlayer() {
         if(!joueurs.isEmpty()){
-        currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
+            currentPlayerIndex = (currentPlayerIndex + 1) % joueurs.size();
         }
     }
     public void passerAuJoueurSuivant() {

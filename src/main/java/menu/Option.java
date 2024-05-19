@@ -84,7 +84,7 @@ public class Option {
 
     public static JButton createReturnButton(){
         JButton returnButton = new JButton();
-        returnButton.setBackground(new Color(0,0,0,0));
+        //returnButton.setBackground(new Color(0,0,0,0));
         // Charger l'image depuis le fichier returnButton.png
         ImageIcon returnIcon = new ImageIcon("src/main/resources/returnButton.png");
         // Redimensionner l'icône pour qu'elle soit plus petite
