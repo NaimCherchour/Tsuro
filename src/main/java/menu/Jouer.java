@@ -16,6 +16,9 @@ import java.io.IOException;
  */
 public class Jouer {
 
+    private static AnimatedCursorFrame cursorFrame ;
+    private static Cursor hoverCursor;
+    private static Cursor defaultCursor ;
     private static final int CHARGING_TIME = 4; // Durée de la scène de chargement
 
     /**
@@ -23,12 +26,18 @@ public class Jouer {
      * @param frame La fenêtre principale dans laquelle les éléments du jeu sont chargés.
      * @param cursorFrame Une instance de AnimatedCursorFrame contenant les curseurs personnalisés.
      */
-    public static void gererClicSurBoutonJouer(JFrame frame, AnimatedCursorFrame cursorFrame) {
-        Cursor hoverCursor = cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
-        Cursor defaultCursor = cursorFrame.getDefaultCursor();  // Curseur par défaut.
+    public static void gererClicSurBoutonJouer(JFrame frame, AnimatedCursorFrame cursorFrame,String username) {
+        // Reprend le frame d'accueil
+        frame.getContentPane().removeAll(); // Clean le contenu avant de faire d'autres réglages
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1065, 600);
+        frame.setLocationRelativeTo(null);
 
-        // Suppression de tous les composants actuellement présents dans le conteneur principal de la fenêtre.
-        frame.getContentPane().removeAll();
+        if ( cursorFrame != null ) {
+            Jouer.cursorFrame = cursorFrame;
+            hoverCursor = Jouer.cursorFrame.getHoverCursor();  // Curseur lors du survol d'un bouton.
+            defaultCursor = Jouer.cursorFrame.getDefaultCursor();  // Curseur par défaut.
+        }
 
         // Création et configuration d'un nouveau panneau pour les options de jeu.
         JPanel panel = new JPanel(new GridBagLayout());
@@ -46,7 +55,7 @@ public class Jouer {
         JButton onlineButton = createButton("src/main/resources/gameOnline.png", 175, hoverCursor, defaultCursor, frame, "src/main/resources/gameOnlineHovered.png", "src/main/resources/gameOnlineHovered.png");
 
         // Ajout d'une action pour jouer un son lors du clic sur un bouton.
-        ActionListener playSoundAction = e -> playSound("src/main/resources/sound/buttonClickSound.wav");
+        ActionListener playSoundAction = e -> Option.playSound();
         soloButton.addActionListener(playSoundAction);
         localButton.addActionListener(playSoundAction);
         onlineButton.addActionListener(playSoundAction);
@@ -64,18 +73,34 @@ public class Jouer {
         // Création du bouton de retour avec changement d'image au survol et lors du clic.
         JButton backButton = createButton("src/main/resources/returnButton.png", 75, hoverCursor, defaultCursor, frame, "src/main/resources/returnButtonHovered.png", "src/main/resources/returnButtonPressed.png");
         backButton.addActionListener(e -> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
-            MainMenu.createAndShowGUI(frame);  // Assurer que le menu principal gère également correctement le curseur.
+            Option.playSound();
+            MainMenu.createAndShowGUI(frame,username);  // Assurer que le menu principal gère également correctement le curseur.
         });
 
         soloButton.addActionListener(e-> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             //TODO: Scène de Chargement Rapide 2 secondes
-            Main.solo();
+            int selectedMode = 0;
+            boolean flag = false;
+            while (!flag) {
+                Object[] options = {"Classic", "Longest Path", "Timer"};
+                int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                if (choice == JOptionPane.CLOSED_OPTION) {
+                    // Close the dialog without exiting the application
+                    return; // Exit the action listener
+                } else {
+                    // User has made a selection
+                    selectedMode = choice ;
+                    flag = true; // Exit the loop
+                }
+            }
+            Main.solo(frame,selectedMode,username);
         });
 
         localButton.addActionListener(e -> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             int numberOfPlayers = 0 ;
             while (true) {
                 String input = JOptionPane.showInputDialog("Enter the number of players (2-8):");
@@ -94,13 +119,30 @@ public class Jouer {
                     JOptionPane.showMessageDialog(null, "Enter a valid number.");
                 }
             }
+
+            int selectedMode = 0;
+            boolean flag = false;
+            while (!flag) {
+                Object[] options = {"Classic", "Longest Path", "Timer"};
+                int choice = JOptionPane.showOptionDialog(null, "Sélectionnez le mode de jeu :", "Choix du Mode de Jeu",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                if (choice == JOptionPane.CLOSED_OPTION) {
+                    // Close the dialog without exiting the application
+                    return; // Exit the action listener
+                } else {
+                    // User has made a selection
+                    selectedMode = choice ;
+                    flag = true; // Exit the loop
+                }
+            }
             //TODO: Scène de Chargement Rapide 2 secondes
-            Main.multiPlayer(numberOfPlayers);
+            Main.multiPlayer(frame,numberOfPlayers,selectedMode,username);
 
         });
 
         onlineButton.addActionListener(e-> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             //TODO: Scène de Chargement Rapide 4 secondes
             System.out.println("Online game...");
         });
@@ -191,20 +233,5 @@ public class Jouer {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         return button;
-    }
-
-    /**
-     * Joue un fichier sonore spécifié.
-     * @param soundFileName Chemin vers le fichier sonore à jouer.
-     */
-    private static void playSound(String soundFileName) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
     }
 }

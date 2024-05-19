@@ -1,10 +1,9 @@
 # Projet De Programmation Tsuro ( VP2B )
 
 Pour exécuter le projet:
+javac -d build src/main/java/*.java src/main/java/*/*.java
+java -cp build main.java.TsuroGame
 
- (javac -cp src/main/java/*/*.java)
- (java src/main/java/Main.java)
- 
 Pour exécuter les tests:
 
 

@@ -32,5 +32,18 @@ public interface ReadOnlyGame {
      */
     DeckTuiles getDeckTuiles();
 
+    /**
+     * Retourne l'état du jeu ; true : Playing , false : Over
+     */
     boolean getGameState();
+
+
+    /**
+     * récupérer la variante du jeu
+     */
+
+    int getGameModeInt();
+
+    int getNumberOfSavedGames(String username);
+
 }

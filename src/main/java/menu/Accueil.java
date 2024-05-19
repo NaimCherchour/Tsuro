@@ -1,9 +1,14 @@
 package main.java.menu;
 
+import main.java.vue.LoginPage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.awt.FontFormatException;
+
 
 public class Accueil {
 
@@ -40,7 +45,11 @@ public class Accueil {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startButtonClicked = true;
-                launchMainMenu();
+                try {
+                    LoginPage log = new LoginPage(frame);
+                } catch (IOException | FontFormatException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -84,15 +93,18 @@ public class Accueil {
         frame.setVisible(true);
     }
 
+
     /**
      * Lance le menu principal.
      */
-    private void launchMainMenu() {
-        MainMenu.createAndShowGUI(frame); // Utilise la fenêtre existante
+    public void launchMainMenu() {
+        //MainMenu.createAndShowGUI(frame); // Utilise la fenêtre existante
         if (animatedCursor != null) {
             animatedCursor.stopAnimation(frame);
         }
     }
+
+
 
     /**
      * Indique si le bouton de démarrage a été cliqué.

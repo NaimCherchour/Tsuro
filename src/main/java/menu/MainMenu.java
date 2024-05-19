@@ -1,5 +1,8 @@
 package main.java.menu;
 
+import main.java.model.Profile;
+import main.java.model.ProfileManager;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -21,18 +24,31 @@ import java.awt.event.ActionEvent;
  * Représente le menu principal du jeu TSURO.
  */
 public class MainMenu {
-
-    private static String playerName = "";
     private static JFrame frame; // La déclare comme variable de classe (static)
     private static AnimatedCursorFrame cursorFrame;
     private static Clip clip;
+    protected static final String MUSIC_PATH = "src/main/resources/sound/SoundMenu.wav";
 
+    private static AudioInputStream audioInputStream ;
+
+    static {
+        try {
+            File soundFile = new File(MUSIC_PATH);
+            audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+            // Lecture du son en boucle
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Crée et affiche l'interface graphique du menu principal (partie vue).
      */
 
-    public static void createAndShowGUI(JFrame existingFrame) {
+    public static void createAndShowGUI(JFrame existingFrame,String username) {
         // Reprend le frame d'accueil
         frame = existingFrame;
         frame.getContentPane().removeAll(); // Clean le contenu avant de faire d'autres réglages
@@ -51,8 +67,6 @@ public class MainMenu {
 
         // Définissez le curseur après toutes les modifications de la fenêtre pour garantir qu'il reste appliqué
         frame.setCursor(cursorFrame.getDefaultCursor());
-
-
 
         // Chargement et définition de l'icône de la fenêtre à partir de 'logo.png'
         ImageIcon icone = new ImageIcon("src/main/resources/logo.png");
@@ -73,21 +87,11 @@ public class MainMenu {
         );
          */
 
-        try {
-            // Création de l'audioInputStream à partir du fichier audio
-            File soundFile = new File("src/main/resources/sound/SoundMenu.wav");
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-
-            // Lecture du son en boucle
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
+        // Contrôle du son
+        if (Option.soundMuted) {
+            clip.stop();
+        } else {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
-
-            // Affichage d'un message pour indiquer que tout s'est bien passé
-            System.out.println("Tout s'est bien passé !");
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.out.println("Une erreur est survenue lors de la lecture du fichier audio : " + e.getMessage());
-            e.printStackTrace();
         }
         // Création d'un panneau pour les boutons avec un layout GridBag
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
@@ -110,7 +114,7 @@ public class MainMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Appel de la méthode gererClicSurBoutonOption de la classe Option
-                Option.gererClicSurBoutonOption(frame, clip);
+                Option.gererClicSurBoutonOption(frame, clip,username);
             }
         });
         
@@ -142,69 +146,16 @@ public class MainMenu {
 
         rulesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // fenetre pour afficher les regles
-                JDialog dialog = new JDialog(frame, "Rules", true);
-
-
-                Color color = new Color(64, 224, 208);
-                dialog.getContentPane().setBackground(color);
-
-                // Contenu de la fenêtre JDialog avec les règles
-                JTextArea rulesTextArea = new JTextArea(
-                        "Objectif:\n" +
-                                "Placez les carreaux et voyagez à travers le tableau pour survivre à vos adversaires.\n\n" +
-                                "Composants:\n" +
-                                "- 6 x 6 tiles de jeu.\n" +
-                                "- 35 Tiravaillons avec des chemins différents.\n" +
-                                "- 2 à 8 jetons de couleur différentes, un pour chaque joueur.\n" +
-                                "- Une tuile de dragon spéciale.\n\n" +
-                                "Mise en place:\n" +
-                                "- Tout le monde choisit un jeton et le met sur un point de départ au bord de la planche.\n" +
-                                "- Créez un tas de sillon à partir des tuiles de 35 chemins.\n" +
-                                "- Chaque joueur tire trois Tiles de chemin aléatoires pour commencer, et le plus jeune joueur va en premier.\n" +
-                                "- Le jeu continue dans le sens des aiguilles d'une montre autour de la planche.\n\n" +
-                                "Comment jouer:\n" +
-                                "Que faire à tour de votre tour :\n" +
-                                "- Jouez un trait de chemin : Choisissez l'un de vos paquettes et mettez-le sur le plateau. Connectez-le à l'endroit où se trouve votre jeton maintenant.\n" +
-                                "- Déplacez le (les) jeton(s) : Après avoir placé votre tuile de chemin, suivez le chemin que vous avez tracé, et déplacez votre jeton le long de ce chemin. Déplacez tout autre jeton de joueur qui se connecte également au Tile de chemin que vous avez placé.\n" +
-                                "- Surveillez les collisions : Si votre jeton entre en collision avec le jeton d'un autre joueur, vous êtes tous les deux sortis du jeu. Tout jeton qui sort du plateau n'est pas non plus en jeu.\n" +
-                                "- Obtenez un nouveau chemin : Quand vous aurez fini, prenez une autre tuile de chemin pour en garder trois dans votre main. Si vous n'êtes pas en jeu, alors mélangez vos tuiles à nouveau dans la pile de tirage.\n" +
-                                "Comment gagner:\n" +
-                                "Continuez à jouer jusqu'à ce que le jeton d'un seul joueur soit laissé sur le plateau. Ce joueur gagne.\n\n" +
-                                "Règles supplémentaires:\n" +
-                                "- Les chemins qui se croisent ne comptent pas comme une collision. Ce n'est que lorsque les jetons finissent sur la même voie qu'ils entrent en collision.\n" +
-                                "- Vous devez placer votre Tile Path adjacent à votre jeton.\n" +
-                                "- Si tout le monde sort en même temps, le jeu est une cravate.\n\n" +
-                                "Variations:\n" +
-                                "- Classique : Standard Tsuro.\n" +
-                                "- Le plus long chemin : À la fin de la partie, le joueur avec le chemin le plus long gagne\n" +
-                                "- Solo : Placez tous les Tiles du chemin tout en empêchant chaque jeton d'entrer en collision ou de sortir de la planche.\n"
-                );
-                rulesTextArea.setEditable(false);
-                rulesTextArea.setOpaque(false);
-                rulesTextArea.setWrapStyleWord(true);
-
-                rulesTextArea.setLineWrap(true);
-                rulesTextArea.setBackground(Color.WHITE);
-
-                JScrollPane scrollPane = new JScrollPane(rulesTextArea);
-                scrollPane.getViewport().setBackground(new Color(173, 216, 230));
-                dialog.add(scrollPane, BorderLayout.CENTER);
-
-                // Taille et position de la fenêtre JDialog
-                dialog.setSize(new Dimension(600, 400));
-                dialog.setLocationRelativeTo(frame);
-
-                // Afficher la fenêtre JDialog
-                dialog.setVisible(true);
+                Rules.displayRules(frame, cursorFrame,username); // Assurez-vous que cursorFrame est bien passé ici
             }
         });
+
+
 
         // Ajoute un ActionListener au bouton "Quitter"
 
         quitButton.addActionListener(e -> {
             customDialog dialog = new customDialog(frame);
-            dialog.setVisible(true);
         });
 
         
@@ -239,14 +190,16 @@ public class MainMenu {
         rulesPanel.add(rulesButton, BorderLayout.EAST);
 
         configureButton(playButton, () -> {
-            Jouer.gererClicSurBoutonJouer(frame, cursorFrame);
+            Jouer.gererClicSurBoutonJouer(frame, cursorFrame,username);
         });
         configureButton(optionsButton, () -> {
             // Code à exécuter lors du clic sur optionsButton
         });
 
         configureButton(profilButton, () -> {
-            // Code à exécuter lors du clic sur profilButton
+            Profile userProfile = ProfileManager.getProfile(username);
+            assert userProfile != null;
+            ProfilePage pdp = new ProfilePage(existingFrame, userProfile);
         });
 
         configureButton(quitButton, () -> {
@@ -268,11 +221,11 @@ public class MainMenu {
         frame.setLocationRelativeTo(null);
 
         playButton.addActionListener(e -> {
-            Jouer.gererClicSurBoutonJouer(frame,cursorFrame);
+            Jouer.gererClicSurBoutonJouer(frame,cursorFrame,username);
         });
 
         optionsButton.addActionListener(e -> {
-            Option.gererClicSurBoutonOption(existingFrame, clip);
+            Option.gererClicSurBoutonOption(existingFrame, clip,username);
         });
 
 
@@ -281,21 +234,6 @@ public class MainMenu {
         frame.getContentPane().setCursor(cursorFrame.getDefaultCursor());
         frame.setVisible(true);
 
-    }
-    /**
-     * Joue un son à partir du fichier spécifié.
-     *
-     * @param soundFileName Le chemin vers le fichier son.
-     */
-    private static void playSound(String soundFileName) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName).getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -319,7 +257,7 @@ public class MainMenu {
         });
 
         button.addActionListener(e -> {
-            playSound("src/main/resources/sound/buttonClickSound.wav");
+            Option.playSound();
             action.run();
         });
     }

@@ -1,4 +1,5 @@
 package main.java.model;
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -6,7 +7,7 @@ import java.util.List;
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
 
-public class PlateauTuiles implements Cloneable {
+public class PlateauTuiles implements Cloneable, Serializable {
 
     // Enumération des directions
     public enum Direction {
@@ -176,6 +177,10 @@ public class PlateauTuiles implements Cloneable {
                             j.setColonne(nouvelleColonne);
                             j.incrementerCompteur();
                             System.out.println("Longueur du chemin du joueur" + j.getCouleur() + " :" + j.getCompteur());
+                            actualiserPosJ(joueurs);
+                            if (j.getCompteur() > Game.getMaxCompteur()) {
+                                Game.setMaxCompteur(j.getCompteur());
+                            }
                             actualiserPosJ(joueurs);
                         } else {
                             j.setLigne(nouvelleLigne);

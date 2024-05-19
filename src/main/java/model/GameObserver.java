@@ -6,7 +6,7 @@ import java.util.Observer;
 /**
  * Interface pour les classes qui se font observer durant le jeu , en Readonly pour ne pas modifier les valeurs
  */
-public interface GameObserver extends Observer {
+public interface GameObserver {
 
     /**
      * Méthode pour mettre à jour le jeu ; le plateau et les joueurs en passant
@@ -36,4 +36,19 @@ public interface GameObserver extends Observer {
      * Méthode pour notifier que la partie se termine sur une égalité de deux Joueurs
      */
     void gameWinnersTie();
+
+    /**
+     * Méthode pour lancer le timer dès que le Game est crée
+     */
+    void startTurnTimer();
+
+    /**
+     * Méthode qui permet de rénitialiser le timer apres que le joueur ait placé une tuile 
+     */
+    void resetTimer();
+
+    void alertSavedGame();
+
+    void alertUpdateSavedGame();
+
 }

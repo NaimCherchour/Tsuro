@@ -1,11 +1,11 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
-import java.util.Collections;
 
 // cette classe permet de générer les tuiles du deck du side Panel latéral
-public class DeckTuiles {
+public class DeckTuiles implements Serializable {
 
     //TODO : Voir si il faut appliquer la Relation Observer/Observable pour le DeckTuiles et le SidePanel
     private Tuile[] sideTuiles; // Sauvegarde des 3 tuiles du deck
