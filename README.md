@@ -11,6 +11,10 @@
 
 chmod +x run.sh
 
+-> Si vous n'avez pas la commande jar alors exécuter le script de secours 
+
+./run2.sh
+
 
 ## Si vous voulez exécuter le jeu sur un IDE :
 
