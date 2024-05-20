@@ -299,8 +299,10 @@ public class Game implements ReadOnlyGame,Serializable {
                 return j;
             }
         }
-        return deadPlayers.getLast();
+        return deadPlayers.get(deadPlayers.size() - 1);
     }
+
+
 
 
     public void playBotTurn(BotTsuro bot) throws IOException {
