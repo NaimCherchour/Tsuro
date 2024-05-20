@@ -116,9 +116,6 @@ public class LoginPage implements LoginListener {
     /**
      * Ajoute les écouteurs d'événements aux composants graphiques.
      */
-    /**
-     * Ajoute les écouteurs d'événements aux composants graphiques.
-     */
     public void addEventListeners() {
         // Nouvel ActionListener pour le bouton de connexion
         ActionListener loginAction = new ActionListener() {

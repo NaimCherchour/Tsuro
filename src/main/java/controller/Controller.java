@@ -14,7 +14,6 @@ import java.io.IOException;
 
 public class Controller implements MouseListener, ActionListener {
     private Game game; // C'est le model ; La classe Game représente une partie du jeu
-
     // Constructeur
     public Controller(Game game) throws IOException {
             this.game =  game;
@@ -50,7 +49,7 @@ public class Controller implements MouseListener, ActionListener {
         Component clickedComponent = e.getComponent();
         if (game.getGameState()) {
             if (clickedComponent instanceof TuilePanel tuilePanel) {
-                placerTuileFromDeck(tuilePanel.getTuile());
+                placerTuileFromDeck((Tuile)tuilePanel.getTuile());
             }
         }
     }
@@ -85,7 +84,7 @@ public class Controller implements MouseListener, ActionListener {
         switch (actionCommand) {
             case "Rotate":
                 TuilePanel tuilePanel = (TuilePanel) clickedButton.getClientProperty("tuilePanel");
-                rotateTile(tuilePanel.getTuile());
+                rotateTile((Tuile) tuilePanel.getTuile());
                 break;
             case "Save":
                 String username = (String) clickedButton.getClientProperty("Save");

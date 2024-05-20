@@ -5,7 +5,7 @@ import main.java.model.PlateauTuiles.Direction;
 
 import java.io.Serializable;
 
-public class Tuile implements Cloneable, Serializable {
+public class Tuile implements Cloneable, Serializable, ReadOnlyTuile {
     private static final long serialVersionUID = 1L; // Définir un serialVersionUID cohérents
     private final int id; // Identifiant de la tuile ;
     public static final int TAILLE_DU_TABLEAU = 8; // Taille du tableau de chemins ;
@@ -122,7 +122,7 @@ public class Tuile implements Cloneable, Serializable {
     }
 
 
-    public class Chemin implements Serializable{
+    public class Chemin implements Serializable, ReadOnlyChemin{
 
         private int pointSortie; // Point de sortie du chemin tel que le point d'entrée est l'indice du tableau
         private Joueur.Couleur couleur; // Couleur du chemin ; les couleurs sont définies dans l'enum Couleur

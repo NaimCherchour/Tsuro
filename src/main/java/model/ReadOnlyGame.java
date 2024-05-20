@@ -1,5 +1,6 @@
 package main.java.model;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,13 +13,13 @@ public interface ReadOnlyGame {
      * @param j : la colonne de la tuile
      * @return
      */
-    Tuile getTuile(int i, int j);
+    ReadOnlyTuile getTuile(int i, int j);
 
     /**
      * Retourne la liste des joueurs
      * @return
      */
-    List<Joueur> getJoueurs();
+    List<ReadOnlyJoueur> getJoueursRO();
 
     /**
      * Retourne l'indice du joueur courant pour l'affichage du tour de rôle
@@ -30,7 +31,7 @@ public interface ReadOnlyGame {
      * Retourne le deck de tuiles pour afficher les tuiles du SidePanel
      * @return
      */
-    DeckTuiles getDeckTuiles();
+    ReadOnlyDeck getDeckTuiles();
 
     /**
      * Retourne l'état du jeu ; true : Playing , false : Over

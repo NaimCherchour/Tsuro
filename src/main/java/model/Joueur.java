@@ -13,7 +13,7 @@ import java.util.Random;
  * La classe Joueur représente un joueur dans le jeu.
  */
 
-public class Joueur implements Cloneable, Serializable {
+public class Joueur implements Cloneable, Serializable,ReadOnlyJoueur {
     private int ligne; // La ligne actuelle ( de la tuile ) du joueur sur le plateau
     private int colonne; // La colonne actuelle ( de la tuile ) du joueur sur le plateau
     private int PointEntree; // Le point d'entrée du joueur sur le plateau et SA POSITION ACTUELLE dans le plateau par rapport à la tuile

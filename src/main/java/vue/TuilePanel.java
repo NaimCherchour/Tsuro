@@ -1,5 +1,6 @@
 package main.java.vue;
 
+import main.java.model.ReadOnlyTuile;
 import main.java.model.Tuile;
 
 import javax.swing.*;
@@ -9,16 +10,16 @@ import java.io.IOException;
 public class TuilePanel extends JPanel {
 
     private final DessinateurDeTuile dessinateur; // le dessinateur de Tuile
-    private final Tuile tuile; // La tuile à dessiner
+    private final ReadOnlyTuile tuile; // La tuile à dessiner
     private static final int TILE_SIZE = 120;
 
     // getter
-    public Tuile getTuile() {
+    public ReadOnlyTuile getTuile() {
         return tuile;
     }
 
     // Un panel de Tuile est un JPanel qui affiche une tuile.
-    public TuilePanel(Tuile tuile) throws IOException {
+    public TuilePanel(ReadOnlyTuile tuile) throws IOException {
         this.tuile = tuile;
         this.dessinateur = new DessinateurDeTuile();
         setPreferredSize(new Dimension(TILE_SIZE, TILE_SIZE)); // Taille préférée du panneau de la tuile

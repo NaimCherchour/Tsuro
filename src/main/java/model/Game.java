@@ -1,10 +1,7 @@
 package main.java.model;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Game implements ReadOnlyGame,Serializable {
 
@@ -49,8 +46,16 @@ public class Game implements ReadOnlyGame,Serializable {
         return gameState;
     }
 
-    public List<Joueur> getJoueurs() {
+    public List<Joueur> getJoueurs(){
         return joueurs;
+    }
+
+    public List<ReadOnlyJoueur> getJoueursRO() {
+        List<ReadOnlyJoueur> readOnlyJoueurs = new ArrayList<>();
+        for (Joueur joueur : joueurs) {
+            readOnlyJoueurs.add((ReadOnlyJoueur) joueur); // Supposez qu'il existe un constructeur qui prend un Joueur
+        }
+        return Collections.unmodifiableList(readOnlyJoueurs);
     }
     public void setJoueurs(List<Joueur> joueurs) {
         this.joueurs = joueurs;
@@ -265,7 +270,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 notifyObserversWinnersTie();
                 notifyGameEnd();
                 }
-            }
+            } else {
             if (gameMode == GameMode.LONGEST_PATH ) {
                 Joueur jW = checkWinner();
                 if ( jW != null ){
@@ -273,6 +278,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 }
                 gameState = false ;
                 notifyGameEnd();
+            }
             }
         }
         if (!(gameMode == GameMode.LONGEST_PATH)) {
@@ -293,7 +299,7 @@ public class Game implements ReadOnlyGame,Serializable {
                 return j;
             }
         }
-        return null;
+        return deadPlayers.getLast();
     }
 
 

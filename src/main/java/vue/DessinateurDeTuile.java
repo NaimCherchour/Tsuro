@@ -1,14 +1,11 @@
 package main.java.vue;
 
-import main.java.model.Tuile;
+import main.java.model.ReadOnlyTuile;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
-import java.nio.Buffer;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -47,10 +44,9 @@ public class DessinateurDeTuile extends JPanel {
 
     // Méthode principale pour dessiner une tuile
 
-    public void dessinerTuile(Graphics g, Tuile tuile, BufferedImage sprites, int x, int y) {
+    public void dessinerTuile(Graphics g, ReadOnlyTuile tuile, BufferedImage sprites, int x, int y) {
         drawnConnections.clear(); // Clear the set before drawing each tile
         for (int i = 0; i < TAILLE_DU_TABLEAU; i++) {
-           // int connection = tuile.getPointSortieAvecRot(i);
             int connection = tuile.getPointSortieAvecRot(i);
             if (!isConnectionDrawn(i, connection)) { // Check if connection is already drawn
                 int color = tuile.getTableauChemins()[i].getCouleur().ordinal();

@@ -7,7 +7,7 @@ import java.util.List;
  * La classe PlateauTuiles représente le plateau de jeu composé de tuiles.
  */
 
-public class PlateauTuiles implements Cloneable, Serializable {
+public class PlateauTuiles implements Cloneable, Serializable, ReadOnlyPlateau {
 
     // Enumération des directions
     public enum Direction {

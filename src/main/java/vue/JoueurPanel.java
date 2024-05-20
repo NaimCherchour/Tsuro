@@ -1,6 +1,7 @@
 package main.java.vue;
 
 import main.java.model.Joueur;
+import main.java.model.ReadOnlyJoueur;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +11,7 @@ import java.awt.*;
  * Cette classe représente l'interface utilisateur d'un joueur dans un jeu.
  */
 public class JoueurPanel extends JPanel {
-    //TODO : à voir si on doit appliquer le Observer Pattern ici
-
-    private Joueur joueur;
+    private ReadOnlyJoueur joueur;
     private static final int TAILLE_PION = 15; // La taille du pion du joueur
     private static final int MARGE_GAUCHE = 195;
     private static final int MARGE_TOP = 45;
@@ -24,7 +23,7 @@ public class JoueurPanel extends JPanel {
      * Constructeur de la classe JoueurUI.
      * @param joueur Le joueur associé à cette interface utilisateur.
      */
-    public JoueurPanel(Joueur joueur) {
+    public JoueurPanel(ReadOnlyJoueur joueur) {
         this.joueur = joueur;
         setPreferredSize(new Dimension(TAILLE_PION, TAILLE_PION));
     }
@@ -45,7 +44,7 @@ public class JoueurPanel extends JPanel {
         dessinerPion(g, posX, posY);
     }
     
-    private int calculPosX(Joueur j){
+    private int calculPosX(ReadOnlyJoueur j){
         int posActuelle = j.getPointEntree();
         int posJoueurSurBoard = 0;
         if (posActuelle == 0 || posActuelle == 5){
@@ -60,7 +59,7 @@ public class JoueurPanel extends JPanel {
         return MARGE_GAUCHE + j.getColonne() * TUILE_SIZE + posJoueurSurBoard;
     }
 
-    private int calculPosY(Joueur j){
+    private int calculPosY(ReadOnlyJoueur j){
         int posActuelle = j.getPointEntree();
         int posJoueurSurBoard= 0;
         if (posActuelle == 2 || posActuelle == 7){
