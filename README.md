@@ -2,6 +2,8 @@
 
 # Tsuro ( VP2B )
 
+![Visual_IdentityTsuro](https://github.com/user-attachments/assets/3aefd015-14ac-4f0a-adc9-cdf6cce80ef9)
+
 # Exécuter le projet: 
 
 ## Sur Terminal : Exécutez ce script ( copier cette commande directement et assurez vous d'avoir installé le JDK Java) 
@@ -47,10 +49,6 @@ chmod +x run.sh
  - Kecman Dejan
  - Lounici Sifaks 
 
-## Git :
-
-Pour cloner le projet :
-        git clone https://gaufre.informatique.univ-paris-diderot.fr/ProjetTsuro/projettsuro.git
 
 
 ### Comment jouer :
@@ -87,7 +85,6 @@ Cliquer sur une tuile magique (fond doré) vous permet de sauter votre tour sans
 # LONGEST_PATH : 
 Les tuiles magiques vous permettent de poser deux tuiles consécutivement pour agrandir votre parcours.
 
-
 ### Fonctionnalités implémentées :
 
 ## Sauvegarde :
@@ -99,13 +96,6 @@ Le bot est un adversaire qui place une tuile automatiquement après vous.
 Il dispose également de trois tuiles qu'il teste pour choisir la meilleure, 
 en utilisant l'algorithme MinMax, afin de rester sur le plateau et tenter de vous éliminer. 
 Tout dépend des tuiles qui lui sont proposées, donc vous pouvez gagner facilement ou difficilement !
-
-## Mode réseau :
-Malheureusement, le mode réseau n'a pas abouti. 
-Bien que nous ayons créé un serveur et des clients pour gérer les connexions, 
-le problème résidait dans la transmission des données entre le serveur et les clients. 
-Malgré des recherches sur les bibliothèques (net.Sockets) et (RMI), nous n'avons pas pu 
-finaliser cette fonctionnalité faute de temps.
 
 ## Tests :
 Les tests unitaires avec JUnit 5 ont permis de s'assurer que plusieurs fonctionnalités du modèle et de la vue étaient correctes, 
